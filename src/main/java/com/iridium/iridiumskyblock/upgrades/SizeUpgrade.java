@@ -12,7 +12,11 @@ public class SizeUpgrade extends UpgradeData {
     public int size;
 
     public SizeUpgrade(int money, int crystals, int size) {
-        super(money, crystals);
+        super(money, crystals,null,null);
+        this.size = size;
+    }
+    public SizeUpgrade(int money, int crystals, int size,String permission, String permissionMessage) {
+        super(money, crystals,permission,permissionMessage);
         this.size = size;
     }
 

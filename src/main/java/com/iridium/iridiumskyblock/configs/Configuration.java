@@ -41,7 +41,7 @@ public class Configuration {
     public boolean endIslands = true;
     public boolean respawnOnIsland = true;
     public boolean obsidianBucket = true;
-    public boolean patreonMessage = true;
+    public boolean patreonMessage = false;
     public boolean islandMenu = true;
     public boolean backButtons = true;
     public boolean createIslandOnHome = true;

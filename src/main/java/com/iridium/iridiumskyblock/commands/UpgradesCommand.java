@@ -66,6 +66,11 @@ public class UpgradesCommand extends Command {
             return false;
         }
 
+        if (upgradeData.permission!= null && !player.hasPermission(upgradeData.permission)) {
+            player.sendMessage(StringUtils.color(("%prefix%You do not have the required rank : "+upgradeData.permissionMessage).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            return false;
+        }
+
         if (!PlayerUtils.pay(player, island.get(), upgradeData.crystals, upgradeData.money)) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotAfford.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;

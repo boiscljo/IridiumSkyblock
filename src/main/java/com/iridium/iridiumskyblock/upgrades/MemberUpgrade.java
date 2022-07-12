@@ -8,12 +8,17 @@ import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
-public class MemberUpgrade extends UpgradeData{
+public class MemberUpgrade extends UpgradeData {
 
     public int amount;
 
     public MemberUpgrade(int money, int crystals, int amount) {
-        super(money, crystals);
+        super(money, crystals, null, null);
+        this.amount = amount;
+    }
+
+    public MemberUpgrade(int money, int crystals, int amount, String permission, String permissionMessage) {
+        super(money, crystals, permission, permissionMessage);
         this.amount = amount;
     }
 

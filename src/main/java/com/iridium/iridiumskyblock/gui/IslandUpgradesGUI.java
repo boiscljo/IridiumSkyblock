@@ -49,9 +49,11 @@ public class IslandUpgradesGUI extends IslandGUI {
                 UpgradeData upgradeData = upgrade.getValue().upgrades.get(level + 1);
                 placeholderList.add(new Placeholder("crystalscost", String.valueOf(upgradeData.crystals)));
                 placeholderList.add(new Placeholder("vaultcost", String.valueOf(upgradeData.money)));
+                placeholderList.add(new Placeholder("permission", String.valueOf(upgradeData.permissionMessage)));
             } else if (!upgrade.getValue().upgrades.containsKey(level + 1)) {
                 placeholderList.add(new Placeholder("crystalscost", IridiumSkyblock.getInstance().getPlaceholders().crystalCost));
                 placeholderList.add(new Placeholder("vaultcost", IridiumSkyblock.getInstance().getPlaceholders().vaultCost));
+                placeholderList.add(new Placeholder("permission", ""));
             }
 
             inventory.setItem(item.slot, ItemStackUtils.makeItem(item, placeholderList));

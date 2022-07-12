@@ -14,6 +14,9 @@ public class UpgradeData {
     public int money;
     public int crystals;
 
+    public String permission;
+    public String permissionMessage;
+
     @JsonIgnore
     public List<Placeholder> getPlaceholders() {
         return Collections.emptyList();
