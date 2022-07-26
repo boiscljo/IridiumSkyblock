@@ -8,6 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -131,6 +132,10 @@ public final class User extends DatabaseObject {
      */
     public @Nullable Player getPlayer() {
         return Bukkit.getPlayer(uuid);
+    }
+
+    public @Nullable OfflinePlayer getOfflinePlayer() {
+        return Bukkit.getOfflinePlayer(uuid);
     }
 
     /**

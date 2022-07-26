@@ -9,6 +9,9 @@ import com.iridium.iridiumskyblock.database.IslandUpgrade;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.generators.GeneratorType;
 import com.iridium.iridiumskyblock.managers.IslandManager;
+
+import co.aikar.commands.InvalidCommandArgument;
+
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -27,12 +30,8 @@ import java.util.concurrent.CompletableFuture;
  */
 public class IridiumSkyblockAPI {
 
-    private static final IridiumSkyblockAPI instance;
+    private static IridiumSkyblockAPI instance;
     private final IridiumSkyblock iridiumSkyblock;
-
-    static {
-        instance = new IridiumSkyblockAPI(IridiumSkyblock.getInstance());
-    }
 
     /**
      * Constructor for api initialization.
@@ -45,12 +44,15 @@ public class IridiumSkyblockAPI {
 
     /**
      * Accesses the api instance.
-     * Might be null if this method is called when {@link IridiumSkyblock}'s startup method is still being executed.
+     * Might be null if this method is called when {@link IridiumSkyblock}'s startup
+     * method is still being executed.
      *
      * @return the instance of this api
      * @since 3.0.0
      */
     public static @NotNull IridiumSkyblockAPI getInstance() {
+        if (instance == null && IridiumSkyblock.getInstance() != null)
+            instance = new IridiumSkyblockAPI(IridiumSkyblock.getInstance());
         return instance;
     }
 
@@ -183,20 +185,22 @@ public class IridiumSkyblockAPI {
      * @return true if the permission is allowed
      * @since 3.0.0
      */
-    public boolean getIslandPermission(@NotNull Island island, @NotNull User user, @NotNull Permission permission, @NotNull String key) {
+    public boolean getIslandPermission(@NotNull Island island, @NotNull User user, @NotNull Permission permission,
+            @NotNull String key) {
         return iridiumSkyblock.getIslandManager().getIslandPermission(island, user, permission, key);
     }
 
     /**
      * Gets whether a permission is allowed or denied.
      *
-     * @param island     The specified Island
-     * @param user       The specified user
+     * @param island         The specified Island
+     * @param user           The specified user
      * @param permissionType The specified permission type
      * @return true if the permission is allowed
      * @since 3.0.4
      */
-    public boolean getIslandPermission(@NotNull Island island, @NotNull User user, @NotNull PermissionType permissionType) {
+    public boolean getIslandPermission(@NotNull Island island, @NotNull User user,
+            @NotNull PermissionType permissionType) {
         return iridiumSkyblock.getIslandManager().getIslandPermission(island, user, permissionType);
     }
 
@@ -249,7 +253,8 @@ public class IridiumSkyblockAPI {
     /**
      * Returns the overworld.
      *
-     * @return the main Skyblock {@link World}, might be null if some third-party plugin deleted it
+     * @return the main Skyblock {@link World}, might be null if some third-party
+     *         plugin deleted it
      * @since 3.0.0
      */
     public @Nullable World getWorld() {
@@ -259,7 +264,8 @@ public class IridiumSkyblockAPI {
     /**
      * Returns the nether world.
      *
-     * @return the nether Skyblock {@link World}, might be null if some third-party plugin deleted it
+     * @return the nether Skyblock {@link World}, might be null if some third-party
+     *         plugin deleted it
      * @since 3.0.0
      */
     public @Nullable World getNetherWorld() {
@@ -269,7 +275,8 @@ public class IridiumSkyblockAPI {
     /**
      * Returns the end world.
      *
-     * @return the nether Skyblock {@link World}, might be null if some third-party plugin deleted it
+     * @return the nether Skyblock {@link World}, might be null if some third-party
+     *         plugin deleted it
      * @since 3.0.0
      */
     public @Nullable World getEndWorld() {
@@ -284,7 +291,8 @@ public class IridiumSkyblockAPI {
      * @since 3.0.7
      */
     public boolean isIslandWorld(@NotNull World world) {
-        return Objects.equals(getWorld(), world) || Objects.equals(getNetherWorld(), world) || Objects.equals(getEndWorld(), world);
+        return Objects.equals(getWorld(), world) || Objects.equals(getNetherWorld(), world)
+                || Objects.equals(getEndWorld(), world);
     }
 
     /**
@@ -329,11 +337,12 @@ public class IridiumSkyblockAPI {
     public GeneratorType getGeneratorType() {
         return IridiumSkyblock.getInstance().getConfiguration().generatorSettings.generatorType;
     }
-  
+
     /**
-     * Returns whether the specified player can visit the provided Island.<p>
+     * Returns whether the specified player can visit the provided Island.
+     * <p>
      *
-     * @param user the user
+     * @param user   the user
      * @param island the Island
      * @return true if the user can visit the Island
      * @since 3.2.7
@@ -343,7 +352,9 @@ public class IridiumSkyblockAPI {
             return false;
         }
 
-        return island.isVisitable() || user.isBypassing() || user.getPlayer().hasPermission("iridiumskyblock.visitbypass") || island.getMembers().contains(user) || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island, user).isPresent();
+        return island.isVisitable() || user.isBypassing()
+                || user.getPlayer().hasPermission("iridiumskyblock.visitbypass") || island.getMembers().contains(user)
+                || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island, user).isPresent();
     }
 
 }

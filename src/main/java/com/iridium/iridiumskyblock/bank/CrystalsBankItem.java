@@ -56,10 +56,10 @@ public class CrystalsBankItem extends BankItem {
                         .replace("%type%", getDisplayName())
                 );
             } else {
-                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().insufficientFundsToWithdrew
-                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix))
-                        .replace("%type%", getDisplayName())
-                );
+                //player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().insufficientFundsToWithdrew
+                //        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix))
+                //        .replace("%type%", getDisplayName())
+                //);
             }
             return crystals;
         } else {

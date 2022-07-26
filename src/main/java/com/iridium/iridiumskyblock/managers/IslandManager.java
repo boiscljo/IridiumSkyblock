@@ -256,8 +256,8 @@ public class IslandManager {
                     player.getInventory().clear();
                 if (regenSettings.clearEnderChests)
                     player.getEnderChest().clear();
-                if (regenSettings.resetVaultBalances)
-                    IridiumSkyblock.getInstance().getEconomy().withdrawPlayer(player, IridiumSkyblock.getInstance().getEconomy().getBalance(player));
+                //if (regenSettings.resetVaultBalances)
+                //    IridiumSkyblock.getInstance().getEconomy().withdrawPlayer(player, IridiumSkyblock.getInstance().getEconomy().getBalance(player));
                 if (regenSettings.kickMembers) {
                     player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().youHaveBeenKicked.replace("%player%", user.getName()).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                     IridiumSkyblock.getInstance().getUserManager().getUser(player).setIsland(null);
@@ -686,9 +686,9 @@ public class IslandManager {
                 if (IridiumSkyblock.getInstance().getConfiguration().deleteSettings.clearEnderChests) {
                     player.getEnderChest().clear();
                 }
-                if (IridiumSkyblock.getInstance().getConfiguration().deleteSettings.resetVaultBalances) {
-                    IridiumSkyblock.getInstance().getEconomy().withdrawPlayer(player, IridiumSkyblock.getInstance().getEconomy().getBalance(player));
-                }
+                //if (IridiumSkyblock.getInstance().getConfiguration().deleteSettings.resetVaultBalances) {
+                //    IridiumSkyblock.getInstance().getEconomy().withdrawPlayer(player, IridiumSkyblock.getInstance().getEconomy().getBalance(player));
+                //}
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().islandDeleted.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             }
         });

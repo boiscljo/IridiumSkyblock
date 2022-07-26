@@ -1,17 +1,21 @@
 package com.iridium.iridiumskyblock.commands;
 
-import com.iridium.iridiumcore.utils.StringUtils;
-import com.iridium.iridiumskyblock.IridiumSkyblock;
-import com.iridium.iridiumskyblock.database.Island;
-import com.iridium.iridiumskyblock.database.IslandBooster;
-import com.iridium.iridiumskyblock.database.User;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
+import com.iridium.iridiumcore.utils.StringUtils;
+import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.database.Island;
+import com.iridium.iridiumskyblock.database.IslandBooster;
+import com.iridium.iridiumskyblock.database.User;
 
 public class FlyCommand extends Command {
 
@@ -40,18 +44,31 @@ public class FlyCommand extends Command {
             return false;
         }
 
-        boolean flight = !user.isFlying();
+        boolean flight =  !user.isFlying() ||player.getAllowFlight();
         if (args.length == 2) {
             if (!args[1].equalsIgnoreCase("enable") && !args[1].equalsIgnoreCase("disable") && !args[1].equalsIgnoreCase("on") && !args[1].equalsIgnoreCase("off")) {
                 sender.sendMessage(StringUtils.color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                player.setAllowFlight(true);
+                player.setFlying(true);
                 return false;
             }
 
             flight = args[1].equalsIgnoreCase("enable") || args[1].equalsIgnoreCase("on");
         }
-
+        
+        RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        
+        boolean ownerHasFlightPerm = false;
+        try
+        { 
+            ownerHasFlightPerm=permissionProvider.getProvider().playerHas( "world",island.get().getOwner().getOfflinePlayer(), "iridiumskyblock.fly");
+        }
+        catch(Throwable t)
+        {
+            
+        }
         IslandBooster islandBooster = IridiumSkyblock.getInstance().getIslandManager().getIslandBooster(island.get(), "flight");
-        if (!islandBooster.isActive() && !player.hasPermission("iridiumskyblock.fly")) {
+        if (!islandBooster.isActive() && !(player.hasPermission("iridiumskyblock.fly")||ownerHasFlightPerm)) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().flightBoosterNotActive.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }

@@ -92,8 +92,6 @@ public class IridiumSkyblock extends IridiumCore {
     private Map<String, Upgrade<?>> upgradesList;
     private Map<String, Booster> boosterList;
 
-    private Economy economy;
-
     private StackerSupport stackerSupport;
 
     /**
@@ -178,7 +176,7 @@ public class IridiumSkyblock extends IridiumCore {
         this.schematicManager = new SchematicManager();
 
         // Initialize Vault economy support
-        Bukkit.getScheduler().runTask(this, () -> this.economy = setupEconomy());
+        //Bukkit.getScheduler().runTask(this, () -> this.economy = setupEconomy());
 
         this.stackerSupport = registerBlockStackerSupport();
 
@@ -371,20 +369,6 @@ public class IridiumSkyblock extends IridiumCore {
         getDatabaseManager().getIslandLogTableManager().save();
         getDatabaseManager().getIslandBanTableManager().save();
         getDatabaseManager().getIslandSettingTableManager().save();
-    }
-
-    /**
-     * Tries to initialize the Vault support.
-     *
-     * @return Vault's economy interface, null if none is found
-     */
-    private Economy setupEconomy() {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
-        if (economyProvider == null) {
-            getLogger().warning("You do not have an economy plugin installed (like Essentials)");
-            return null;
-        }
-        return economyProvider.getProvider();
     }
 
     /**

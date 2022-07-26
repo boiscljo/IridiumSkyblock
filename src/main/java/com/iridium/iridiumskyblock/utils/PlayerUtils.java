@@ -40,13 +40,13 @@ public class PlayerUtils {
 
         IslandBank islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().crystalsBankItem);
         IslandBank islandMoney = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().moneyBankItem);
-        Economy economy = IridiumSkyblock.getInstance().getEconomy();
+        //Economy economy = IridiumSkyblock.getInstance().getEconomy();
 
         islandCrystals.setNumber(islandCrystals.getNumber() - crystals);
         if (islandMoney.getNumber() >= money) {
             islandMoney.setNumber(islandMoney.getNumber() - money);
         } else {
-            economy.withdrawPlayer(player, money);
+            //economy.withdrawPlayer(player, money);
         }
 
         return true;
@@ -64,9 +64,8 @@ public class PlayerUtils {
     public static boolean canPurchase(@NotNull Player player, @NotNull Island island, int crystals, double money) {
         IslandBank islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().crystalsBankItem);
         IslandBank islandMoney = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().moneyBankItem);
-        Economy economy = IridiumSkyblock.getInstance().getEconomy();
 
-        return islandCrystals.getNumber() >= crystals && (islandMoney.getNumber() >= money || (economy != null && economy.getBalance(player) >= money));
+        return islandCrystals.getNumber() >= crystals && (islandMoney.getNumber() >= money);
     }
 
     /**
