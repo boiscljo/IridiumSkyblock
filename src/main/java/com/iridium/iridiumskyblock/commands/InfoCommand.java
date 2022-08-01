@@ -46,7 +46,7 @@ public class InfoCommand extends Command {
 
             Player player = (Player) sender;
             User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-            Optional<Island> userIsland = user.getIsland();
+            Optional<Island> userIsland = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(player.getLocation());
             if (!userIsland.isPresent()) {
                 sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;

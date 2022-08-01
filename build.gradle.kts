@@ -40,9 +40,9 @@ dependencies {
     compileOnly("net.ess3:EssentialsXSpawn:2.16.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.9.2")
-    compileOnly("be.maximvdw:MVdWPlaceholderAPI:2.1.1-SNAPSHOT") {
-        exclude("org.spigotmc")
-    }
+    //compileOnly("be.maximvdw:MVdWPlaceholderAPI:2.1.1-SNAPSHOT") {
+    //    exclude("org.spigotmc")
+    //}
     compileOnly("com.gc:AdvancedSpawners:1.2.6")
     compileOnly("dev.rosewood:rosestacker:1.4.2")
     compileOnly("com.github.OmerBenGera:WildStackerAPI:master")
