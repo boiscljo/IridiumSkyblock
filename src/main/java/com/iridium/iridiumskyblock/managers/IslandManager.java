@@ -161,7 +161,8 @@ public class IslandManager {
      */
     private void teleportHome(@NotNull Player player, @NotNull Island island) {
         player.setFallDistance(0);
-        PaperLib.teleportAsync(player, LocationUtils.getSafeLocation(island.getHome(), island), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        player.teleport(island.getHome(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        //PaperLib.teleportAsync(player, (island.getHome()), PlayerTeleportEvent.TeleportCause.PLUGIN);
 
     }
 
@@ -196,7 +197,9 @@ public class IslandManager {
      */
     private void teleportWarp(@NotNull Player player, @NotNull IslandWarp islandWarp) {
         player.setFallDistance(0);
-        PaperLib.teleportAsync(player, LocationUtils.getSafeLocation(islandWarp.getLocation(), islandWarp.getIsland().orElse(null)), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        player.teleport(islandWarp.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+        //PaperLib.teleportAsync(player, (islandWarp.getLocation()), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     /**

@@ -60,7 +60,7 @@ public class PlayerPortalListener implements Listener {
 
             if (IridiumSkyblock.getInstance().getConfiguration().endIslands) {
                 World world = Objects.equals(event.getFrom().getWorld(), islandManager.getEndWorld()) ? islandManager.getWorld() : islandManager.getEndWorld();
-                event.getPlayer().teleport(LocationUtils.getSafeLocation(island.get().getCenter(world), island.get()));
+                event.getPlayer().teleport((island.get().getCenter(world)));
                 return;
             }
 

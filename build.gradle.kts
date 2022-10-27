@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.iridium"
-version = "3.2.9-TAKSTIJN"
+version = "3.2.9-IGNITED"
 description = "IridiumSkyblock"
 
 repositories {
