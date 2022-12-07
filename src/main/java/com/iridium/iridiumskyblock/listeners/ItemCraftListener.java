@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.listeners;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.database.Island;
@@ -32,7 +33,7 @@ public class ItemCraftListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
         Optional<Island> island = user.getIsland();
-        XMaterial material = XMaterial.matchXMaterial(event.getRecipe().getResult().getType());
+        ObsidianMaterial material = ObsidianMaterial.wrap(event.getRecipe().getResult().getType());
 
         island.ifPresent(value -> IridiumSkyblock.getInstance().getMissionManager().handleMissionUpdates(value, "CRAFT", material.name(), amount));
     }

@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.shop;
 
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
@@ -117,7 +118,7 @@ public class ShopManager {
                 return;
             }
 
-            ItemStack itemStack = shopItem.type.parseItem();
+            ItemStack itemStack = shopItem.type.toItem();
             itemStack.setAmount(amount);
             if (shopItem.displayName != null && !shopItem.displayName.isEmpty()) {
                 ItemMeta itemMeta = itemStack.getItemMeta();

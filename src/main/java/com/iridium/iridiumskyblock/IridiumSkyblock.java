@@ -2,7 +2,8 @@ package com.iridium.iridiumskyblock;
 
 import com.iridium.iridiumcore.Color;
 import com.iridium.iridiumcore.IridiumCore;
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.utils.NumberFormatter;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockReloadEvent;
@@ -163,10 +164,15 @@ public class IridiumSkyblock extends IridiumCore {
             return;
         }
 
-        this.islandManager.createWorld(World.Environment.NORMAL, configuration.worldName);
-        this.islandManager.createWorld(World.Environment.NETHER, configuration.worldName + "_nether");
-        this.islandManager.createWorld(World.Environment.THE_END, configuration.worldName + "_the_end");
-
+        try{
+            this.islandManager.createWorld(World.Environment.NORMAL, configuration.worldName);
+            this.islandManager.createWorld(World.Environment.NETHER, configuration.worldName + "_nether");
+            this.islandManager.createWorld(World.Environment.THE_END, configuration.worldName + "_the_end");
+        }catch(Throwable t)
+        {
+            t.printStackTrace();
+            System.out.println("Trying to continue loading");
+        }
         // Try to connect to the database
       
 
@@ -264,7 +270,7 @@ public class IridiumSkyblock extends IridiumCore {
         if (Bukkit.getPluginManager().isPluginEnabled("WildStacker")) return new WildStackerSupport();
         return new StackerSupport() {
             @Override
-            public int getExtraBlocks(Island island, XMaterial material) {
+            public int getExtraBlocks(Island island, ObsidianMaterial material) {
                 return 0;
             }
 

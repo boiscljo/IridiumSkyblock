@@ -1,9 +1,10 @@
 package com.iridium.iridiumskyblock.configs;
 
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.google.common.collect.ImmutableMap;
 import com.iridium.iridiumcore.Item;
 import com.iridium.iridiumcore.dependencies.fasterxml.annotation.JsonIgnoreProperties;
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
 import com.iridium.iridiumskyblock.Upgrade;
 import com.iridium.iridiumskyblock.upgrades.*;
 
@@ -12,7 +13,7 @@ import java.util.Arrays;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Upgrades {
     public Upgrade<SizeUpgrade> sizeUpgrade = new Upgrade<>(true, "Size",
-            new Item(XMaterial.GRASS_BLOCK, 11, 1, "&b&lIsland Size", Arrays.asList(
+            new Item(ObsidianMaterial.valueOf("GRASS_BLOCK"), 11, 1, "&b&lIsland Size", Arrays.asList(
                     "&7Need more room to expand? Buy this",
                     "&7upgrade to increase your island size.",
                     "",
@@ -33,7 +34,7 @@ public class Upgrades {
             .build());
 
     public Upgrade<MemberUpgrade> memberUpgrade = new Upgrade<>(true, "Member",
-            new Item(XMaterial.ARMOR_STAND, 12, 1, "&b&lIsland Members", Arrays.asList(
+            new Item(ObsidianMaterial.valueOf("ARMOR_STAND"), 12, 1, "&b&lIsland Members", Arrays.asList(
                     "&7Need more members? Buy this",
                     "&7upgrade to increase your member count.",
                     "",
@@ -54,7 +55,7 @@ public class Upgrades {
             .build());
 
     public Upgrade<BlockLimitUpgrade> blockLimitUpgrade = new Upgrade<>(true, "Block Limit",
-            new Item(XMaterial.HOPPER, 13, 1, "&b&lIsland Block Limits", Arrays.asList(
+            new Item(ObsidianMaterial.valueOf("HOPPER"), 13, 1, "&b&lIsland Block Limits", Arrays.asList(
                     "&7Need to place more blocks? Buy this",
                     "&7upgrade to increase the amount of blocks you can place.",
                     "",
@@ -64,35 +65,35 @@ public class Upgrades {
                     "",
                     "&b&l[!] &bLeft Click to Purchase this Upgrade"
             )), ImmutableMap.<Integer, BlockLimitUpgrade>builder()
-            .put(1, new BlockLimitUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.HOPPER, 15)
-                    .put(XMaterial.PISTON, 10)
-                    .put(XMaterial.SPAWNER, 10)
+            .put(1, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("HOPPER"), 15)
+                    .put(ObsidianMaterial.valueOf("PISTON"), 10)
+                    .put(ObsidianMaterial.valueOf("SPAWNER"), 10)
                     .build()))
-            .put(2, new BlockLimitUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.HOPPER, 20)
-                    .put(XMaterial.PISTON, 15)
-                    .put(XMaterial.SPAWNER, 15)
+            .put(2, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("HOPPER"), 20)
+                    .put(ObsidianMaterial.valueOf("PISTON"), 15)
+                    .put(ObsidianMaterial.valueOf("SPAWNER"), 15)
                     .build()))
-            .put(3, new BlockLimitUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.HOPPER, 25)
-                    .put(XMaterial.PISTON, 20)
-                    .put(XMaterial.SPAWNER, 20)
+            .put(3, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("HOPPER"), 25)
+                    .put(ObsidianMaterial.valueOf("PISTON"), 20)
+                    .put(ObsidianMaterial.valueOf("SPAWNER"), 20)
                     .build()))
-            .put(4, new BlockLimitUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.HOPPER, 30)
-                    .put(XMaterial.PISTON, 25)
-                    .put(XMaterial.SPAWNER, 25)
+            .put(4, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("HOPPER"), 30)
+                    .put(ObsidianMaterial.valueOf("PISTON"), 25)
+                    .put(ObsidianMaterial.valueOf("SPAWNER"), 25)
                     .build()))
-            .put(5, new BlockLimitUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.HOPPER, 40)
-                    .put(XMaterial.PISTON, 30)
-                    .put(XMaterial.SPAWNER, 30)
+            .put(5, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("HOPPER"), 40)
+                    .put(ObsidianMaterial.valueOf("PISTON"), 30)
+                    .put(ObsidianMaterial.valueOf("SPAWNER"), 30)
                     .build()))
             .build());
 
     public Upgrade<WarpsUpgrade> warpsUpgrade = new Upgrade<>(true, "Warps",
-            new Item(XMaterial.END_PORTAL_FRAME, 14, 1, "&b&lIsland Warps", Arrays.asList(
+            new Item(ObsidianMaterial.valueOf("END_PORTAL_FRAME"), 14, 1, "&b&lIsland Warps", Arrays.asList(
                     "&7Need more island warps? Buy this",
                     "&7upgrade to increase your island warps.",
                     "",
@@ -116,7 +117,7 @@ public class Upgrades {
             .build());
 
     public Upgrade<OresUpgrade> oresUpgrade = new Upgrade<>(true, "Ore Generator",
-            new Item(XMaterial.DIAMOND_ORE, 15, 1, "&b&lIsland Generator", Arrays.asList(
+            new Item(ObsidianMaterial.valueOf("DIAMOND_ORE"), 15, 1, "&b&lIsland Generator", Arrays.asList(
                     "&7Want to improve your generator? Buy this",
                     "&7upgrade to improve your island generator.",
                     "",
@@ -126,43 +127,43 @@ public class Upgrades {
                     "",
                     "&b&l[!] &bLeft Click to Purchase this Upgrade"
             )), ImmutableMap.<Integer, OresUpgrade>builder()
-            .put(1, new OresUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.COBBLESTONE, 3)
-                    .put(XMaterial.COAL_ORE, 1)
-                    .build(), ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.BASALT, 1)
+            .put(1, new OresUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("COBBLESTONE"), 3)
+                    .put(ObsidianMaterial.valueOf("COAL_ORE"), 1)
+                    .build(), ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("BASALT"), 1)
                     .build()))
-            .put(2, new OresUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.DIAMOND_ORE, 1)
-                    .put(XMaterial.IRON_ORE, 10)
-                    .put(XMaterial.REDSTONE_ORE, 10)
-                    .put(XMaterial.GOLD_ORE, 10)
-                    .put(XMaterial.LAPIS_ORE, 10)
-                    .put(XMaterial.COAL_ORE, 20)
-                    .put(XMaterial.COBBLESTONE, 40)
-                    .build(), ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.BASALT, 20)
-                    .put(XMaterial.GLOWSTONE, 20)
-                    .put(XMaterial.NETHER_QUARTZ_ORE, 20)
-                    .put(XMaterial.NETHER_GOLD_ORE, 20)
-                    .put(XMaterial.NETHERRACK, 20)
-                    .put(XMaterial.ANCIENT_DEBRIS, 1)
+            .put(2, new OresUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("DIAMOND_ORE"), 1)
+                    .put(ObsidianMaterial.valueOf("IRON_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("REDSTONE_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("GOLD_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("LAPIS_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("COAL_ORE"), 20)
+                    .put(ObsidianMaterial.valueOf("COBBLESTONE"), 40)
+                    .build(), ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("BASALT"), 20)
+                    .put(ObsidianMaterial.valueOf("GLOWSTONE"), 20)
+                    .put(ObsidianMaterial.valueOf("NETHER_QUARTZ_ORE"), 20)
+                    .put(ObsidianMaterial.valueOf("NETHER_GOLD_ORE"), 20)
+                    .put(ObsidianMaterial.valueOf("NETHERRACK"), 20)
+                    .put(ObsidianMaterial.valueOf("ANCIENT_DEBRIS"), 1)
                     .build()))
-            .put(3, new OresUpgrade(1000, 15, ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.DIAMOND_ORE, 10)
-                    .put(XMaterial.IRON_ORE, 10)
-                    .put(XMaterial.REDSTONE_ORE, 10)
-                    .put(XMaterial.GOLD_ORE, 10)
-                    .put(XMaterial.LAPIS_ORE, 10)
-                    .put(XMaterial.COAL_ORE, 20)
-                    .put(XMaterial.COBBLESTONE, 40)
-                    .build(), ImmutableMap.<XMaterial, Integer>builder()
-                    .put(XMaterial.BASALT, 10)
-                    .put(XMaterial.GLOWSTONE, 10)
-                    .put(XMaterial.NETHER_QUARTZ_ORE, 10)
-                    .put(XMaterial.NETHER_GOLD_ORE, 10)
-                    .put(XMaterial.NETHERRACK, 10)
-                    .put(XMaterial.ANCIENT_DEBRIS, 1)
+            .put(3, new OresUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("DIAMOND_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("IRON_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("REDSTONE_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("GOLD_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("LAPIS_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("COAL_ORE"), 20)
+                    .put(ObsidianMaterial.valueOf("COBBLESTONE"), 40)
+                    .build(), ImmutableMap.<ObsidianMaterial, Integer>builder()
+                    .put(ObsidianMaterial.valueOf("BASALT"), 10)
+                    .put(ObsidianMaterial.valueOf("GLOWSTONE"), 10)
+                    .put(ObsidianMaterial.valueOf("NETHER_QUARTZ_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("NETHER_GOLD_ORE"), 10)
+                    .put(ObsidianMaterial.valueOf("NETHERRACK"), 10)
+                    .put(ObsidianMaterial.valueOf("ANCIENT_DEBRIS"), 1)
                     .build()))
             .build());
 

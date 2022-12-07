@@ -62,7 +62,7 @@ public class ShopCategoryGUI extends GUI {
         InventoryUtils.fillInventory(inventory, IridiumSkyblock.getInstance().getShop().categoryBackground);
 
         for (ShopItem item : category.items) {
-            ItemStack itemStack = item.type.parseItem();
+            ItemStack itemStack = item.type.toItem();
             ItemMeta itemMeta = itemStack.getItemMeta();
 
             itemStack.setAmount(item.defaultAmount);

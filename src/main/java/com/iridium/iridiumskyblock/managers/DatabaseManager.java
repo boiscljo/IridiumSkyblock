@@ -4,7 +4,7 @@ import com.iridium.iridiumskyblock.DataConverter;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.configs.SQL;
 import com.iridium.iridiumskyblock.database.*;
-import com.iridium.iridiumskyblock.database.types.XMaterialType;
+import com.iridium.iridiumskyblock.database.types.ObsidianMaterialType;
 import com.iridium.iridiumskyblock.managers.tablemanagers.ForeignIslandTableManager;
 import com.iridium.iridiumskyblock.managers.tablemanagers.IslandTableManager;
 import com.iridium.iridiumskyblock.managers.tablemanagers.UserTableManager;
@@ -59,7 +59,7 @@ public class DatabaseManager {
         SQL sqlConfig = IridiumSkyblock.getInstance().getSql();
         String databaseURL = getDatabaseURL(sqlConfig);
 
-        DataPersisterManager.registerDataPersisters(XMaterialType.getSingleton());
+        DataPersisterManager.registerDataPersisters(ObsidianMaterialType.getSingleton());
 
         if (!IridiumSkyblock.getInstance().isTesting()) {
             this.connectionSource = new JdbcConnectionSource(

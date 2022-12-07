@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.commands;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.PermissionType;
@@ -68,9 +69,9 @@ public class EditWarpCommand extends Command {
                     sender.sendMessage("/is editwarp <name> icon <icon>");
                 }
 
-                Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(args[3]);
-                if (xMaterial.isPresent()) {
-                    islandWarp.get().setIcon(xMaterial.get());
+                ObsidianMaterial xMaterial = ObsidianMaterial.valueOf(args[3]);
+                if (xMaterial!= null) {
+                    islandWarp.get().setIcon(xMaterial);
                     player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().warpIconSet.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                     return true;
                 } else {
@@ -118,8 +119,8 @@ public class EditWarpCommand extends Command {
 
         if (args.length == 4) {
             if (args[2].equalsIgnoreCase("icon")) {
-                return Arrays.stream(XMaterial.values())
-                    .map(XMaterial::name)
+                return ObsidianMaterial.values().stream()
+                    .map(ObsidianMaterial::name)
                     .collect(Collectors.toList());
             }
         }

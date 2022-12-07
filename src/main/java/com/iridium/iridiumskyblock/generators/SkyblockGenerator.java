@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.generators;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.jetbrains.annotations.NotNull;
@@ -82,8 +83,8 @@ public class SkyblockGenerator extends IridiumChunkGenerator {
      * @return the most used material of the chunk generator in this generator
      */
     @Override
-    public XMaterial getMainMaterial(@Nullable World world) {
-        return XMaterial.AIR;
+    public ObsidianMaterial getMainMaterial(@Nullable World world) {
+        return ObsidianMaterial.valueOf("AIR");
     }
 
 }

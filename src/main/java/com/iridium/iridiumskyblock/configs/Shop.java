@@ -1,11 +1,12 @@
 package com.iridium.iridiumskyblock.configs;
 
 import com.google.common.collect.ImmutableMap;
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.Background;
 import com.iridium.iridiumcore.Item;
 import com.iridium.iridiumcore.dependencies.fasterxml.annotation.JsonIgnoreProperties;
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
-import com.iridium.iridiumcore.dependencies.xseries.XSound;
+
+import com.moyskleytech.obsidian.material.dependencies.xseries.XSound;
 import com.iridium.iridiumskyblock.shop.ShopItem;
 import com.iridium.iridiumskyblock.shop.ShopItem.BuyCost;
 import com.iridium.iridiumskyblock.shop.ShopItem.SellReward;
@@ -25,12 +26,12 @@ import java.util.Map;
 public class Shop {
 
     public Map<String, ShopCategoryConfig> categories = ImmutableMap.<String, ShopCategoryConfig>builder()
-            .put("Blocks", new ShopCategoryConfig(new Item(XMaterial.GRASS_BLOCK, 12, 1, "&9&lBlocks", Collections.emptyList()), 6))
-            .put("Food", new ShopCategoryConfig(new Item(XMaterial.COOKED_CHICKEN, 13, 1, "&9&lFood", Collections.emptyList()), 4))
-            .put("Ores", new ShopCategoryConfig(new Item(XMaterial.GOLD_INGOT, 14, 1, "&9&lOres", Collections.emptyList()), 4))
-            .put("Farming", new ShopCategoryConfig(new Item(XMaterial.WHEAT, 21, 1, "&9&lFarming", Collections.emptyList()), 5))
-            .put("Mob Drops", new ShopCategoryConfig(new Item(XMaterial.SPIDER_EYE, 22, 1, "&9&lMob Drops", Collections.emptyList()), 5))
-            .put("Miscellaneous", new ShopCategoryConfig(new Item(XMaterial.SADDLE, 23, 1, "&9&lMiscellaneous", Collections.emptyList()), 4))
+            .put("Blocks", new ShopCategoryConfig(new Item(ObsidianMaterial.valueOf("GRASS_BLOCK"), 12, 1, "&9&lBlocks", Collections.emptyList()), 6))
+            .put("Food", new ShopCategoryConfig(new Item(ObsidianMaterial.valueOf("COOKED_CHICKEN"), 13, 1, "&9&lFood", Collections.emptyList()), 4))
+            .put("Ores", new ShopCategoryConfig(new Item(ObsidianMaterial.valueOf("GOLD_INGOT"), 14, 1, "&9&lOres", Collections.emptyList()), 4))
+            .put("Farming", new ShopCategoryConfig(new Item(ObsidianMaterial.valueOf("WHEAT"), 21, 1, "&9&lFarming", Collections.emptyList()), 5))
+            .put("Mob Drops", new ShopCategoryConfig(new Item(ObsidianMaterial.valueOf("SPIDER_EYE"), 22, 1, "&9&lMob Drops", Collections.emptyList()), 5))
+            .put("Miscellaneous", new ShopCategoryConfig(new Item(ObsidianMaterial.valueOf("SADDLE"), 23, 1, "&9&lMiscellaneous", Collections.emptyList()), 4))
             .build();
 
     public Map<String, List<ShopItem>> items = ImmutableMap.<String, List<ShopItem>>builder()
@@ -38,7 +39,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lGrass Block",
                             "",
-                            XMaterial.GRASS_BLOCK,
+                            ObsidianMaterial.valueOf("GRASS_BLOCK"),
                             1,
                             10,
                             new BuyCost(100, 0),
@@ -47,7 +48,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lDirt Block",
                             "",
-                            XMaterial.DIRT,
+                            ObsidianMaterial.valueOf("DIRT"),
                             10,
                             11,
                             new BuyCost(50, 0),
@@ -56,7 +57,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lGravel",
                             "",
-                            XMaterial.GRAVEL,
+                            ObsidianMaterial.valueOf("GRAVEL"),
                             10,
                             12,
                             new BuyCost(100, 0),
@@ -65,7 +66,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lGranite",
                             "",
-                            XMaterial.GRANITE,
+                            ObsidianMaterial.valueOf("GRANITE"),
                             10,
                             13,
                             new BuyCost(100, 0),
@@ -74,7 +75,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lDiorite",
                             "",
-                            XMaterial.DIORITE,
+                            ObsidianMaterial.valueOf("DIORITE"),
                             10,
                             14,
                             new BuyCost(100, 0),
@@ -83,7 +84,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lAndesite",
                             "",
-                            XMaterial.ANDESITE,
+                            ObsidianMaterial.valueOf("ANDESITE"),
                             10,
                             15,
                             new BuyCost(100, 0),
@@ -92,7 +93,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lOak Log",
                             "",
-                            XMaterial.OAK_LOG,
+                            ObsidianMaterial.valueOf("OAK_LOG"),
                             16,
                             16,
                             new BuyCost(100, 0),
@@ -101,7 +102,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSpruce Log",
                             "",
-                            XMaterial.SPRUCE_LOG,
+                            ObsidianMaterial.valueOf("SPRUCE_LOG"),
                             16,
                             19,
                             new BuyCost(100, 0),
@@ -110,7 +111,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBirch Log",
                             "",
-                            XMaterial.BIRCH_LOG,
+                            ObsidianMaterial.valueOf("BIRCH_LOG"),
                             16,
                             20,
                             new BuyCost(100, 0),
@@ -119,7 +120,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lJungle Log",
                             "",
-                            XMaterial.JUNGLE_LOG,
+                            ObsidianMaterial.valueOf("JUNGLE_LOG"),
                             16,
                             21,
                             new BuyCost(100, 0),
@@ -128,7 +129,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lAcacia Log",
                             "",
-                            XMaterial.ACACIA_LOG,
+                            ObsidianMaterial.valueOf("ACACIA_LOG"),
                             16,
                             22,
                             new BuyCost(100, 0),
@@ -137,7 +138,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lDark Oak Log",
                             "",
-                            XMaterial.DARK_OAK_LOG,
+                            ObsidianMaterial.valueOf("DARK_OAK_LOG"),
                             16,
                             23,
                             new BuyCost(100, 0),
@@ -146,7 +147,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSnow Block",
                             "",
-                            XMaterial.SNOW_BLOCK,
+                            ObsidianMaterial.valueOf("SNOW_BLOCK"),
                             16,
                             24,
                             new BuyCost(200, 0),
@@ -155,7 +156,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lIce",
                             "",
-                            XMaterial.ICE,
+                            ObsidianMaterial.valueOf("ICE"),
                             8,
                             25,
                             new BuyCost(300, 0),
@@ -164,7 +165,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lPacked Ice",
                             "",
-                            XMaterial.PACKED_ICE,
+                            ObsidianMaterial.valueOf("PACKED_ICE"),
                             8,
                             28,
                             new BuyCost(300, 0),
@@ -173,7 +174,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSponge",
                             "",
-                            XMaterial.SPONGE,
+                            ObsidianMaterial.valueOf("SPONGE"),
                             4,
                             29,
                             new BuyCost(1000, 0),
@@ -182,7 +183,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSand",
                             "",
-                            XMaterial.SAND,
+                            ObsidianMaterial.valueOf("SAND"),
                             8,
                             30,
                             new BuyCost(100, 0),
@@ -191,7 +192,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSandstone",
                             "",
-                            XMaterial.SANDSTONE,
+                            ObsidianMaterial.valueOf("SANDSTONE"),
                             16,
                             31,
                             new BuyCost(80, 0),
@@ -200,7 +201,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lClay Ball",
                             "",
-                            XMaterial.CLAY_BALL,
+                            ObsidianMaterial.valueOf("CLAY_BALL"),
                             32,
                             32,
                             new BuyCost(70, 0),
@@ -209,7 +210,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lObsidian",
                             "",
-                            XMaterial.OBSIDIAN,
+                            ObsidianMaterial.valueOf("OBSIDIAN"),
                             4,
                             33,
                             new BuyCost(250, 0),
@@ -218,7 +219,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lGlowstone",
                             "",
-                            XMaterial.GLOWSTONE,
+                            ObsidianMaterial.valueOf("GLOWSTONE"),
                             8,
                             34,
                             new BuyCost(125, 0),
@@ -227,7 +228,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lEnd Stone",
                             "",
-                            XMaterial.END_STONE,
+                            ObsidianMaterial.valueOf("END_STONE"),
                             4,
                             39,
                             new BuyCost(250, 0),
@@ -236,7 +237,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lPrismarine",
                             "",
-                            XMaterial.PRISMARINE,
+                            ObsidianMaterial.valueOf("PRISMARINE"),
                             16,
                             40,
                             new BuyCost(200, 0),
@@ -245,7 +246,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lWool",
                             "",
-                            XMaterial.WHITE_WOOL,
+                            ObsidianMaterial.valueOf("WHITE_WOOL"),
                             8,
                             41,
                             new BuyCost(50, 0),
@@ -256,7 +257,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lApple",
                             "",
-                            XMaterial.APPLE,
+                            ObsidianMaterial.valueOf("APPLE"),
                             10,
                             11,
                             new BuyCost(50, 0),
@@ -265,7 +266,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lEnchanted Golden Apple",
                             "",
-                            XMaterial.ENCHANTED_GOLDEN_APPLE,
+                            ObsidianMaterial.valueOf("ENCHANTED_GOLDEN_APPLE"),
                             3,
                             12,
                             new BuyCost(1000, 0),
@@ -274,7 +275,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCarrot",
                             "",
-                            XMaterial.CARROT,
+                            ObsidianMaterial.valueOf("CARROT"),
                             10,
                             13,
                             new BuyCost(100, 0),
@@ -283,7 +284,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBaked Potato",
                             "",
-                            XMaterial.BAKED_POTATO,
+                            ObsidianMaterial.valueOf("BAKED_POTATO"),
                             10,
                             14,
                             new BuyCost(150, 0),
@@ -292,7 +293,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBread",
                             "",
-                            XMaterial.BREAD,
+                            ObsidianMaterial.valueOf("BREAD"),
                             10,
                             15,
                             new BuyCost(50, 0),
@@ -301,7 +302,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCookie",
                             "",
-                            XMaterial.COOKIE,
+                            ObsidianMaterial.valueOf("COOKIE"),
                             5,
                             20,
                             new BuyCost(130, 0),
@@ -310,7 +311,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCooked Porkchop",
                             "",
-                            XMaterial.COOKED_PORKCHOP,
+                            ObsidianMaterial.valueOf("COOKED_PORKCHOP"),
                             10,
                             21,
                             new BuyCost(100, 0),
@@ -319,7 +320,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCooked Beef",
                             "",
-                            XMaterial.COOKED_BEEF,
+                            ObsidianMaterial.valueOf("COOKED_BEEF"),
                             10,
                             22,
                             new BuyCost(100, 0),
@@ -328,7 +329,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCooked Mutton",
                             "",
-                            XMaterial.COOKED_MUTTON,
+                            ObsidianMaterial.valueOf("COOKED_MUTTON"),
                             10,
                             23,
                             new BuyCost(100, 0),
@@ -337,7 +338,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCooked Rabbit",
                             "",
-                            XMaterial.COOKED_RABBIT,
+                            ObsidianMaterial.valueOf("COOKED_RABBIT"),
                             10,
                             24,
                             new BuyCost(100, 0),
@@ -349,7 +350,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCoal",
                             "",
-                            XMaterial.COAL,
+                            ObsidianMaterial.valueOf("COAL"),
                             16,
                             11,
                             new BuyCost(100, 0),
@@ -358,7 +359,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lRedstone",
                             "",
-                            XMaterial.REDSTONE,
+                            ObsidianMaterial.valueOf("REDSTONE"),
                             16,
                             12,
                             new BuyCost(150, 0),
@@ -367,7 +368,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lLapis Lazuli",
                             "",
-                            XMaterial.LAPIS_LAZULI,
+                            ObsidianMaterial.valueOf("LAPIS_LAZULI"),
                             16,
                             13,
                             new BuyCost(150, 0),
@@ -376,7 +377,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lIron Ingot",
                             "",
-                            XMaterial.IRON_INGOT,
+                            ObsidianMaterial.valueOf("IRON_INGOT"),
                             8,
                             14,
                             new BuyCost(200, 0),
@@ -385,7 +386,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lGold Ingot",
                             "",
-                            XMaterial.GOLD_INGOT,
+                            ObsidianMaterial.valueOf("GOLD_INGOT"),
                             8,
                             15,
                             new BuyCost(200, 0),
@@ -394,7 +395,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lDiamond",
                             "",
-                            XMaterial.DIAMOND,
+                            ObsidianMaterial.valueOf("DIAMOND"),
                             8,
                             21,
                             new BuyCost(1000, 0),
@@ -403,7 +404,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lEmerald",
                             "",
-                            XMaterial.EMERALD,
+                            ObsidianMaterial.valueOf("EMERALD"),
                             8,
                             22,
                             new BuyCost(200, 0),
@@ -412,7 +413,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lQuartz",
                             "",
-                            XMaterial.QUARTZ,
+                            ObsidianMaterial.valueOf("QUARTZ"),
                             64,
                             23,
                             new BuyCost(100, 0),
@@ -424,7 +425,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lWheat Seeds",
                             "",
-                            XMaterial.WHEAT_SEEDS,
+                            ObsidianMaterial.valueOf("WHEAT_SEEDS"),
                             16,
                             10,
                             new BuyCost(130, 0),
@@ -433,7 +434,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lPumpkin Seeds",
                             "",
-                            XMaterial.PUMPKIN_SEEDS,
+                            ObsidianMaterial.valueOf("PUMPKIN_SEEDS"),
                             16,
                             11,
                             new BuyCost(150, 0),
@@ -442,7 +443,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lMelon Seeds",
                             "",
-                            XMaterial.MELON_SEEDS,
+                            ObsidianMaterial.valueOf("MELON_SEEDS"),
                             16,
                             12,
                             new BuyCost(250, 0),
@@ -451,7 +452,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lNether Wart",
                             "",
-                            XMaterial.NETHER_WART,
+                            ObsidianMaterial.valueOf("NETHER_WART"),
                             4,
                             13,
                             new BuyCost(100, 0),
@@ -460,7 +461,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSugar Cane",
                             "",
-                            XMaterial.SUGAR_CANE,
+                            ObsidianMaterial.valueOf("SUGAR_CANE"),
                             16,
                             14,
                             new BuyCost(150, 0),
@@ -469,7 +470,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lWheat",
                             "",
-                            XMaterial.WHEAT,
+                            ObsidianMaterial.valueOf("WHEAT"),
                             16,
                             15,
                             new BuyCost(50, 0),
@@ -478,7 +479,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lPumpkin",
                             "",
-                            XMaterial.PUMPKIN,
+                            ObsidianMaterial.valueOf("PUMPKIN"),
                             16,
                             16,
                             new BuyCost(150, 0),
@@ -487,7 +488,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lMelon Slice",
                             "",
-                            XMaterial.MELON_SLICE,
+                            ObsidianMaterial.valueOf("MELON_SLICE"),
                             16,
                             19,
                             new BuyCost(150, 0),
@@ -496,7 +497,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lCactus",
                             "",
-                            XMaterial.CACTUS,
+                            ObsidianMaterial.valueOf("CACTUS"),
                             8,
                             20,
                             new BuyCost(80, 0),
@@ -505,7 +506,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lOak Sapling",
                             "",
-                            XMaterial.OAK_SAPLING,
+                            ObsidianMaterial.valueOf("OAK_SAPLING"),
                             4,
                             21,
                             new BuyCost(20, 0),
@@ -514,7 +515,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSpruce Sapling",
                             "",
-                            XMaterial.SPRUCE_SAPLING,
+                            ObsidianMaterial.valueOf("SPRUCE_SAPLING"),
                             4,
                             22,
                             new BuyCost(20, 0),
@@ -523,7 +524,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBirch Sapling",
                             "",
-                            XMaterial.BIRCH_SAPLING,
+                            ObsidianMaterial.valueOf("BIRCH_SAPLING"),
                             4,
                             23,
                             new BuyCost(20, 0),
@@ -532,7 +533,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lJungle Sapling",
                             "",
-                            XMaterial.JUNGLE_SAPLING,
+                            ObsidianMaterial.valueOf("JUNGLE_SAPLING"),
                             4,
                             24,
                             new BuyCost(150, 0),
@@ -541,7 +542,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lAcacia Sapling",
                             "",
-                            XMaterial.ACACIA_SAPLING,
+                            ObsidianMaterial.valueOf("ACACIA_SAPLING"),
                             4,
                             25,
                             new BuyCost(20, 0),
@@ -550,7 +551,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lDark Oak Sapling",
                             "",
-                            XMaterial.DARK_OAK_SAPLING,
+                            ObsidianMaterial.valueOf("DARK_OAK_SAPLING"),
                             4,
                             30,
                             new BuyCost(150, 0),
@@ -559,7 +560,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBrown Mushroom",
                             "",
-                            XMaterial.BROWN_MUSHROOM,
+                            ObsidianMaterial.valueOf("BROWN_MUSHROOM"),
                             8,
                             31,
                             new BuyCost(60, 0),
@@ -568,7 +569,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lRed Mushroom",
                             "",
-                            XMaterial.RED_MUSHROOM,
+                            ObsidianMaterial.valueOf("RED_MUSHROOM"),
                             8,
                             32,
                             new BuyCost(60, 0),
@@ -580,7 +581,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lRotten Flesh",
                             "",
-                            XMaterial.ROTTEN_FLESH,
+                            ObsidianMaterial.valueOf("ROTTEN_FLESH"),
                             16,
                             10,
                             new BuyCost(20, 0),
@@ -589,7 +590,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBone",
                             "",
-                            XMaterial.BONE,
+                            ObsidianMaterial.valueOf("BONE"),
                             16,
                             11,
                             new BuyCost(100, 0),
@@ -598,7 +599,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lGunpowder",
                             "",
-                            XMaterial.GUNPOWDER,
+                            ObsidianMaterial.valueOf("GUNPOWDER"),
                             16,
                             12,
                             new BuyCost(30, 0),
@@ -607,7 +608,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lString",
                             "",
-                            XMaterial.STRING,
+                            ObsidianMaterial.valueOf("STRING"),
                             16,
                             13,
                             new BuyCost(80, 0),
@@ -616,7 +617,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lArrow",
                             "",
-                            XMaterial.ARROW,
+                            ObsidianMaterial.valueOf("ARROW"),
                             16,
                             14,
                             new BuyCost(75, 0),
@@ -625,7 +626,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSpider Eye",
                             "",
-                            XMaterial.SPIDER_EYE,
+                            ObsidianMaterial.valueOf("SPIDER_EYE"),
                             16,
                             15,
                             new BuyCost(50, 0),
@@ -634,7 +635,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lEnder Pearl",
                             "",
-                            XMaterial.ENDER_PEARL,
+                            ObsidianMaterial.valueOf("ENDER_PEARL"),
                             3,
                             16,
                             new BuyCost(75, 0),
@@ -643,7 +644,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSlime Ball",
                             "",
-                            XMaterial.SLIME_BALL,
+                            ObsidianMaterial.valueOf("SLIME_BALL"),
                             16,
                             19,
                             new BuyCost(200, 0),
@@ -652,7 +653,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lPrismarine Crystals",
                             "",
-                            XMaterial.PRISMARINE_CRYSTALS,
+                            ObsidianMaterial.valueOf("PRISMARINE_CRYSTALS"),
                             16,
                             20,
                             new BuyCost(50, 0),
@@ -661,7 +662,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lPrismarine Shard",
                             "",
-                            XMaterial.PRISMARINE_SHARD,
+                            ObsidianMaterial.valueOf("PRISMARINE_SHARD"),
                             16,
                             21,
                             new BuyCost(50, 0),
@@ -670,7 +671,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBlaze Rod",
                             "",
-                            XMaterial.BLAZE_ROD,
+                            ObsidianMaterial.valueOf("BLAZE_ROD"),
                             4,
                             22,
                             new BuyCost(250, 0),
@@ -679,7 +680,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lMagma Cream",
                             "",
-                            XMaterial.MAGMA_CREAM,
+                            ObsidianMaterial.valueOf("MAGMA_CREAM"),
                             4,
                             23,
                             new BuyCost(150, 0),
@@ -688,7 +689,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lGhast Tear",
                             "",
-                            XMaterial.GHAST_TEAR,
+                            ObsidianMaterial.valueOf("GHAST_TEAR"),
                             4,
                             24,
                             new BuyCost(200, 0),
@@ -697,7 +698,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lLeather",
                             "",
-                            XMaterial.LEATHER,
+                            ObsidianMaterial.valueOf("LEATHER"),
                             8,
                             25,
                             new BuyCost(50, 0),
@@ -706,7 +707,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lRabbit Foot",
                             "",
-                            XMaterial.RABBIT_FOOT,
+                            ObsidianMaterial.valueOf("RABBIT_FOOT"),
                             4,
                             30,
                             new BuyCost(250, 0),
@@ -715,7 +716,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lInk Sack",
                             "",
-                            XMaterial.INK_SAC,
+                            ObsidianMaterial.valueOf("INK_SAC"),
                             8,
                             31,
                             new BuyCost(50, 0),
@@ -724,7 +725,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lFeather",
                             "",
-                            XMaterial.FEATHER,
+                            ObsidianMaterial.valueOf("FEATHER"),
                             16,
                             32,
                             new BuyCost(30, 0),
@@ -736,7 +737,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lBucket",
                             "",
-                            XMaterial.BUCKET,
+                            ObsidianMaterial.valueOf("BUCKET"),
                             1,
                             12,
                             new BuyCost(100, 0),
@@ -745,7 +746,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lWater Bucket",
                             "",
-                            XMaterial.WATER_BUCKET,
+                            ObsidianMaterial.valueOf("WATER_BUCKET"),
                             1,
                             13,
                             new BuyCost(200, 0),
@@ -754,7 +755,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lLava Bucket",
                             "",
-                            XMaterial.LAVA_BUCKET,
+                            ObsidianMaterial.valueOf("LAVA_BUCKET"),
                             1,
                             14,
                             new BuyCost(200, 0),
@@ -763,7 +764,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lName Tag",
                             "",
-                            XMaterial.NAME_TAG,
+                            ObsidianMaterial.valueOf("NAME_TAG"),
                             1,
                             21,
                             new BuyCost(200, 0),
@@ -772,7 +773,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lSaddle",
                             "",
-                            XMaterial.SADDLE,
+                            ObsidianMaterial.valueOf("SADDLE"),
                             1,
                             22,
                             new BuyCost(300, 0),
@@ -781,7 +782,7 @@ public class Shop {
                     new ShopItem(
                             "&9&lEnd Portal Frame",
                             "",
-                            XMaterial.END_PORTAL_FRAME,
+                            ObsidianMaterial.valueOf("END_PORTAL_FRAME"),
                             Arrays.asList("&5&lVisit the end!", " "),
                             null,
                             1,

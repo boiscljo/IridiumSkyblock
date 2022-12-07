@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.utils;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.multiversion.MultiVersion;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.database.Island;
@@ -9,7 +10,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.bukkit.Bukkit;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,10 +24,10 @@ import java.util.stream.Stream;
 public class LocationUtils {
 
     private static final List<Material> unsafeBlocks = Stream.of(
-            XMaterial.END_PORTAL,
-            XMaterial.WATER,
-            XMaterial.LAVA
-    ).map(XMaterial::parseMaterial).collect(Collectors.toList());
+            ObsidianMaterial.valueOf("END_PORTAL"),
+            ObsidianMaterial.valueOf("WATER"),
+            ObsidianMaterial.valueOf("LAVA")
+    ).map(ObsidianMaterial::toMaterial).collect(Collectors.toList());
 
     /**
      * Is a location safe to teleport a player to
@@ -91,7 +95,13 @@ public class LocationUtils {
      * @return The lowest AIR location.
      */
     public static int getMinHeight(World world) {
-        return XMaterial.getVersion() >= 17 ? world.getMinHeight() : 0;  // World#getMinHeight() -> Available only in 1.17 Spigot and 1.16.5 PaperMC
+
+        String version = Bukkit.getVersion();
+        Matcher matcher = Pattern.compile("MC: \\d\\.(\\d+)").matcher(version);
+        int VERSION=0;
+        if (matcher.find()) VERSION = Integer.parseInt(matcher.group(1));
+
+        return VERSION >= 17 ? world.getMinHeight() : 0;  // World#getMinHeight() -> Available only in 1.17 Spigot and 1.16.5 PaperMC
     }
 
 }

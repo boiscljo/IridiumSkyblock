@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.listeners;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.database.Island;
 import org.bukkit.event.EventHandler;
@@ -15,7 +16,7 @@ public class FurnaceSmeltListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void monitorFurnaceSmelt(FurnaceSmeltEvent event) {
         Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getBlock().getLocation());
-        XMaterial material = XMaterial.matchXMaterial(event.getSource().getType());
+        ObsidianMaterial material = ObsidianMaterial.valueOf(event.getSource().getType());
 
         island.ifPresent(value -> IridiumSkyblock.getInstance().getMissionManager().handleMissionUpdates(value, "SMELT", material.name(), 1));
     }

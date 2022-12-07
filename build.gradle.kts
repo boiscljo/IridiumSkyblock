@@ -5,12 +5,13 @@ plugins {
 }
 
 group = "com.iridium"
-version = "3.2.9"
+version = "3.2.9-OM"
 description = "IridiumSkyblock"
 
 repositories {
     mavenLocal()
     mavenCentral()
+    maven("https://moyskleytech.com/debian/m2")
     maven("https://repo.mvdw-software.com/content/groups/public/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -27,13 +28,13 @@ repositories {
 dependencies {
     // Dependencies that we want to shade in
     implementation("org.jetbrains:annotations:23.0.0")
-    implementation("com.iridium:IridiumCore:1.6.7-HOTFIX")
+    implementation("com.iridium:IridiumCore:1.6.7-OM")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.github.Redempt:Crunch:1.0")
     implementation("com.j256.ormlite:ormlite-core:6.1")
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
     implementation("de.jeff_media:SpigotUpdateChecker:1.3.0")
-
+   
     // Other dependencies that are not required or already available at runtime
     compileOnly("org.projectlombok:lombok:1.18.22")
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
@@ -49,6 +50,7 @@ dependencies {
     compileOnly("com.songoda:UltimateStacker:2.1.7")
     compileOnly("com.songoda:EpicSpawners:7.1.2")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.6-SNAPSHOT")
+    compileOnly("com.moyskleytech:ObsidianMaterial:1.0.2")
 
     // Enable lombok annotation processing
     annotationProcessor("org.projectlombok:lombok:1.18.22")
@@ -57,6 +59,8 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.7.0"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
+    testImplementation("com.moyskleytech:ObsidianMaterial:1.0.2")
+
 }
 
 tasks {

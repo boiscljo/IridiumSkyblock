@@ -44,7 +44,7 @@ public class IslandWarpsGUI extends IslandGUI {
                     new Placeholder("warp_name", islandWarp.getName()),
                     new Placeholder("description", islandWarp.getDescription() != null ? islandWarp.getDescription() : "")
             ));
-            Material material = islandWarp.getIcon().parseMaterial();
+            Material material = islandWarp.getIcon().toMaterial();
             if (material != null) itemStack.setType(material);
             inventory.setItem(slot, itemStack);
         }

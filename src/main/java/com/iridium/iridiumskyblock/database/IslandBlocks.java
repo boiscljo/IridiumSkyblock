@@ -1,7 +1,8 @@
 package com.iridium.iridiumskyblock.database;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
 import com.j256.ormlite.field.DatabaseField;
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public final class IslandBlocks extends IslandData {
     private int id;
 
     @DatabaseField(columnName = "block", canBeNull = false, uniqueCombo = true)
-    private @NotNull XMaterial material;
+    private @NotNull ObsidianMaterial material;
 
     @DatabaseField(columnName = "amount", canBeNull = false)
     private int amount;
@@ -35,7 +36,7 @@ public final class IslandBlocks extends IslandData {
      * @param island   The Island which has this valuable block
      * @param material The material of this valuable block
      */
-    public IslandBlocks(@NotNull Island island, @NotNull XMaterial material) {
+    public IslandBlocks(@NotNull Island island, @NotNull ObsidianMaterial material) {
         super(island);
         this.material = material;
     }

@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.support;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandBlocks;
@@ -13,12 +14,12 @@ import org.bukkit.entity.EntityType;
 public class RoseStackerSupport implements StackerSupport {
 
     @Override
-    public int getExtraBlocks(Island island, XMaterial material) {
+    public int getExtraBlocks(Island island, ObsidianMaterial material) {
         IslandBlocks islandBlocks = IridiumSkyblock.getInstance().getIslandManager().getIslandBlock(island, material);
         int stackedBlocks = 0;
         for (StackedBlock stackedBlock : RoseStackerAPI.getInstance().getStackedBlocks().values()) {
             if (!island.isInIsland(stackedBlock.getLocation())) continue;
-            if (material != XMaterial.matchXMaterial(stackedBlock.getBlock().getType())) continue;
+            if (material != ObsidianMaterial.valueOf(stackedBlock.getBlock().getType())) continue;
             stackedBlocks += (stackedBlock.getStackSize() - 1);
         }
         islandBlocks.setExtraAmount(stackedBlocks);

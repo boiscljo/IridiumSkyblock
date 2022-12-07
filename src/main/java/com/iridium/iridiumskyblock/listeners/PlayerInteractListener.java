@@ -1,8 +1,9 @@
 package com.iridium.iridiumskyblock.listeners;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandBank;
@@ -27,13 +28,13 @@ import java.util.Set;
 public class PlayerInteractListener implements Listener {
 
     private final CooldownProvider<Player> cooldownProvider = CooldownProvider.newInstance(Duration.ofMillis(500));
-    private final Set<XMaterial> redstoneMaterials = new HashSet<>(Arrays.asList(
-            XMaterial.REPEATER,
-            XMaterial.COMPARATOR,
-            XMaterial.DAYLIGHT_DETECTOR,
-            XMaterial.LEVER,
-            XMaterial.NOTE_BLOCK,
-            XMaterial.TRIPWIRE
+    private final Set<ObsidianMaterial> redstoneMaterials = new HashSet<>(Arrays.asList(
+            ObsidianMaterial.valueOf("REPEATER"),
+            ObsidianMaterial.valueOf("COMPARATOR"),
+            ObsidianMaterial.valueOf("DAYLIGHT_DETECTOR"),
+            ObsidianMaterial.valueOf("LEVER"),
+            ObsidianMaterial.valueOf("NOTE_BLOCK"),
+            ObsidianMaterial.valueOf("TRIPWIRE")
     ));
 
     @EventHandler
@@ -67,7 +68,7 @@ public class PlayerInteractListener implements Listener {
 
         if (event.getClickedBlock() == null) return;
         IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getClickedBlock().getLocation()).ifPresent(island -> {
-            XMaterial material = XMaterial.matchXMaterial(event.getClickedBlock().getType());
+            ObsidianMaterial material = ObsidianMaterial.valueOf(event.getClickedBlock().getType());
             String materialName = material.name();
 
             if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island, user, PermissionType.INTERACT)) {
@@ -78,7 +79,7 @@ public class PlayerInteractListener implements Listener {
                 return;
             }
 
-            if (event.getAction() == Action.PHYSICAL && material == XMaterial.FARMLAND) {
+            if (event.getAction() == Action.PHYSICAL && material == ObsidianMaterial.valueOf("FARMLAND")) {
                 if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island, user, PermissionType.TRAMPLE_CROPS)) {
                     event.setCancelled(true);
                     if (hasNoCooldown(player)) {
@@ -106,7 +107,7 @@ public class PlayerInteractListener implements Listener {
                         player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotUseRedstone.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                     }
                 }
-            } else if (materialName.contains("MINECART") || materialName.contains("BOAT") || materialName.contains("EGG") || materialName.contains("BUCKET") || material == XMaterial.END_CRYSTAL || material == XMaterial.ARMOR_STAND) {
+            } else if (materialName.contains("MINECART") || materialName.contains("BOAT") || materialName.contains("EGG") || materialName.contains("BUCKET") || material == ObsidianMaterial.valueOf("END_CRYSTAL") || material == ObsidianMaterial.valueOf("ARMOR_STAND")) {
                 if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island, user, PermissionType.INTERACT_ENTITIES)) {
                     event.setCancelled(true);
                     if (hasNoCooldown(player)) {

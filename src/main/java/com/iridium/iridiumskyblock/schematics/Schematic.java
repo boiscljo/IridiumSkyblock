@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.schematics;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -75,10 +76,10 @@ public class Schematic implements SchematicPaster {
                         byte slot = SchematicData.getChildTag(itemtag, "Slot", ByteTag.class).getValue();
                         String name = (SchematicData.getChildTag(itemtag, "id", StringTag.class).getValue()).toLowerCase().replace("minecraft:", "").replace("reeds", "sugar_cane");
                         Byte amount = SchematicData.getChildTag(itemtag, "Count", ByteTag.class).getValue();
-                        Optional<XMaterial> optionalXMaterial = XMaterial.matchXMaterial(name.toUpperCase());
-                        if (optionalXMaterial.isPresent()) {
-                            XMaterial material = optionalXMaterial.get();
-                            ItemStack itemStack = material.parseItem();
+                        ObsidianMaterial optionalXMaterial = ObsidianMaterial.valueOf(name.toUpperCase());
+                        if (optionalXMaterial != null) {
+                            ObsidianMaterial material = optionalXMaterial;
+                            ItemStack itemStack = material.toItem();
                             if (itemStack != null) {
                                 itemStack.setAmount(amount);
                                 chest.getBlockInventory().setItem(slot, itemStack);

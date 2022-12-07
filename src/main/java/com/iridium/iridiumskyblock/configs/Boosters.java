@@ -2,15 +2,16 @@ package com.iridium.iridiumskyblock.configs;
 
 import com.iridium.iridiumcore.Item;
 import com.iridium.iridiumcore.dependencies.fasterxml.annotation.JsonIgnoreProperties;
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
 import com.iridium.iridiumskyblock.Booster;
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 
 import java.util.Arrays;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Boosters {
 
-    public Booster farmingBooster = new Booster(new Item(XMaterial.WHEAT, 10, 1, "&b&lFarming Booster", Arrays.asList(
+    public Booster farmingBooster = new Booster(new Item(ObsidianMaterial.valueOf("WHEAT"), 10, 1, "&b&lFarming Booster", Arrays.asList(
             "&7Crops growing too slow? Buy this",
             "&7booster and double crop growth.",
             "",
@@ -21,7 +22,7 @@ public class Boosters {
             "&b&l[!] &bRight Click to Purchase this Booster."
     )), 15, 10000, 3600, "Farming", true, true);
 
-    public Booster spawnerBooster = new Booster(new Item(XMaterial.SPAWNER, 12, 1, "&b&lSpawner Booster", Arrays.asList(
+    public Booster spawnerBooster = new Booster(new Item(ObsidianMaterial.valueOf("SPAWNER"), 12, 1, "&b&lSpawner Booster", Arrays.asList(
             "&7Spawners too slow? Buy this",
             "&7booster and double your spawner speed.",
             "",
@@ -32,7 +33,7 @@ public class Boosters {
             "&b&l[!] &bRight Click to Purchase this Booster."
     )), 15, 10000, 3600, "Spawner", true, true);
 
-    public Booster experienceBooster = new Booster(new Item(XMaterial.EXPERIENCE_BOTTLE, 14, 1, "&b&lExperience Booster", Arrays.asList(
+    public Booster experienceBooster = new Booster(new Item(ObsidianMaterial.valueOf("EXPERIENCE_BOTTLE"), 14, 1, "&b&lExperience Booster", Arrays.asList(
             "&7Gaining Experience too slow? Buy this",
             "&7booster and double experience drops.",
             "",
@@ -43,7 +44,7 @@ public class Boosters {
             "&b&l[!] &bRight Click to Purchase this Booster."
     )), 15, 10000, 3600, "Experience", true, true);
 
-    public Booster flightBooster = new Booster(new Item(XMaterial.FEATHER, 16, 1, "&b&lFlight Booster", Arrays.asList(
+    public Booster flightBooster = new Booster(new Item(ObsidianMaterial.valueOf("FEATHER"), 16, 1, "&b&lFlight Booster", Arrays.asList(
             "&7Keep falling off your island? Buy this",
             "&7booster and Gain access to /is fly.",
             "",

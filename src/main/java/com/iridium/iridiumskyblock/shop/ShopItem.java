@@ -1,9 +1,10 @@
 package com.iridium.iridiumskyblock.shop;
 
 import com.iridium.iridiumcore.dependencies.fasterxml.annotation.JsonIgnore;
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ public class ShopItem {
 
     public String name;
     public String displayName;
-    public XMaterial type;
+    public ObsidianMaterial type;
     public List<String> lore;
     public String command;
     public int defaultAmount;
@@ -36,7 +37,7 @@ public class ShopItem {
      * @param buyCost The cost for buying this item
      * @param sellReward The reward for selling this item
      */
-    public ShopItem(String name, String displayName, XMaterial type, int defaultAmount, int slot, BuyCost buyCost, SellReward sellReward) {
+    public ShopItem(String name, String displayName, ObsidianMaterial type, int defaultAmount, int slot, BuyCost buyCost, SellReward sellReward) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;

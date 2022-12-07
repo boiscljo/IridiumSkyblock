@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.listeners;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.PermissionType;
@@ -36,7 +37,7 @@ public class BlockPlaceListener implements Listener {
             return;
         }
 
-        XMaterial material = XMaterial.matchXMaterial(event.getBlock().getType());
+        ObsidianMaterial material = ObsidianMaterial.wrap(event.getBlock().getType());
         if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(), user, PermissionType.BLOCK_PLACE)) {
             event.setCancelled(true);
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotPlaceBlocks.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
@@ -59,7 +60,7 @@ public class BlockPlaceListener implements Listener {
 
         Player player = event.getPlayer();
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-        XMaterial material = XMaterial.matchXMaterial(event.getBlock().getType());
+        ObsidianMaterial material = ObsidianMaterial.valueOf(event.getBlock().getType());
 
         user.getIsland().ifPresent(island -> {
             IridiumSkyblock.getInstance().getMissionManager().handleMissionUpdates(island, "PLACE", material.name(), 1);

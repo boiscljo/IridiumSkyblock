@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.database;
 
-import com.iridium.iridiumcore.dependencies.xseries.XMaterial;
+
+import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -32,7 +33,7 @@ public final class IslandWarp extends IslandData {
     private String description;
 
     @DatabaseField(columnName = "icon")
-    private XMaterial icon;
+    private ObsidianMaterial icon;
 
     /**
      * The default constructor.
@@ -70,7 +71,7 @@ public final class IslandWarp extends IslandData {
         setChanged(true);
     }
 
-    public void setIcon(XMaterial icon) {
+    public void setIcon(ObsidianMaterial icon) {
         this.icon = icon;
         setChanged(true);
     }
