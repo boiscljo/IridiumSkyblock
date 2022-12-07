@@ -151,6 +151,7 @@ public class IridiumSkyblock extends IridiumCore {
         // Initialize the commands
         this.commandManager = new CommandManager("iridiumskyblock");
 
+
         // Initialize the manager classes (bad) and create the world
         this.islandManager = new IslandManager();
         this.userManager = new UserManager();

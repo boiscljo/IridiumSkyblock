@@ -22,6 +22,7 @@ import com.iridium.iridiumskyblock.generators.OceanGenerator;
 import com.iridium.iridiumskyblock.utils.LocationUtils;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
 import org.bukkit.*;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
@@ -49,10 +50,22 @@ public class IslandManager {
 
     public final Cache<List<Island>> islandValueSortCache = new Cache<>(5000);
     public final Cache<List<Island>> islandLevelSortCache = new Cache<>(5000);
+    public World overworld, nether, the_end;
 
     public void clearIslandCache() {
         islandLevelSortCache.clearCache();
         islandValueSortCache.clearCache();
+    }
+
+    private World move(World w) {
+        if (w.getEnvironment() == Environment.NORMAL)
+            overworld = w;
+        else if (w.getEnvironment() == Environment.NETHER)
+            nether = w;
+        else if (w.getEnvironment() == Environment.THE_END)
+            the_end = w;
+        return w;
+        // IridiumSkyblock.getInstance().getConfiguration().worldName;
     }
 
     /**
@@ -63,10 +76,9 @@ public class IslandManager {
      */
     public World createWorld(World.Environment environment, String name) {
 
-        Optional<World> w_= Bukkit.getWorlds().stream().filter(w->w.getName().equalsIgnoreCase(name)).findFirst();
-        if(w_.isPresent())
-        {
-            return w_.get();
+        Optional<World> w_ = Bukkit.getWorlds().stream().filter(w -> w.getName().equalsIgnoreCase(name)).findFirst();
+        if (w_.isPresent()) {
+            return move(w_.get());
         }
         long begin = System.nanoTime();
         WorldCreator worldCreator = new WorldCreator(name)
@@ -75,7 +87,7 @@ public class IslandManager {
         World w = Bukkit.createWorld(worldCreator);
 
         System.out.println("Created world in " + (System.nanoTime() - begin) + " nanoseconds");
-        return w;
+        return move(w);
     }
 
     /**
@@ -1106,7 +1118,8 @@ public class IslandManager {
      * @since 3.0.0
      */
     public World getWorld() {
-        return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName);
+        return overworld;
+        //return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName);
     }
 
     /**
@@ -1117,7 +1130,8 @@ public class IslandManager {
      * @since 3.0.0
      */
     public World getNetherWorld() {
-        return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName + "_nether");
+        return nether;
+        //return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName + "_nether");
     }
 
     /**
@@ -1128,7 +1142,8 @@ public class IslandManager {
      * @since 3.0.0
      */
     public World getEndWorld() {
-        return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName + "_the_end");
+        return the_end;
+        //return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName + "_the_end");
     }
 
     public boolean isIslandOverWorld(World world) {
