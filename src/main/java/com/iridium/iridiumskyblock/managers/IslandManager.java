@@ -988,9 +988,13 @@ public class IslandManager {
                 if (!island.isInIsland(blockState.getLocation()))
                     continue;
                 CreatureSpawner creatureSpawner = (CreatureSpawner) blockState;
-                IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager()
-                        .getIslandSpawners(island, creatureSpawner.getSpawnedType());
-                islandSpawners.setAmount(islandSpawners.getAmount() + 1);
+                try {
+                    IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager()
+                            .getIslandSpawners(island, creatureSpawner.getSpawnedType());
+                    islandSpawners.setAmount(islandSpawners.getAmount() + 1);
+                } catch (Throwable t) {
+
+                }
             }
         });
     }
@@ -1119,7 +1123,8 @@ public class IslandManager {
      */
     public World getWorld() {
         return overworld;
-        //return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName);
+        // return
+        // Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName);
     }
 
     /**
@@ -1131,7 +1136,9 @@ public class IslandManager {
      */
     public World getNetherWorld() {
         return nether;
-        //return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName + "_nether");
+        // return
+        // Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName +
+        // "_nether");
     }
 
     /**
@@ -1143,7 +1150,9 @@ public class IslandManager {
      */
     public World getEndWorld() {
         return the_end;
-        //return Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName + "_the_end");
+        // return
+        // Bukkit.getWorld(IridiumSkyblock.getInstance().getConfiguration().worldName +
+        // "_the_end");
     }
 
     public boolean isIslandOverWorld(World world) {

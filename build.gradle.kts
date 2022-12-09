@@ -28,7 +28,7 @@ repositories {
 dependencies {
     // Dependencies that we want to shade in
     implementation("org.jetbrains:annotations:23.0.0")
-    implementation("com.iridium:IridiumCore:1.6.7-OM.1")
+    implementation("com.iridium:IridiumCore:1.6.7-OM.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.github.Redempt:Crunch:1.0")
     implementation("com.j256.ormlite:ormlite-core:6.1")
@@ -50,7 +50,6 @@ dependencies {
     compileOnly("com.songoda:UltimateStacker:2.1.7")
     compileOnly("com.songoda:EpicSpawners:7.1.2")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.6-SNAPSHOT")
-    compileOnly("com.moyskleytech:ObsidianMaterial:1.0.2")
 
     // Enable lombok annotation processing
     annotationProcessor("org.projectlombok:lombok:1.18.22")
@@ -59,7 +58,6 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.7.0"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("com.github.seeseemelk:MockBukkit-v1.18:1.24.1")
-    testImplementation("com.moyskleytech:ObsidianMaterial:1.0.2")
 
 }
 

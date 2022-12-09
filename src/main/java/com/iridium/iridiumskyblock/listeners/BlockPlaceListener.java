@@ -1,6 +1,5 @@
 package com.iridium.iridiumskyblock.listeners;
 
-
 import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
@@ -28,35 +27,45 @@ public class BlockPlaceListener implements Listener {
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-        Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getBlock().getLocation());
+        Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager()
+                .getIslandViaLocation(event.getBlock().getLocation());
         if (!island.isPresent()) {
             World world = event.getBlock().getLocation().getWorld();
             if (IridiumSkyblockAPI.getInstance().isIslandWorld(world)) {
-                if (!user.isBypassing()) event.setCancelled(true);
+                if (!user.isBypassing())
+                    event.setCancelled(true);
             }
             return;
         }
 
         ObsidianMaterial material = ObsidianMaterial.wrap(event.getBlock().getType());
-        if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(), user, PermissionType.BLOCK_PLACE)) {
+        if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(), user,
+                PermissionType.BLOCK_PLACE)) {
             event.setCancelled(true);
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotPlaceBlocks.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotPlaceBlocks
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return;
         }
 
-        int limitUpgradeLevel = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(island.get(), "blocklimit").getLevel();
-        int blockLimit = IridiumSkyblock.getInstance().getUpgrades().blockLimitUpgrade.upgrades.get(limitUpgradeLevel).limits.getOrDefault(material, 0);
+        int limitUpgradeLevel = IridiumSkyblock.getInstance().getIslandManager()
+                .getIslandUpgrade(island.get(), "blocklimit").getLevel();
+        int blockLimit = IridiumSkyblock.getInstance().getUpgrades().blockLimitUpgrade.upgrades
+                .get(limitUpgradeLevel).limits.getOrDefault(material, 0);
 
-        if (blockLimit > 0 && IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(island.get(), material) >= blockLimit) {
+        if (blockLimit > 0 && IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(island.get(),
+                material) >= blockLimit) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().blockLimitReached
-                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix).replace("%limit%", String.valueOf(blockLimit)).replace("%block%", WordUtils.capitalizeFully(material.name().toLowerCase().replace("_", " ")))));
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
+                    .replace("%limit%", String.valueOf(blockLimit))
+                    .replace("%block%", WordUtils.capitalizeFully(material.name().toLowerCase().replace("_", " ")))));
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void monitorBlockPlace(BlockPlaceEvent event) {
-        if (!IridiumSkyblockAPI.getInstance().isIslandWorld(event.getBlock().getWorld())) return;
+        if (!IridiumSkyblockAPI.getInstance().isIslandWorld(event.getBlock().getWorld()))
+            return;
 
         Player player = event.getPlayer();
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
@@ -66,15 +75,22 @@ public class BlockPlaceListener implements Listener {
             IridiumSkyblock.getInstance().getMissionManager().handleMissionUpdates(island, "PLACE", material.name(), 1);
         });
 
-        IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getBlock().getLocation()).ifPresent(island -> {
-            IslandBlocks islandBlocks = IridiumSkyblock.getInstance().getIslandManager().getIslandBlock(island, material);
-            islandBlocks.setAmount(islandBlocks.getAmount() + 1);
-            if (event.getBlock().getState() instanceof CreatureSpawner) {
-                CreatureSpawner creatureSpawner = (CreatureSpawner) event.getBlock().getState();
-                IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager().getIslandSpawners(island, creatureSpawner.getSpawnedType());
-                islandSpawners.setAmount(islandSpawners.getAmount() + 1);
-            }
-        });
+        IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getBlock().getLocation())
+                .ifPresent(island -> {
+                    IslandBlocks islandBlocks = IridiumSkyblock.getInstance().getIslandManager().getIslandBlock(island,
+                            material);
+                    islandBlocks.setAmount(islandBlocks.getAmount() + 1);
+                    if (event.getBlock().getState() instanceof CreatureSpawner) {
+                        CreatureSpawner creatureSpawner = (CreatureSpawner) event.getBlock().getState();
+                        try {
+                            IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager()
+                                    .getIslandSpawners(island, creatureSpawner.getSpawnedType());
+                            islandSpawners.setAmount(islandSpawners.getAmount() + 1);
+                        } catch (Throwable t) {
+
+                        }
+                    }
+                });
     }
 
 }
