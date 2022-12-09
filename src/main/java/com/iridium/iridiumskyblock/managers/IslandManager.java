@@ -16,6 +16,7 @@ import com.iridium.iridiumskyblock.api.IslandDeleteEvent;
 import com.iridium.iridiumskyblock.api.IslandRegenEvent;
 import com.iridium.iridiumskyblock.bank.BankItem;
 import com.iridium.iridiumskyblock.configs.Configuration.IslandRegenSettings;
+import com.iridium.iridiumskyblock.configs.Configuration;
 import com.iridium.iridiumskyblock.configs.Schematics;
 import com.iridium.iridiumskyblock.database.*;
 import com.iridium.iridiumskyblock.generators.OceanGenerator;
@@ -123,6 +124,8 @@ public class IslandManager {
                 world = getWorld();
                 break;
         }
+        if (world == null)
+            return;
 
         getIslandChunks(island, world).thenAccept(chunks -> {
             Location pos1 = island.getPos1(world);
@@ -377,12 +380,14 @@ public class IslandManager {
         setIslandBiome(island, schematicConfig.overworld.biome);
         setIslandBiome(island, schematicConfig.nether.biome);
         setIslandBiome(island, schematicConfig.end.biome);
+        HashMap<World, Schematics.SchematicWorld> map = new HashMap<>();
+        map.put(getWorld(), schematicConfig.overworld);
+        if (nether != null)
+            map.put(getNetherWorld(), schematicConfig.nether);
+        if (the_end != null)
+            map.put(getEndWorld(), schematicConfig.end);
         return IridiumSkyblock.getInstance().getSchematicManager().pasteSchematic(island,
-                ImmutableMap.<World, Schematics.SchematicWorld>builder()
-                        .put(getWorld(), schematicConfig.overworld)
-                        .put(getNetherWorld(), schematicConfig.nether)
-                        .put(getEndWorld(), schematicConfig.end)
-                        .build());
+                map);
     }
 
     /**
@@ -394,8 +399,13 @@ public class IslandManager {
      * @return A completableFuture for when its finished deleting the blocks
      */
     public CompletableFuture<Void> deleteIslandBlocks(@NotNull Island island, @NotNull World world, int delay) {
+
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
-        deleteIslandBlocks(island, world, world.getMaxHeight() - 1, completableFuture, delay);
+        if (world != null) {
+            deleteIslandBlocks(island, world, world.getMaxHeight() - 1, completableFuture, delay);
+        } else {
+            completableFuture.complete(null);
+        }
         return completableFuture;
     }
 
@@ -410,7 +420,8 @@ public class IslandManager {
         return CompletableFuture.supplyAsync(() -> {
             List<CompletableFuture<Chunk>> chunks = new ArrayList<>();
             for (World world : worlds) {
-
+                if (world == null)
+                    continue;
                 Location pos1 = island.getPos1(world);
                 Location pos2 = island.getPos2(world);
 
@@ -705,6 +716,11 @@ public class IslandManager {
      */
     private void deleteIslandBlocks(@NotNull Island island, @NotNull World world, int y,
             CompletableFuture<Void> completableFuture, int delay) {
+        if (world == null) {
+            completableFuture.complete(null);
+            return;
+        }
+
         Location pos1 = island.getPos1(world);
         Location pos2 = island.getPos2(world);
 
@@ -1029,7 +1045,8 @@ public class IslandManager {
         Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
             List<Chunk> chunks = new ArrayList<>();
             for (World world : worlds) {
-                chunks.addAll(getIslandChunks(island, world).join());
+                if (world != null)
+                    chunks.addAll(getIslandChunks(island, world).join());
             }
             Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
                 List<Entity> entities = new ArrayList<>();
@@ -1185,6 +1202,26 @@ public class IslandManager {
             return nbtCompound.getInteger("islandCrystals");
         }
         return 0;
+    }
+
+    public void reload() {
+        Configuration configuration = IridiumSkyblock.getInstance().getConfiguration();
+        this.createWorld(World.Environment.NORMAL, configuration.worldName);
+        if (configuration.netherIslands)
+            this.createWorld(World.Environment.NETHER, configuration.worldName + "_nether");
+        if (configuration.endIslands)
+            this.createWorld(World.Environment.THE_END, configuration.worldName + "_the_end");
+
+        // Register worlds with multiverse
+        if (Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
+            Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(), () -> {
+                IridiumSkyblock.getInstance().registerMultiverse(getWorld());
+                if (configuration.netherIslands)
+                    IridiumSkyblock.getInstance().registerMultiverse(getNetherWorld());
+                if (configuration.endIslands)
+                    IridiumSkyblock.getInstance().registerMultiverse(getEndWorld());
+            }, 1);
+        }
     }
 
 }
