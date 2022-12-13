@@ -7,9 +7,11 @@ import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.antlr.v4.parse.ANTLRParser.labeledAlt_return;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +25,15 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerTrackListener implements Listener {
 
     BukkitTask timer;
-    Map<Player, Island> island;
+    Map<Player, Island> island = new HashMap<>();
+
+    private boolean equalsIsland(Island a, Island b) {
+        if (a != null)
+            return a.equals(b);
+        if (b != null)
+            return b != a;
+        return true;
+    }
 
     public PlayerTrackListener(IridiumSkyblock iridiumSkyblock) {
         if (IridiumSkyblock.getInstance().getConfiguration().trackTicks > 0) {
@@ -36,14 +46,21 @@ public class PlayerTrackListener implements Listener {
 
                         standingIsland.ifPresent(island -> PlayerUtils.sendBorder(player, island));
 
-                        if (!Objects.equal(island.get(player), standingIsland.orElse(null))) {
+                        if ( !equalsIsland(island.get(player), standingIsland.orElse(null))) {
                             if (island.get(player) != null &&
                                     standingIsland.isPresent()) {
-                                if (IridiumSkyblock.getInstance().getConfiguration().putBackOnIslandLeave) {
+                                if (IridiumSkyblock.getInstance().getConfiguration().putBackOnIslandLeave ) {
                                     IridiumSkyblock.getInstance().getIslandManager().teleportHome(player,
                                             island.get(player),
                                             0);
                                     return;
+                                }
+                            }
+                            else if(standingIsland.isPresent())
+                            {
+                                if(!IridiumSkyblock.getInstance().getIslandManager().enterIsland(player, standingIsland.get()))
+                                {
+                                    PlayerUtils.teleportSpawn(player);
                                 }
                             }
                             island.put(player, standingIsland.orElse(null));
@@ -73,6 +90,6 @@ public class PlayerTrackListener implements Listener {
     }
 
     public void track(@NotNull Player player, @NotNull Island island2) {
-        island.put(player,island2);
+        island.put(player, island2);
     }
 }
