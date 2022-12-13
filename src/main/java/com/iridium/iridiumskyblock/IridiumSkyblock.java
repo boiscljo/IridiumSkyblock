@@ -97,6 +97,8 @@ public class IridiumSkyblock extends IridiumCore {
 
     private StackerSupport stackerSupport;
 
+    private PlayerTrackListener track;
+
     /**
      * The default constructor.
      */
@@ -237,7 +239,11 @@ public class IridiumSkyblock extends IridiumCore {
         getLogger().info("");
         getLogger().info("----------------------------------------");
     }
-
+ 
+    @Override 
+    public void onDisable() {
+        if(track!=null) track.disable();
+    }
     private void registerPlaceholderSupport() {
         Plugin MVDWPlaceholderAPI = getServer().getPluginManager().getPlugin("MVdWPlaceholderAPI");
         if (MVDWPlaceholderAPI != null && MVDWPlaceholderAPI.isEnabled()) {
@@ -336,6 +342,7 @@ public class IridiumSkyblock extends IridiumCore {
         pluginManager.registerEvents(new LeavesDecayListener(), this);
         pluginManager.registerEvents(new PlayerChatListener(), this);
         pluginManager.registerEvents(new PlayerDropItemListener(), this);
+        pluginManager.registerEvents(track=new PlayerTrackListener(this), this);
         pluginManager.registerEvents(new PlayerFishListener(), this);
         pluginManager.registerEvents(new PlayerInteractListener(), this);
         pluginManager.registerEvents(new PlayerJoinQuitListener(), this);
