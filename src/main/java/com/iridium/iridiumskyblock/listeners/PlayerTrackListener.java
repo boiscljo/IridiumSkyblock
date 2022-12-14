@@ -3,6 +3,7 @@ package com.iridium.iridiumskyblock.listeners;
 import com.google.common.base.Objects;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
@@ -46,21 +47,28 @@ public class PlayerTrackListener implements Listener {
 
                         standingIsland.ifPresent(island -> PlayerUtils.sendBorder(player, island));
 
-                        if ( !equalsIsland(island.get(player), standingIsland.orElse(null))) {
+                        if (!equalsIsland(island.get(player), standingIsland.orElse(null))) {
                             if (island.get(player) != null &&
                                     standingIsland.isPresent()) {
-                                if (IridiumSkyblock.getInstance().getConfiguration().putBackOnIslandLeave ) {
+                                if (IridiumSkyblock.getInstance().getConfiguration().putBackOnIslandLeave) {
                                     IridiumSkyblock.getInstance().getIslandManager().teleportHome(player,
                                             island.get(player),
                                             0);
                                     return;
                                 }
-                            }
-                            else if(standingIsland.isPresent())
-                            {
-                                if(!IridiumSkyblock.getInstance().getIslandManager().enterIsland(player, standingIsland.get()))
-                                {
+                            } else if (standingIsland.isPresent()) {
+                                if (!IridiumSkyblock.getInstance().getIslandManager().enterIsland(player,
+                                        standingIsland.get())) {
                                     PlayerUtils.teleportSpawn(player);
+                                }
+                            } else if (island.get(player) != null && !standingIsland.isPresent()) {
+                                if (IridiumSkyblockAPI.getInstance().isIslandWorld(player.getWorld())) {
+                                    if (IridiumSkyblock.getInstance().getConfiguration().putBackOnIslandLeave) {
+                                        IridiumSkyblock.getInstance().getIslandManager().teleportHome(player,
+                                                island.get(player),
+                                                0);
+                                        return;
+                                    }
                                 }
                             }
                             island.put(player, standingIsland.orElse(null));
