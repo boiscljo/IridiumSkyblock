@@ -47,6 +47,7 @@ public class Configuration {
     public boolean backButtons = true;
     public boolean createIslandOnHome = true;
     public boolean putBackOnIslandLeave = false;
+    public boolean dropSpawners = true;
 
     public IslandRegenSettings regenSettings = new IslandRegenSettings();
 

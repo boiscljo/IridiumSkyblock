@@ -94,6 +94,10 @@ public class BlockBreakListener implements Listener {
                         } catch (Throwable t) {
 
                         }
+                        if(IridiumSkyblock.getInstance().getConfiguration().dropSpawners)
+                        {
+                            event.getBlock().getWorld().dropItem(event.getBlock().getLocation(),ObsidianMaterial.valueOf(creatureSpawner.getSpawnedType()+"_SPAWNER").toItem());
+                        }
                     }
                 });
     }

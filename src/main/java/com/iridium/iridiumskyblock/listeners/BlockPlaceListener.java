@@ -11,12 +11,15 @@ import com.iridium.iridiumskyblock.database.IslandSpawners;
 import com.iridium.iridiumskyblock.database.User;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -80,14 +83,28 @@ public class BlockPlaceListener implements Listener {
                     IslandBlocks islandBlocks = IridiumSkyblock.getInstance().getIslandManager().getIslandBlock(island,
                             material);
                     islandBlocks.setAmount(islandBlocks.getAmount() + 1);
+
                     if (event.getBlock().getState() instanceof CreatureSpawner) {
+
                         CreatureSpawner creatureSpawner = (CreatureSpawner) event.getBlock().getState();
+
+                        try {
+                            BlockStateMeta blockStateMeta = (BlockStateMeta) event.getItemInHand().getItemMeta();
+                            CreatureSpawner creatureSpawner_ = (CreatureSpawner) blockStateMeta.getBlockState();
+                            if (creatureSpawner.getSpawnedType() != creatureSpawner_.getSpawnedType()) {
+                                creatureSpawner.setSpawnedType(creatureSpawner_.getSpawnedType());
+                                creatureSpawner.update();
+                            }
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                        }
+
                         try {
                             IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager()
                                     .getIslandSpawners(island, creatureSpawner.getSpawnedType());
                             islandSpawners.setAmount(islandSpawners.getAmount() + 1);
                         } catch (Throwable t) {
-
+                            t.printStackTrace();
                         }
                     }
                 });
