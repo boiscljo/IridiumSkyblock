@@ -182,6 +182,7 @@ public class IslandManager {
         }, 20L * delay);
         user.setTeleportingTask(bukkitTask);
     }
+
     /**
      * Teleports a player to the Island's home
      *
@@ -216,7 +217,7 @@ public class IslandManager {
      */
     private void teleportHome(@NotNull Player player, @NotNull Island island) {
         player.setFallDistance(0);
-        IridiumSkyblock.getInstance().getTrack().track(player,island);
+        IridiumSkyblock.getInstance().getTrack().track(player, island);
         PaperLib.teleportAsync(player, LocationUtils.getSafeLocation(island.getHome(), island),
                 PlayerTeleportEvent.TeleportCause.PLUGIN);
 
@@ -1241,15 +1242,15 @@ public class IslandManager {
             this.createWorld(World.Environment.THE_END, configuration.worldName + "_the_end");
 
         // Register worlds with multiverse
-        if (Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(), () -> {
+            if (Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
                 IridiumSkyblock.getInstance().registerMultiverse(getWorld());
                 if (configuration.netherIslands)
                     IridiumSkyblock.getInstance().registerMultiverse(getNetherWorld());
                 if (configuration.endIslands)
                     IridiumSkyblock.getInstance().registerMultiverse(getEndWorld());
-            }, 1);
-        }
+            }
+        }, 1);
     }
 
 }
