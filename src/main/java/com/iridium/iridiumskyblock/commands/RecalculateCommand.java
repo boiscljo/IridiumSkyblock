@@ -25,51 +25,67 @@ public class RecalculateCommand extends Command {
      * The default constructor.
      */
     public RecalculateCommand() {
-        super(Arrays.asList("recalculate", "recalc"), "Recalculate all Island Values", "iridiumskyblock.recalculate", false, Duration.ZERO);
+        super(Arrays.asList("recalculate", "recalc"), "Recalculate all Island Values", "iridiumskyblock.recalculate",
+                false, Duration.ZERO);
     }
 
     /**
-     * Executes the command for the specified {@link CommandSender} with the provided arguments.
-     * Not called when the command execution was invalid (no permission, no player or command disabled).
+     * Executes the command for the specified {@link CommandSender} with the
+     * provided arguments.
+     * Not called when the command execution was invalid (no permission, no player
+     * or command disabled).
      *
      * @param sender The CommandSender which executes this command
-     * @param args   The arguments used with this command. They contain the sub-command
+     * @param args   The arguments used with this command. They contain the
+     *               sub-command
      */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (bukkitTask != null) {
-            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().calculationAlreadyInProcess.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().calculationAlreadyInProcess
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
         int interval = 1;
-        List<Island> islandList = IridiumSkyblock.getInstance().getDatabaseManager().getIslandTableManager().getEntries();
+        List<Island> islandList = IridiumSkyblock.getInstance().getDatabaseManager().getIslandTableManager()
+                .getEntries();
         int seconds = (islandList.size() * interval / 20) % 60;
         int minutes = (islandList.size() * interval / 20) / 60;
         sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().calculatingIslands
                 .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix))
                 .replace("%minutes%", String.valueOf(minutes))
                 .replace("%seconds%", String.valueOf(seconds))
-                .replace("%amount%", String.valueOf(islandList.size()))
-        );
+                .replace("%amount%", String.valueOf(islandList.size())));
 
-        bukkitTask = Bukkit.getScheduler().runTaskTimer(IridiumSkyblock.getInstance(), new Runnable() {
-            final ListIterator<Integer> islands = islandList.stream().map(Island::getId).collect(Collectors.toList()).listIterator();
-
+        bukkitTask = Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(), new Runnable() {
+            final ListIterator<Integer> islands = islandList.stream().map(Island::getId).collect(Collectors.toList())
+                    .listIterator();
+            long start=0;
             @Override
             public void run() {
+                start = System.currentTimeMillis();
+                runOnce();
+            }
+
+            public void runOnce() {
                 if (islands.hasNext()) {
-                    IridiumSkyblock.getInstance().getIslandManager().getIslandById(islands.next()).ifPresent(island ->
-                            IridiumSkyblock.getInstance().getIslandManager().recalculateIsland(island)
-                    );
+                    IridiumSkyblock.getInstance().getIslandManager().getIslandById(islands.next())
+                            .ifPresent(island -> IridiumSkyblock.getInstance().getIslandManager()
+                                    .recalculateIslandAsync(island).thenRun(() -> {
+                                        runOnce();
+                                    }));
                 } else {
                     bukkitTask.cancel();
                     bukkitTask = null;
-                    sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().calculatingFinished.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                    IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "+(System.currentTimeMillis()-start)+" milliseconds");
+
+                    sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().calculatingFinished
+                            .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 }
             }
 
-        }, 0, interval);
+        }, interval);
         return true;
     }
 
@@ -83,7 +99,8 @@ public class RecalculateCommand extends Command {
      * @return The list of tab completions for this command
      */
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         // We currently don't want to tab-completion here
         // Return a new List, so it isn't a list of online players
         return Collections.emptyList();

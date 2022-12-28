@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -986,6 +987,24 @@ public class IslandManager {
     }
 
     /**
+     * Recalculates the island value of the specified island.
+     *
+     * @param island The specified Island
+     */
+    public CompletableFuture<Void> recalculateIslandAsync(@NotNull Island island) {
+        CompletableFuture<Void> ret = new CompletableFuture<>();
+        getIslandChunks(island, getWorld(), getNetherWorld(), getEndWorld()).thenAcceptAsync(chunks -> {
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandBlocksTableManager().getEntries(island)
+                    .forEach(islandBlocks -> islandBlocks.setAmount(0));
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandSpawnersTableManager().getEntries(island)
+                    .forEach(islandSpawners -> islandSpawners.setAmount(0));
+
+            recalculateIsland(island, chunks, ret);
+        });
+        return ret;
+    }
+
+    /**
      * Recalculates the island async with specified ChunkSnapshots.
      *
      * @param island The specified Island
@@ -1023,6 +1042,57 @@ public class IslandManager {
         } else {
             Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> getAllTileInIsland(island, chunks));
         }
+    }
+
+    /**
+     * Recalculates the island async with specified ChunkSnapshots.
+     *
+     * @param island The specified Island
+     * @param chunks The Island's Chunks
+     */
+    private void recalculateIsland(@NotNull Island island, @NotNull List<Chunk> chunks, CompletableFuture<Void> ret) {
+        ListIterator<Chunk> iterator = new ArrayList<>(chunks).listIterator();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                if (!iterator.hasNext()) {
+                    if (Bukkit.isPrimaryThread()) {
+                        getAllTileInIsland(island, chunks);
+                    } else {
+                        Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> getAllTileInIsland(island, chunks));
+                    }
+                    ret.complete(null);
+                    this.cancel();
+                } else {
+                    ChunkSnapshot chunk = iterator.next().getChunkSnapshot(true, false, false);
+                    World world = Bukkit.getWorld(chunk.getWorldName());
+                    boolean ignoreMainMaterial = IridiumSkyblock.getInstance().getChunkGenerator().ignoreMainMaterial();
+                    int maxHeight = world == null ? 255 : world.getMaxHeight() - 1;
+                    ObsidianMaterial air = ObsidianMaterial.valueOf("AIR");
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            if (island.isInIsland(x + (chunk.getX() * 16), z + (chunk.getZ() * 16))) {
+                                final int maxy = Math.min(maxHeight, chunk.getHighestBlockYAt(x, z));
+                                for (int y = LocationUtils.getMinHeight(world); y <= maxy; y++) {
+                                    ObsidianMaterial material = ObsidianMaterial.valueOf(chunk.getBlockType(x, y, z));
+                                    if (material == air)
+                                        continue;
+                                    if (!ignoreMainMaterial
+                                            && material == IridiumSkyblock.getInstance().getChunkGenerator()
+                                                    .getMainMaterial(world))
+                                        continue;
+
+                                    IslandBlocks islandBlock = IridiumSkyblock.getInstance().getIslandManager()
+                                            .getIslandBlock(island, material);
+                                    islandBlock.setAmount(islandBlock.getAmount() + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(IridiumSkyblock.getInstance(), 1, 1);
     }
 
     private void getAllTileInIsland(Island island, List<Chunk> chunks) {

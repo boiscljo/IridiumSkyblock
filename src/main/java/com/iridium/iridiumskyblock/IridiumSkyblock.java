@@ -153,7 +153,6 @@ public class IridiumSkyblock extends IridiumCore {
         // Initialize the commands
         this.commandManager = new CommandManager("iridiumskyblock");
 
-
         // Initialize the manager classes (bad) and create the world
         this.islandManager = new IslandManager();
         this.userManager = new UserManager();
@@ -194,19 +193,33 @@ public class IridiumSkyblock extends IridiumCore {
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
                 ListIterator<Integer> islands = getDatabaseManager().getIslandTableManager().getEntries().stream()
                         .map(Island::getId).collect(Collectors.toList()).listIterator();
-
+                long start = 0;
                 @Override
                 public void run() {
-                    if (!islands.hasNext()) {
-                        islands = getDatabaseManager().getIslandTableManager().getEntries().stream().map(Island::getId)
-                                .collect(Collectors.toList()).listIterator();
-                    } else {
-                        getIslandManager().getIslandById(islands.next())
-                                .ifPresent(island -> getIslandManager().recalculateIsland(island));
+                    islands = getDatabaseManager().getIslandTableManager().getEntries().stream().map(Island::getId)
+                            .collect(Collectors.toList()).listIterator();
+                    if (islands.hasNext()) {
+                        start=System.currentTimeMillis();
+                        IridiumSkyblock.getInstance().getLogger().info("recalculation started at "+System.currentTimeMillis());
+
+                        runOnce();
                     }
                 }
 
-            }, 0, getConfiguration().islandRecalculateInterval * 20L);
+                public void runOnce() {
+                    if (islands.hasNext()) {
+                        getIslandManager().getIslandById(islands.next())
+                                .ifPresent(island -> {
+                                    getIslandManager().recalculateIslandAsync(island).thenRun(() -> {
+                                        runOnce();
+                                    });
+                                });
+                    } else {
+                        IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "+(System.currentTimeMillis()-start)+" milliseconds");
+                    }
+                }
+
+            }, 0, getConfiguration().islandRecalculateInterval * 60 * 20L);
         }
 
         // Automatically update all inventories
@@ -239,11 +252,13 @@ public class IridiumSkyblock extends IridiumCore {
         getLogger().info("");
         getLogger().info("----------------------------------------");
     }
- 
-    @Override 
+
+    @Override
     public void onDisable() {
-        if(track!=null) track.disable();
+        if (track != null)
+            track.disable();
     }
+
     private void registerPlaceholderSupport() {
         Plugin MVDWPlaceholderAPI = getServer().getPluginManager().getPlugin("MVdWPlaceholderAPI");
         if (MVDWPlaceholderAPI != null && MVDWPlaceholderAPI.isEnabled()) {
@@ -342,7 +357,7 @@ public class IridiumSkyblock extends IridiumCore {
         pluginManager.registerEvents(new LeavesDecayListener(), this);
         pluginManager.registerEvents(new PlayerChatListener(), this);
         pluginManager.registerEvents(new PlayerDropItemListener(), this);
-        pluginManager.registerEvents(track=new PlayerTrackListener(this), this);
+        pluginManager.registerEvents(track = new PlayerTrackListener(this), this);
         pluginManager.registerEvents(new PlayerFishListener(), this);
         pluginManager.registerEvents(new PlayerInteractListener(), this);
         pluginManager.registerEvents(new PlayerJoinQuitListener(), this);
