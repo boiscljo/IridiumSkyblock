@@ -88,16 +88,17 @@ public class BlockPlaceListener implements Listener {
 
                         CreatureSpawner creatureSpawner = (CreatureSpawner) event.getBlock().getState();
 
-                        try {
-                            BlockStateMeta blockStateMeta = (BlockStateMeta) event.getItemInHand().getItemMeta();
-                            CreatureSpawner creatureSpawner_ = (CreatureSpawner) blockStateMeta.getBlockState();
-                            if (creatureSpawner.getSpawnedType() != creatureSpawner_.getSpawnedType()) {
-                                creatureSpawner.setSpawnedType(creatureSpawner_.getSpawnedType());
-                                creatureSpawner.update();
+                        if(IridiumSkyblock.getInstance().getConfiguration().basicSpawnerSupport)
+                            try {
+                                BlockStateMeta blockStateMeta = (BlockStateMeta) event.getItemInHand().getItemMeta();
+                                CreatureSpawner creatureSpawner_ = (CreatureSpawner) blockStateMeta.getBlockState();
+                                if (creatureSpawner.getSpawnedType() != creatureSpawner_.getSpawnedType()) {
+                                    creatureSpawner.setSpawnedType(creatureSpawner_.getSpawnedType());
+                                    creatureSpawner.update();
+                                }
+                            } catch (Throwable t) {
+                                t.printStackTrace();
                             }
-                        } catch (Throwable t) {
-                            t.printStackTrace();
-                        }
 
                         try {
                             IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager()
