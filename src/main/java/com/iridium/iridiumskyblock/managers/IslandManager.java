@@ -1056,6 +1056,8 @@ public class IslandManager {
             @Override
             public void run() {
                 // TODO Auto-generated method stub
+                for(int i=0;i<IridiumSkyblock.getInstance().getConfiguration().chunkPerTickRecalculation;i++)
+
                 if (!iterator.hasNext()) {
                     if (Bukkit.isPrimaryThread()) {
                         getAllTileInIsland(island, chunks);
@@ -1064,6 +1066,7 @@ public class IslandManager {
                     }
                     ret.complete(null);
                     this.cancel();
+                    return;
                 } else {
                     ChunkSnapshot chunk = iterator.next().getChunkSnapshot(true, false, false);
                     World world = Bukkit.getWorld(chunk.getWorldName());
