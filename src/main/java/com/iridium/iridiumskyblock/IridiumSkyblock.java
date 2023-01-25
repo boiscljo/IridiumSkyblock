@@ -200,8 +200,6 @@ public class IridiumSkyblock extends IridiumCore {
                             .collect(Collectors.toList()).listIterator();
                     if (islands.hasNext()) {
                         start=System.currentTimeMillis();
-                        IridiumSkyblock.getInstance().getLogger().info("recalculation started at "+System.currentTimeMillis());
-
                         runOnce();
                     }
                 }
@@ -215,7 +213,8 @@ public class IridiumSkyblock extends IridiumCore {
                                     });
                                 });
                     } else {
-                        IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "+(System.currentTimeMillis()-start)+" milliseconds");
+                        if (IridiumSkyblock.getInstance().getConfiguration().extraDebugMessage)
+                            IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "+(System.currentTimeMillis()-start)+" milliseconds");
                     }
                 }
 
