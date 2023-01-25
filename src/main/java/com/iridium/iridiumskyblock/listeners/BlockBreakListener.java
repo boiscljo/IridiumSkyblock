@@ -92,7 +92,7 @@ public class BlockBreakListener implements Listener {
                                 islandSpawners.setAmount(islandSpawners.getAmount() - 1);
                             }
                         } catch (Throwable t) {
-
+                            t.printStackTrace();
                         }
                         if(IridiumSkyblock.getInstance().getConfiguration().dropSpawners)
                         {

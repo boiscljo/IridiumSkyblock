@@ -50,7 +50,8 @@ public class Configuration {
     public boolean putBackOnIslandLeave = false;
     public boolean dropSpawners = true;
     public boolean basicSpawnerSupport = true;
-
+    public boolean extraDebugMessage = false;
+    
     public IslandRegenSettings regenSettings = new IslandRegenSettings();
 
     public IslandDeleteSettings deleteSettings = new IslandDeleteSettings();
@@ -119,6 +120,7 @@ public class Configuration {
                     "&b&l[!] &bLeft click to redeem"
             )), Collections.emptyList(), 0, 15, 2000, 0, XSound.ENTITY_PLAYER_LEVELUP))
             .build();
+    
 
     /**
      * Settings for the {@link org.bukkit.generator.ChunkGenerator} of IridiumSkyblock.

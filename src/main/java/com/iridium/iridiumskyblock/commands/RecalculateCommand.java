@@ -78,7 +78,8 @@ public class RecalculateCommand extends Command {
                 } else {
                     bukkitTask.cancel();
                     bukkitTask = null;
-                    IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "+(System.currentTimeMillis()-start)+" milliseconds");
+                    if (IridiumSkyblock.getInstance().getConfiguration().extraDebugMessage)
+                        IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "+(System.currentTimeMillis()-start)+" milliseconds");
 
                     sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().calculatingFinished
                             .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));

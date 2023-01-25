@@ -10,6 +10,8 @@ import com.iridium.iridiumskyblock.upgrades.*;
 
 import java.util.Arrays;
 
+import org.bukkit.Material;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Upgrades {
     public Upgrade<SizeUpgrade> sizeUpgrade = new Upgrade<>(true, "Size",
@@ -68,27 +70,27 @@ public class Upgrades {
             .put(1, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
                     .put(ObsidianMaterial.valueOf("HOPPER"), 15)
                     .put(ObsidianMaterial.valueOf("PISTON"), 10)
-                    .put(ObsidianMaterial.valueOf("SPAWNER"), 10)
+                    .put(ObsidianMaterial.wrap(Material.SPAWNER), 10)
                     .build()))
             .put(2, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
                     .put(ObsidianMaterial.valueOf("HOPPER"), 20)
                     .put(ObsidianMaterial.valueOf("PISTON"), 15)
-                    .put(ObsidianMaterial.valueOf("SPAWNER"), 15)
+                    .put(ObsidianMaterial.wrap(Material.SPAWNER), 15)
                     .build()))
             .put(3, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
                     .put(ObsidianMaterial.valueOf("HOPPER"), 25)
                     .put(ObsidianMaterial.valueOf("PISTON"), 20)
-                    .put(ObsidianMaterial.valueOf("SPAWNER"), 20)
+                    .put(ObsidianMaterial.wrap(Material.SPAWNER), 20)
                     .build()))
             .put(4, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
                     .put(ObsidianMaterial.valueOf("HOPPER"), 30)
                     .put(ObsidianMaterial.valueOf("PISTON"), 25)
-                    .put(ObsidianMaterial.valueOf("SPAWNER"), 25)
+                    .put(ObsidianMaterial.wrap(Material.SPAWNER), 25)
                     .build()))
             .put(5, new BlockLimitUpgrade(1000, 15, ImmutableMap.<ObsidianMaterial, Integer>builder()
                     .put(ObsidianMaterial.valueOf("HOPPER"), 40)
                     .put(ObsidianMaterial.valueOf("PISTON"), 30)
-                    .put(ObsidianMaterial.valueOf("SPAWNER"), 30)
+                    .put(ObsidianMaterial.wrap(Material.SPAWNER), 30)
                     .build()))
             .build());
 
