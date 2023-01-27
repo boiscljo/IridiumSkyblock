@@ -26,7 +26,9 @@ public class ExtraValueCommand extends Command {
      * The default constructor.
      */
     public ExtraValueCommand() {
-        super(Collections.singletonList("extravalue"), "Set extra values of island", "%prefix% &7/is extravalue <player/add/remove/set>", "iridiumskyblock.extravalue", false, Duration.ZERO);
+        super(Collections.singletonList("extravalue"), "Set extra values of island",
+                "%prefix% &7/is extravalue <player/add/remove/set>", "iridiumskyblock.extravalue", false,
+                Duration.ZERO);
 
         this.addCommand = new AddCommand();
         this.removeCommand = new RemoveCommand();
@@ -35,32 +37,38 @@ public class ExtraValueCommand extends Command {
     }
 
     /**
-     * Executes the command for the specified {@link CommandSender} with the provided arguments.
-     * Not called when the command execution was invalid (no permission, no player or command disabled).
+     * Executes the command for the specified {@link CommandSender} with the
+     * provided arguments.
+     * Not called when the command execution was invalid (no permission, no player
+     * or command disabled).
      * Gives extra values to specific player's island
      *
      * @param sender The CommandSender which executes this command
-     * @param args   The arguments used with this command. They contain the sub-command
+     * @param args   The arguments used with this command. They contain the
+     *               sub-command
      */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            sender.sendMessage(StringUtils.color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            sender.sendMessage(StringUtils
+                    .color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(args[2]);
-        User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-        Optional<Island> island = user.getIsland();
-        if (!island.isPresent()) {
-            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNoIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+        User user = IridiumSkyblock.getInstance().getUserManager().getUser(args[2]);
+        if (user != null) {
+            Optional<Island> island = user.getIsland();
+            if (!island.isPresent()) {
+                sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNoIsland
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().extraValueInfo
-                .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
-                .replace("%player%", player.getName()))
-                .replace("%amount%", String.valueOf(island.get().getExtraValue())));
+            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().extraValueInfo
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
+                    .replace("%player%", user.getName()))
+                    .replace("%amount%", String.valueOf(island.get().getExtraValue())));
+        }
         return true;
     }
 
@@ -74,9 +82,10 @@ public class ExtraValueCommand extends Command {
      * @return The list of tab completions for this command
      */
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         // Tab-completion is handled by the subcommands
         return Collections.emptyList();
     }
-    
+
 }

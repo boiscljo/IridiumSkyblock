@@ -26,50 +26,59 @@ public class VisitCommand extends Command {
      * The default constructor.
      */
     public VisitCommand() {
-        super(Collections.singletonList("visit"), "Visit another players Island", "%prefix% &7/is visit <player>", "", true, Duration.ZERO);
+        super(Collections.singletonList("visit"), "Visit another players Island", "%prefix% &7/is visit <player>", "",
+                true, Duration.ZERO);
     }
 
     /**
-     * Executes the command for the specified {@link CommandSender} with the provided arguments.
-     * Not called when the command execution was invalid (no permission, no player or command disabled).
+     * Executes the command for the specified {@link CommandSender} with the
+     * provided arguments.
+     * Not called when the command execution was invalid (no permission, no player
+     * or command disabled).
      * Opens visitable islands or visits an island.
      *
      * @param sender The CommandSender which executes this command
-     * @param args   The arguments used with this command. They contain the sub-command
+     * @param args   The arguments used with this command. They contain the
+     *               sub-command
      */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
         if (args.length != 2) {
-            Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons ? player.getOpenInventory().getTopInventory() : null;
+            Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons
+                    ? player.getOpenInventory().getTopInventory()
+                    : null;
             player.openInventory(new VisitGUI(user, previousInventory).getInventory());
             return true;
         }
 
-        OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[1]);
-        User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser(targetPlayer);
-        if (!targetUser.getIsland().isPresent()) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIslandFound.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+        User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser(args[1]);
+        if (targetUser != null) {
+            if (!targetUser.getIsland().isPresent()) {
+                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIslandFound
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        Island island = targetUser.getIsland().get();
-        if (IridiumSkyblock.getInstance().getIslandManager().isBannedOnIsland(island, user)) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().youHaveBeenBanned
-                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
-                    .replace("%owner%", island.getOwner().getName())
-                    .replace("%name%", island.getName())
-            ));
-            return false;
-        }
+            Island island = targetUser.getIsland().get();
+            if (IridiumSkyblock.getInstance().getIslandManager().isBannedOnIsland(island, user)) {
+                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().youHaveBeenBanned
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
+                        .replace("%owner%", island.getOwner().getName())
+                        .replace("%name%", island.getName())));
+                return false;
+            }
 
-        if (!IridiumSkyblockAPI.getInstance().canVisitIsland(user, island)) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().islandIsPrivate.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+            if (!IridiumSkyblockAPI.getInstance().canVisitIsland(user, island)) {
+                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().islandIsPrivate
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        IridiumSkyblock.getInstance().getIslandManager().teleportHome(player, island, IridiumSkyblock.getInstance().getConfiguration().teleportDelay);
+            IridiumSkyblock.getInstance().getIslandManager().teleportHome(player, island,
+                    IridiumSkyblock.getInstance().getConfiguration().teleportDelay);
+        }
         return true;
     }
 
@@ -83,7 +92,8 @@ public class VisitCommand extends Command {
      * @return The list of tab completions for this command
      */
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         return PlayerUtils.getOnlinePlayerNames();
     }
 

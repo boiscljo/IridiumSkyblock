@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 /**
  * Class which handles users.
  */
@@ -31,6 +33,17 @@ public class UserManager {
         }
     }
 
+     /**
+     * Gets a {@link User}'s info. Creates one if he doesn't exist.
+     *
+     * @param offlinePlayer The player who's data should be fetched
+     * @return The user data
+     */
+    public @Nullable User getUser(@NotNull String name) {
+        Optional<User> userOptional = getUserByName(name);
+        return userOptional.orElse(null);
+    }
+
     /**
      * Finds an User by his {@link UUID}.
      *
@@ -41,4 +54,13 @@ public class UserManager {
         return IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().getUser(uuid);
     }
 
+     /**
+     * Finds an User by his {@link UUID}.
+     *
+     * @param uuid The uuid of the onlyForPlayers
+     * @return the User class of the onlyForPlayers
+     */
+    public Optional<User> getUserByName(@NotNull String name) {
+        return IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().getUser(name);
+    }
 }

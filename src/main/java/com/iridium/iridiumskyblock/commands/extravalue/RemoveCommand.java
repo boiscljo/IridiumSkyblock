@@ -21,45 +21,54 @@ public class RemoveCommand extends Command {
      * The default constructor.
      */
     public RemoveCommand() {
-        super(Collections.singletonList("remove"), "Remove value from the extra value of a player", "%prefix% &7/is extravalue remove <player> <amount>", "iridiumskyblock.extravalue", false, Duration.ZERO);
+        super(Collections.singletonList("remove"), "Remove value from the extra value of a player",
+                "%prefix% &7/is extravalue remove <player> <amount>", "iridiumskyblock.extravalue", false,
+                Duration.ZERO);
     }
 
     /**
-     * Executes the command for the specified {@link CommandSender} with the provided arguments.
-     * Not called when the command execution was invalid (no permission, no player or command disabled).
+     * Executes the command for the specified {@link CommandSender} with the
+     * provided arguments.
+     * Not called when the command execution was invalid (no permission, no player
+     * or command disabled).
      *
-     * @param sender    The CommandSender which executes this command
-     * @param args      The arguments used with this command. They contain the sub-command
+     * @param sender The CommandSender which executes this command
+     * @param args   The arguments used with this command. They contain the
+     *               sub-command
      */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length < 4) {
-            sender.sendMessage(StringUtils.color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            sender.sendMessage(StringUtils
+                    .color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(args[2]);
-        User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-        Optional<Island> optionalIsland = user.getIsland();
-        if (!optionalIsland.isPresent()) {
-            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNoIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+        User user = IridiumSkyblock.getInstance().getUserManager().getUser(args[2]);
+        if (user != null) {
+            Optional<Island> optionalIsland = user.getIsland();
+            if (!optionalIsland.isPresent()) {
+                sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNoIsland
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        double amount;
-        try {
-            amount = Double.parseDouble(args[3]);
-        } catch (NumberFormatException exception) {
-            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().notANumber.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+            double amount;
+            try {
+                amount = Double.parseDouble(args[3]);
+            } catch (NumberFormatException exception) {
+                sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().notANumber
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        Island island = optionalIsland.get();
-        island.setExtraValue(island.getExtraValue() - amount);
-        sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().extraValueSet
-                .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
-                .replace("%player%", player.getName())
-                .replace("%amount%", String.valueOf(island.getExtraValue()))));
+            Island island = optionalIsland.get();
+            island.setExtraValue(island.getExtraValue() - amount);
+            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().extraValueSet
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
+                    .replace("%player%", user.getName())
+                    .replace("%amount%", String.valueOf(island.getExtraValue()))));
+        }
         return true;
     }
 
@@ -73,7 +82,8 @@ public class RemoveCommand extends Command {
      * @return The list of tab completions for this command
      */
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         if (args.length == 3) {
             return PlayerUtils.getOnlinePlayerNames();
         }

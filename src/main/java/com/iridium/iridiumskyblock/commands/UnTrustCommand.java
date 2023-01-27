@@ -23,48 +23,64 @@ public class UnTrustCommand extends Command {
      * The default constructor.
      */
     public UnTrustCommand() {
-        super(Collections.singletonList("untrust"), "Revoke a trusted user from your Island", "%prefix% &7/is untrust <player>", "", true, Duration.ZERO);
+        super(Collections.singletonList("untrust"), "Revoke a trusted user from your Island",
+                "%prefix% &7/is untrust <player>", "", true, Duration.ZERO);
     }
 
     /**
-     * Executes the command for the specified {@link CommandSender} with the provided arguments.
-     * Not called when the command execution was invalid (no permission, no player or command disabled).
+     * Executes the command for the specified {@link CommandSender} with the
+     * provided arguments.
+     * Not called when the command execution was invalid (no permission, no player
+     * or command disabled).
      * Un-Invites a User from an Island.
      *
      * @param sender The CommandSender which executes this command
-     * @param args   The arguments used with this command. They contain the sub-command
+     * @param args   The arguments used with this command. They contain the
+     *               sub-command
      */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length != 2) {
-            sender.sendMessage(StringUtils.color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            sender.sendMessage(StringUtils
+                    .color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
         Player player = (Player) sender;
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
         Optional<Island> island = user.getIsland();
-        User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser(Bukkit.getServer().getOfflinePlayer(args[1]));
-        if (!island.isPresent()) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+        User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser((args[1]));
+        if (targetUser != null) {
+            if (!island.isPresent()) {
+                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIsland
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(), IridiumSkyblock.getInstance().getUserManager().getUser(player), PermissionType.TRUST)) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotManageTrusts.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+            if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(),
+                    IridiumSkyblock.getInstance().getUserManager().getUser(player), PermissionType.TRUST)) {
+                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotManageTrusts
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        Optional<IslandTrusted> islandTrusted = IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island.get(), targetUser);
-        if (!islandTrusted.isPresent()) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().notTrusted.replace("%player%", targetUser.getName()).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-            return false;
-        }
+            Optional<IslandTrusted> islandTrusted = IridiumSkyblock.getInstance().getIslandManager()
+                    .getIslandTrusted(island.get(), targetUser);
+            if (!islandTrusted.isPresent()) {
+                player.sendMessage(StringUtils.color(
+                        IridiumSkyblock.getInstance().getMessages().notTrusted.replace("%player%", targetUser.getName())
+                                .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                return false;
+            }
 
-        IridiumSkyblock.getInstance().getDatabaseManager().getIslandTrustedTableManager().delete(islandTrusted.get());
-        player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().trustRevoked.replace("%player%", targetUser.getName()).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-        IslandLog islandLog = new IslandLog(island.get(), LogAction.USER_UNTRUSTED, user, targetUser, 0, "");
-        IridiumSkyblock.getInstance().getDatabaseManager().getIslandLogTableManager().addEntry(islandLog);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandTrustedTableManager()
+                    .delete(islandTrusted.get());
+            player.sendMessage(StringUtils.color(
+                    IridiumSkyblock.getInstance().getMessages().trustRevoked.replace("%player%", targetUser.getName())
+                            .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            IslandLog islandLog = new IslandLog(island.get(), LogAction.USER_UNTRUSTED, user, targetUser, 0, "");
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandLogTableManager().addEntry(islandLog);
+        }
         return true;
     }
 
@@ -78,7 +94,8 @@ public class UnTrustCommand extends Command {
      * @return The list of tab completions for this command
      */
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         return PlayerUtils.getOnlinePlayerNames();
     }
 

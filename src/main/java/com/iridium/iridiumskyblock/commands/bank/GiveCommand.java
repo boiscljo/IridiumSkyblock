@@ -23,49 +23,61 @@ public class GiveCommand extends Command {
      * The default constructor.
      */
     public GiveCommand() {
-        super(Collections.singletonList("give"), "Give players money into their island bank", "%prefix% &7/is bank give <player> <type> <amount>", "iridiumskyblock.bank.give", false, Duration.ZERO);
+        super(Collections.singletonList("give"), "Give players money into their island bank",
+                "%prefix% &7/is bank give <player> <type> <amount>", "iridiumskyblock.bank.give", false, Duration.ZERO);
     }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length == 5) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(args[2]);
-            User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-            Optional<Island> island = user.getIsland();
-            if (island.isPresent()) {
-                Optional<BankItem> bankItem = IridiumSkyblock.getInstance().getBankItemList().stream().filter(item -> item.getName().equalsIgnoreCase(args[3])).findFirst();
-                if (bankItem.isPresent()) {
-                    try {
-                        IslandBank islandBank = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island.get(), bankItem.get());
-                        islandBank.setNumber(islandBank.getNumber() + Double.parseDouble(args[4]));
-                        sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().gaveBank.replace("%player%", player.getName()).replace("%amount%", args[4]).replace("%item%", bankItem.get().getName()).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-                        return true;
-                    } catch (NumberFormatException exception) {
-                        sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().notANumber.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            User user = IridiumSkyblock.getInstance().getUserManager().getUser(args[2]);
+            if (user != null) {
+                Optional<Island> island = user.getIsland();
+                if (island.isPresent()) {
+                    Optional<BankItem> bankItem = IridiumSkyblock.getInstance().getBankItemList().stream()
+                            .filter(item -> item.getName().equalsIgnoreCase(args[3])).findFirst();
+                    if (bankItem.isPresent()) {
+                        try {
+                            IslandBank islandBank = IridiumSkyblock.getInstance().getIslandManager()
+                                    .getIslandBank(island.get(), bankItem.get());
+                            islandBank.setNumber(islandBank.getNumber() + Double.parseDouble(args[4]));
+                            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().gaveBank
+                                    .replace("%player%", user.getName()).replace("%amount%", args[4])
+                                    .replace("%item%", bankItem.get().getName())
+                                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                            return true;
+                        } catch (NumberFormatException exception) {
+                            sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().notANumber
+                                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                        }
+                    } else {
+                        sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noSuchBankItem
+                                .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                     }
                 } else {
-                    sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noSuchBankItem.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                    sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNoIsland
+                            .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 }
-            } else {
-                sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNoIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             }
         } else {
-            sender.sendMessage(StringUtils.color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            sender.sendMessage(StringUtils
+                    .color(syntax.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
         }
 
         return false;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         if (args.length == 3) {
             return PlayerUtils.getOnlinePlayerNames();
         }
 
         if (args.length == 4) {
             return IridiumSkyblock.getInstance().getBankItemList().stream()
-                .map(BankItem::getName)
-                .collect(Collectors.toList());
+                    .map(BankItem::getName)
+                    .collect(Collectors.toList());
         }
 
         return Collections.emptyList();
