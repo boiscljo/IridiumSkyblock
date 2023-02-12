@@ -2,14 +2,17 @@ package com.iridium.iridiumskyblock.utils;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.spawn.EssentialsSpawn;
+import com.iridium.iridiumcore.dependencies.iridiumcolorapi.IridiumColorAPI;
 import com.iridium.iridiumcore.dependencies.paperlib.PaperLib;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandBank;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
@@ -23,14 +26,17 @@ import java.util.stream.Collectors;
 public class PlayerUtils {
 
     /**
-     * Removes the specified amount of crystals and money from the island bank and from
+     * Removes the specified amount of crystals and money from the island bank and
+     * from
      * the player's purse if there is not enough in the bank.
      *
      * @param player   The Player
      * @param island   The Player's Island
      * @param crystals The amount of crystals
      * @param money    The amount of money
-     * @return If the purchase was successful. {@link PlayerUtils#canPurchase(Player, Island, int, double)} should be preferred.
+     * @return If the purchase was successful.
+     *         {@link PlayerUtils#canPurchase(Player, Island, int, double)} should
+     *         be preferred.
      */
     public static boolean pay(@NotNull Player player, @NotNull Island island, int crystals, double money) {
         // Don't withdraw stuff if they can't purchase it.
@@ -38,8 +44,10 @@ public class PlayerUtils {
             return false;
         }
 
-        IslandBank islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().crystalsBankItem);
-        IslandBank islandMoney = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().moneyBankItem);
+        IslandBank islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island,
+                IridiumSkyblock.getInstance().getBankItems().crystalsBankItem);
+        IslandBank islandMoney = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island,
+                IridiumSkyblock.getInstance().getBankItems().moneyBankItem);
         Economy economy = IridiumSkyblock.getInstance().getEconomy();
 
         islandCrystals.setNumber(islandCrystals.getNumber() - crystals);
@@ -62,11 +70,14 @@ public class PlayerUtils {
      * @return If they can purchase the item
      */
     public static boolean canPurchase(@NotNull Player player, @NotNull Island island, int crystals, double money) {
-        IslandBank islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().crystalsBankItem);
-        IslandBank islandMoney = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island, IridiumSkyblock.getInstance().getBankItems().moneyBankItem);
+        IslandBank islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island,
+                IridiumSkyblock.getInstance().getBankItems().crystalsBankItem);
+        IslandBank islandMoney = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island,
+                IridiumSkyblock.getInstance().getBankItems().moneyBankItem);
         Economy economy = IridiumSkyblock.getInstance().getEconomy();
 
-        return islandCrystals.getNumber() >= crystals && (islandMoney.getNumber() >= money || (economy != null && economy.getBalance(player) >= money));
+        return islandCrystals.getNumber() >= crystals
+                && (islandMoney.getNumber() >= money || (economy != null && economy.getBalance(player) >= money));
     }
 
     /**
@@ -78,7 +89,20 @@ public class PlayerUtils {
     public static void sendBorder(@NotNull Player player, @NotNull Island island) {
         final Location centre = island.getCenter(player.getWorld()).clone();
 
-        Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> IridiumSkyblock.getInstance().getNms().sendWorldBorder(player, island.getColor(), island.getSize() + (island.getSize() % 2 == 0 ? 1 : 0), centre));
+        Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(),
+                () -> {
+                    if (IridiumSkyblockAPI.getInstance().isIslandWorld(player.getWorld()))
+                    {
+                        IridiumSkyblock.getInstance().getNms().sendWorldBorder(player, island.getColor(),
+                                island.getSize() + (island.getSize() % 2 == 0 ? 1 : 0), centre);
+                    }
+                    else
+                    {
+                        WorldBorder border = player.getWorld().getWorldBorder();
+                        IridiumSkyblock.getInstance().getNms().sendWorldBorder(player, island.getColor(),
+                                border.getSize(), border.getCenter());
+                    }
+                });
     }
 
     /**
@@ -95,7 +119,8 @@ public class PlayerUtils {
         EssentialsSpawn essentialsSpawn = (EssentialsSpawn) Bukkit.getPluginManager().getPlugin("EssentialsSpawn");
         Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
         if (essentialsSpawn != null && essentials != null) {
-            PaperLib.teleportAsync(player, essentialsSpawn.getSpawn(essentials.getUser(player).getGroup()), PlayerTeleportEvent.TeleportCause.PLUGIN);
+            PaperLib.teleportAsync(player, essentialsSpawn.getSpawn(essentials.getUser(player).getGroup()),
+                    PlayerTeleportEvent.TeleportCause.PLUGIN);
         } else {
             PaperLib.teleportAsync(player, spawnWorld.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
         }
@@ -118,7 +143,8 @@ public class PlayerUtils {
     }
 
     /**
-     * Calculates the total amount of experience a Player has with levels converted to experience.
+     * Calculates the total amount of experience a Player has with levels converted
+     * to experience.
      *
      * @param player The Player whose experience should be calculated
      * @return The total experience of the provided Player
