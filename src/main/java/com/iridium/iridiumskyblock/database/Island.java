@@ -10,6 +10,7 @@ import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.configs.BlockValues;
 import com.iridium.iridiumskyblock.configs.Schematics;
 import com.iridium.iridiumskyblock.managers.IslandManager;
+import com.iridium.iridiumskyblock.upgrades.SizeUpgrade;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.Getter;
@@ -277,8 +278,15 @@ public final class Island extends DatabaseObject {
      */
     public int getSize() {
         if (size == null) {
+            size=1;
             int sizeLevel = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(this, "size").getLevel();
-            size = IridiumSkyblock.getInstance().getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size;
+            SizeUpgrade upgrade=null;
+            while(upgrade==null && sizeLevel>0)
+            {
+                upgrade=IridiumSkyblock.getInstance().getUpgrades().sizeUpgrade.upgrades.get(sizeLevel);
+                sizeLevel--;
+                size = upgrade.size;
+            }
         }
         return size;
     }
