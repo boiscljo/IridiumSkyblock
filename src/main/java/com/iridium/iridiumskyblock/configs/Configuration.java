@@ -61,10 +61,13 @@ public class Configuration {
     public int distance = 151;
     public int islandRecalculateInterval = 5;
     public int chunkPerTickRecalculation = 1;
+    public int tickPerRecalculationStep = 1;
     public int maxIslandName = 16;
     public int minIslandName = 3;
     public int teleportDelay = 0;
     public int trackTicks = 20;
+    public int pasterLimitPerTick = 250000;
+    public int pasterDelayInTick = 1;
 
     public Item islandCrystal = new Item(ObsidianMaterial.valueOf("NETHER_STAR"), 1, "&b*** &b&lIsland Crystal &b***", Arrays.asList("", "&b%amount% Island Crystals", "&b&l[!] &bRight-Click to Redeem"));
 

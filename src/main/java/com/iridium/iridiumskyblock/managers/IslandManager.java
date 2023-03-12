@@ -1052,6 +1052,7 @@ public class IslandManager {
      */
     private void recalculateIsland(@NotNull Island island, @NotNull List<Chunk> chunks, CompletableFuture<Void> ret) {
         ListIterator<Chunk> iterator = new ArrayList<>(chunks).listIterator();
+        int delay = IridiumSkyblock.getInstance().getConfiguration().tickPerRecalculationStep;
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -1095,7 +1096,7 @@ public class IslandManager {
                     }
                 }
             }
-        }.runTaskTimer(IridiumSkyblock.getInstance(), 1, 1);
+        }.runTaskTimer(IridiumSkyblock.getInstance(), delay, delay);
     }
 
     private void getAllTileInIsland(Island island, List<Chunk> chunks) {

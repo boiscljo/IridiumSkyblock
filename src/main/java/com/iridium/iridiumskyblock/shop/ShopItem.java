@@ -19,6 +19,7 @@ public class ShopItem {
     public String name;
     public String displayName;
     public ObsidianMaterial type;
+    public Integer customModelData;
     public List<String> lore;
     public String command;
     public int defaultAmount;
@@ -46,6 +47,7 @@ public class ShopItem {
         this.slot = slot;
         this.buyCost = buyCost;
         this.sellReward = sellReward;
+        this.customModelData = null;
     }
 
     /**

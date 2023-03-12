@@ -3,6 +3,7 @@ package com.iridium.iridiumskyblock.managers;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.configs.Schematics;
 import com.iridium.iridiumskyblock.database.Island;
+import com.iridium.iridiumskyblock.schematics.FastAsyncWorldEdit;
 import com.iridium.iridiumskyblock.schematics.Schematic;
 import com.iridium.iridiumskyblock.schematics.SchematicAsync;
 import com.iridium.iridiumskyblock.schematics.SchematicPaster;
@@ -34,12 +35,18 @@ public class SchematicManager {
         availablePasters = new TreeMap<>();
         availablePasters.put("internal", new Schematic());
         availablePasters.put("internalAsync", new SchematicAsync());
-        if ((worldEdit || fawe) && WorldEdit.isWorking())
+        if ((worldEdit) && WorldEdit.isWorking())
             availablePasters.put("worldedit", new WorldEdit());
+        if ((fawe) && FastAsyncWorldEdit.isWorking())
+            availablePasters.put("fawe", new FastAsyncWorldEdit());
 
-        if ((worldEdit || fawe) && !WorldEdit.isWorking())
+        if ((worldEdit) && !WorldEdit.isWorking())
         {
             IridiumSkyblock.getInstance().getLogger().warning("WorldEdit version doesn't support minecraft version, disabling WorldEdit integration");
+        }
+        if ((fawe) && !FastAsyncWorldEdit.isWorking())
+        {
+            IridiumSkyblock.getInstance().getLogger().warning("FAWE version does not implement API correctly, did you miss an update? Disabling FAWE integration");
         }
 
         schematicPaster = availablePasters.lastEntry().getValue();

@@ -122,6 +122,7 @@ public class ShopManager {
             itemStack.setAmount(amount);
             if (shopItem.displayName != null && !shopItem.displayName.isEmpty()) {
                 ItemMeta itemMeta = itemStack.getItemMeta();
+                itemMeta.setCustomModelData(shopItem.customModelData);
                 itemMeta.setDisplayName(StringUtils.color(shopItem.displayName));
                 itemStack.setItemMeta(itemMeta);
             }
