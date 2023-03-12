@@ -20,6 +20,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import com.iridium.iridiumskyblock.upgrades.BlockLimitUpgrade;
+import java.util.HashMap;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -53,13 +55,14 @@ public class BlockPlaceListener implements Listener {
         int limitUpgradeLevel = IridiumSkyblock.getInstance().getIslandManager()
                 .getIslandUpgrade(island.get(), "blocklimit").getLevel();
         int blockLimit = IridiumSkyblock.getInstance().getUpgrades().blockLimitUpgrade.upgrades
-                .get(limitUpgradeLevel).limits.getOrDefault(material, 0);
+                .getOrDefault(limitUpgradeLevel, new BlockLimitUpgrade(0, 0, new HashMap<>())).limits
+                .getOrDefault(material, 0);
 
-        if (blockLimit > 0 && IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(island.get(),
+        if (blockLimit != 0 && IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(island.get(),
                 material) >= blockLimit) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().blockLimitReached
                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
-                    .replace("%limit%", String.valueOf(blockLimit))
+                    .replace("%limit%", String.valueOf(blockLimit<0?0:blockLimit))
                     .replace("%block%", WordUtils.capitalizeFully(material.name().toLowerCase().replace("_", " ")))));
             event.setCancelled(true);
         }
@@ -88,7 +91,7 @@ public class BlockPlaceListener implements Listener {
 
                         CreatureSpawner creatureSpawner = (CreatureSpawner) event.getBlock().getState();
 
-                        if(IridiumSkyblock.getInstance().getConfiguration().basicSpawnerSupport)
+                        if (IridiumSkyblock.getInstance().getConfiguration().basicSpawnerSupport)
                             try {
                                 BlockStateMeta blockStateMeta = (BlockStateMeta) event.getItemInHand().getItemMeta();
                                 CreatureSpawner creatureSpawner_ = (CreatureSpawner) blockStateMeta.getBlockState();
