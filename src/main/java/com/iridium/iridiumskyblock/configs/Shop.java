@@ -783,6 +783,7 @@ public class Shop {
                             "&9&lEnd Portal Frame",
                             "",
                             ObsidianMaterial.valueOf("END_PORTAL_FRAME"),
+                            null,
                             Arrays.asList("&5&lVisit the end!", " "),
                             null,
                             1,
