@@ -1018,7 +1018,7 @@ public class IslandManager {
 
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    if (island.isInIsland(x + (chunk.getX() * 16), z + (chunk.getZ() * 16))) {
+                    if (island.isInIsland(x + (chunk.getX() * 16), z + (chunk.getZ() * 16),world)) {
                         final int maxy = Math.min(maxHeight, chunk.getHighestBlockYAt(x, z));
                         for (int y = LocationUtils.getMinHeight(world); y <= maxy; y++) {
                             ObsidianMaterial material = ObsidianMaterial.valueOf(chunk.getBlockType(x, y, z));
@@ -1076,7 +1076,7 @@ public class IslandManager {
                     ObsidianMaterial air = ObsidianMaterial.valueOf("AIR");
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
-                            if (island.isInIsland(x + (chunk.getX() * 16), z + (chunk.getZ() * 16))) {
+                            if (island.isInIsland(x + (chunk.getX() * 16), z + (chunk.getZ() * 16),world)) {
                                 final int maxy = Math.min(maxHeight, chunk.getHighestBlockYAt(x, z));
                                 for (int y = LocationUtils.getMinHeight(world); y <= maxy; y++) {
                                     ObsidianMaterial material = ObsidianMaterial.valueOf(chunk.getBlockType(x, y, z));

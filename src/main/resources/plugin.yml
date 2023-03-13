@@ -12,6 +12,9 @@ softdepend:
   - "EssentialsSpawn"
   - "RoseStacker"
   - "WorldEdit"
+  - "FastAsyncWorldEdit"
+  - "AsyncWorldEdit"
+  - "WildStacker"
 loadbefore:
   - "Multiverse-Core"
 commands:

@@ -51,6 +51,7 @@ public class Configuration {
     public boolean dropSpawners = true;
     public boolean basicSpawnerSupport = true;
     public boolean extraDebugMessage = false;
+    public boolean respectVanilla18netherOverworldProportion=false;
     
     public IslandRegenSettings regenSettings = new IslandRegenSettings();
 

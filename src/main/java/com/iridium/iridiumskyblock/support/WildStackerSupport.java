@@ -22,8 +22,6 @@ public class WildStackerSupport implements StackerSupport {
             if (material != ObsidianMaterial.valueOf(stackedBarrel.getType())) continue;
 
             if (material == ObsidianMaterial.valueOf(stackedBarrel.getType())) {
-                stackedBlocks--;
-            } else {
                 stackedBlocks += stackedBarrel.getStackAmount();
             }
         }
