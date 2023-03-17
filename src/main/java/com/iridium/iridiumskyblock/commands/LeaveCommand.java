@@ -52,7 +52,7 @@ public class LeaveCommand extends Command {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotLeaveIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
-        new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.leaveCommand,() -> {
+        new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.islandLeave,() -> {
             UserLeaveEvent userLeaveEvent = new UserLeaveEvent(island.get(), user);
             Bukkit.getPluginManager().callEvent(userLeaveEvent);
             if (userLeaveEvent.isCancelled()) return;
