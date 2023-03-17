@@ -26,16 +26,20 @@ public class RegenCommand extends Command {
      * The default constructor.
      */
     public RegenCommand() {
-        super(Collections.singletonList("regen"), "Regenerate your Island", "%prefix% &7/is regen <schematic>", "", true, Duration.ofMinutes(5));
+        super(Collections.singletonList("regen"), "Regenerate your Island", "%prefix% &7/is regen <schematic>", "",
+                true, Duration.ofMinutes(5));
     }
 
     /**
-     * Executes the command for the specified {@link CommandSender} with the provided arguments.
-     * Not called when the command execution was invalid (no permission, no player or command disabled).
+     * Executes the command for the specified {@link CommandSender} with the
+     * provided arguments.
+     * Not called when the command execution was invalid (no permission, no player
+     * or command disabled).
      * Resets the Island of a user.
      *
      * @param sender The CommandSender which executes this command
-     * @param args   The arguments used with this command. They contain the sub-command
+     * @param args   The arguments used with this command. They contain the
+     *               sub-command
      */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -43,13 +47,16 @@ public class RegenCommand extends Command {
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
         Optional<Island> island = user.getIsland();
         if (!island.isPresent()) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIsland
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
         if (args.length == 1) {
-            if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(), IridiumSkyblock.getInstance().getUserManager().getUser(player), PermissionType.REGEN)) {
-                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotRegenIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(),
+                    IridiumSkyblock.getInstance().getUserManager().getUser(player), PermissionType.REGEN)) {
+                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotRegenIsland
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;
             }
 
@@ -57,19 +64,21 @@ public class RegenCommand extends Command {
             return false;
         }
 
-        Optional<Schematics.SchematicConfig> schematicConfig = IridiumSkyblock.getInstance().getSchematics().schematics.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(args[1])).map(Map.Entry::getValue).findFirst();
+        Optional<Schematics.SchematicConfig> schematicConfig = IridiumSkyblock.getInstance().getSchematics().schematics
+                .entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(args[1])).map(Map.Entry::getValue)
+                .findFirst();
         if (!schematicConfig.isPresent()) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().unknownSchematic.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().unknownSchematic
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
+        new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.islandRegen, () -> {
 
-        player.openInventory(new ConfirmationGUI(() -> 
-        {
-            IridiumSkyblock.getInstance().getIslandManager().regenerateIsland(island.get(), user, schematicConfig.get());
-            
-        },getCooldownProvider()).getInventory());
+            IridiumSkyblock.getInstance().getIslandManager().regenerateIsland(island.get(), user,
+                    schematicConfig.get());
 
-        
+        }, getCooldownProvider()).open(player);
+
         return true;
     }
 
@@ -83,7 +92,8 @@ public class RegenCommand extends Command {
      * @return The list of tab completions for this command
      */
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         return new ArrayList<>(IridiumSkyblock.getInstance().getSchematics().schematics.keySet());
     }
 

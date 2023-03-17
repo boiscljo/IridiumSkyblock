@@ -61,6 +61,7 @@ public class Configuration {
     public IslandDamageSettings pvpSettings = new IslandDamageSettings();
 
     public PerformanceSettings performance = new PerformanceSettings();
+    public ConfirmationSettings confirmation = new ConfirmationSettings();
 
     public int distance = 151;
     public int islandRecalculateInterval = 5;
@@ -203,6 +204,19 @@ public class Configuration {
         public boolean disableSpawnerEntitySpawnCheck = false;
         public boolean disableEntityTargettingCheck = false;
         public boolean disableLeavesDecayCheck = false;
+    }
+
+     /**
+     * The default settings for island delete.
+     */
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ConfirmationSettings {
+        public boolean islandRegen = true;
+        public boolean warpDeletion = true;
+        public boolean clearData = true;
+        public boolean islandDelete=true;
+        public boolean islandLeave=true;
     }
 
     @AllArgsConstructor
