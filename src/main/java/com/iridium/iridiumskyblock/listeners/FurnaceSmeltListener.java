@@ -15,6 +15,8 @@ public class FurnaceSmeltListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void monitorFurnaceSmelt(FurnaceSmeltEvent event) {
+        if (IridiumSkyblock.getInstance().getConfiguration().performance.disableFurnaceCheck) return;
+
         Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getBlock().getLocation());
         ObsidianMaterial material = ObsidianMaterial.valueOf(event.getSource().getType());
 

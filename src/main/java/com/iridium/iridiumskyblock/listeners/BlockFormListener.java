@@ -32,6 +32,7 @@ public class BlockFormListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         if (!IridiumSkyblockAPI.getInstance().isIslandWorld(event.getBlock().getWorld())) return;
+        if (IridiumSkyblock.getInstance().getConfiguration().performance.disableGenerator) return;
 
         ObsidianMaterial newMaterial = ObsidianMaterial.valueOf(event.getNewState().getType());
         // Custom basalt generators should only work in nether

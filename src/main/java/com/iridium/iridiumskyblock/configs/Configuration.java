@@ -59,6 +59,8 @@ public class Configuration {
 
     public IslandDamageSettings pvpSettings = new IslandDamageSettings();
 
+    public PerformanceSettings performance = new PerformanceSettings();
+
     public int distance = 151;
     public int islandRecalculateInterval = 5;
     public int chunkPerTickRecalculation = 1;
@@ -180,6 +182,26 @@ public class Configuration {
         public boolean clearEnderChests = false;
         public boolean resetVaultBalances = false;
 
+    }
+
+    /**
+     * The default settings for island delete.
+     */
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PerformanceSettings {
+        public boolean disableWaterCheck = false;
+        public boolean disableIslandRecalculationTimer = false;
+        public boolean disableGrowth = false;
+        public boolean disablePiston = false;
+        public boolean disableSpread = false;
+        public boolean disableGenerator = false;
+        public boolean disableEndermanCheck = false;
+        public boolean disableEntitySpawnCheck = false;
+        public boolean disableFurnaceCheck = false;
+        public boolean disableSpawnerEntitySpawnCheck = false;
+        public boolean disableEntityTargettingCheck = false;
+        public boolean disableLeavesDecayCheck = false;
     }
 
     @AllArgsConstructor

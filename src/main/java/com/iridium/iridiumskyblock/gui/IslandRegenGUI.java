@@ -10,6 +10,7 @@ import com.iridium.iridiumskyblock.managers.CooldownProvider;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -56,7 +57,7 @@ public class IslandRegenGUI extends SchematicGUI {
                         } else {
                             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotAfford.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                         }
-                    }, getCooldownProvider()).getInventory());
+                    }, cooldownProvider).getInventory());
                 }
             }.runTaskLater(IridiumSkyblock.getInstance(), 1);
         } else {
