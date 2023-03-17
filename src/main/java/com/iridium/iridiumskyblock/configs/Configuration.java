@@ -52,6 +52,7 @@ public class Configuration {
     public boolean basicSpawnerSupport = true;
     public boolean extraDebugMessage = false;
     public boolean respectVanilla18netherOverworldProportion=false;
+    public boolean forceNetherGeneratorInNether=true;
     
     public IslandRegenSettings regenSettings = new IslandRegenSettings();
 
