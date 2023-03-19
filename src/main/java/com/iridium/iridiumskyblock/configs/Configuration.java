@@ -51,7 +51,7 @@ public class Configuration {
     public boolean dropSpawners = true;
     public boolean basicSpawnerSupport = true;
     public boolean extraDebugMessage = false;
-    public boolean respectVanilla18netherOverworldProportion=false;
+    public boolean respectNetherRatio=false;
     public boolean forceNetherGeneratorInNether=true;
     
     public IslandRegenSettings regenSettings = new IslandRegenSettings();
@@ -61,7 +61,7 @@ public class Configuration {
     public IslandDamageSettings pvpSettings = new IslandDamageSettings();
 
     public PerformanceSettings performance = new PerformanceSettings();
-    
+
     public ConfirmationSettings confirmation = new ConfirmationSettings();
 
     public int distance = 151;

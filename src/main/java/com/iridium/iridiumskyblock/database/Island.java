@@ -350,7 +350,7 @@ public final class Island extends DatabaseObject {
             default:
                 throw new IllegalStateException("Could not find island location with ID: " + id);
         }
-        if(IridiumSkyblock.getInstance().getConfiguration().respectVanilla18netherOverworldProportion && world.getEnvironment() != Environment.NETHER)
+        if(IridiumSkyblock.getInstance().getConfiguration().respectNetherRatio && world.getEnvironment() != Environment.NETHER)
             location = location.multiply(8);
         return location.multiply(IridiumSkyblock.getInstance().getConfiguration().distance);
     }
