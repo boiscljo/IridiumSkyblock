@@ -150,7 +150,7 @@ public class IridiumSkyblock extends IridiumCore {
     @Override
     public void onEnable() {
         super.onEnable();
-
+        
         // Convert old IridiumSkyblock data
         DataConverter.copyLegacyData();
 
@@ -194,7 +194,8 @@ public class IridiumSkyblock extends IridiumCore {
 
         // Auto recalculate islands
         // 3.2.11, moved into loadConfigs()
-        //this.createRecalcTimer();
+        createRecalcTimer();
+        // this.createRecalcTimer();
 
         // Automatically update all inventories
         Bukkit.getScheduler().runTaskTimer(this, () -> Bukkit.getServer().getOnlinePlayers().forEach(player -> {
@@ -228,43 +229,50 @@ public class IridiumSkyblock extends IridiumCore {
     }
 
     private void createRecalcTimer() {
+        if (this.islandManager==null) return;
         if (this.islandRecalcTimer != null) {
             this.islandRecalcTimer.cancel();
             this.islandRecalcTimer = null;
         }
         if (getConfiguration().islandRecalculateInterval > 0) {
-            this.islandRecalcTimer = (new BukkitRunnable() {
-                ListIterator<Integer> islands = getDatabaseManager().getIslandTableManager().getEntries().stream()
-                        .map(Island::getId).collect(Collectors.toList()).listIterator();
-                long start = 0;
-
-                @Override
+            new BukkitRunnable() {
                 public void run() {
-                    if (getConfiguration().performance.disableIslandRecalculationTimer)
-                        return;
-                    islands = getDatabaseManager().getIslandTableManager().getEntries().stream().map(Island::getId)
-                            .collect(Collectors.toList()).listIterator();
-                    if (islands.hasNext()) {
-                        start = System.currentTimeMillis();
-                        runOnce();
-                    }
-                }
+                    IridiumSkyblock.this.islandRecalcTimer = (new BukkitRunnable() {
+                        ListIterator<Integer> islands = getDatabaseManager().getIslandTableManager().getEntries()
+                                .stream()
+                                .map(Island::getId).collect(Collectors.toList()).listIterator();
+                        long start = 0;
 
-                public void runOnce() {
-                    if (islands.hasNext()) {
-                        getIslandManager().getIslandById(islands.next())
-                                .ifPresent(island -> {
-                                    getIslandManager().recalculateIslandAsync(island).thenRun(() -> {
-                                        runOnce();
-                                    });
-                                });
-                    } else {
-                        if (IridiumSkyblock.getInstance().getConfiguration().extraDebugMessage)
-                            IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "
-                                    + (System.currentTimeMillis() - start) + " milliseconds");
-                    }
+                        @Override
+                        public void run() {
+                            if (getConfiguration().performance.disableIslandRecalculationTimer)
+                                return;
+                            islands = getDatabaseManager().getIslandTableManager().getEntries().stream()
+                                    .map(Island::getId)
+                                    .collect(Collectors.toList()).listIterator();
+                            if (islands.hasNext()) {
+                                start = System.currentTimeMillis();
+                                runOnce();
+                            }
+                        }
+
+                        public void runOnce() {
+                            if (islands.hasNext()) {
+                                getIslandManager().getIslandById(islands.next())
+                                        .ifPresent(island -> {
+                                            getIslandManager().recalculateIslandAsync(island).thenRun(() -> {
+                                                runOnce();
+                                            });
+                                        });
+                            } else {
+                                if (IridiumSkyblock.getInstance().getConfiguration().extraDebugMessage)
+                                    IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "
+                                            + (System.currentTimeMillis() - start) + " milliseconds");
+                            }
+                        }
+                    }).runTaskTimer(IridiumSkyblock.this, 0, getConfiguration().islandRecalculateInterval * 60 * 20L);
                 }
-            }).runTaskTimer(this, 0, getConfiguration().islandRecalculateInterval * 60 * 20L);
+            }.runTaskLater(this, 20);
         }
     }
 

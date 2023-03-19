@@ -61,6 +61,7 @@ public class Configuration {
     public IslandDamageSettings pvpSettings = new IslandDamageSettings();
 
     public PerformanceSettings performance = new PerformanceSettings();
+    
     public ConfirmationSettings confirmation = new ConfirmationSettings();
 
     public int distance = 151;
