@@ -78,6 +78,7 @@ public class Configuration {
     public Item islandCrystal = new Item(ObsidianMaterial.valueOf("NETHER_STAR"), 1, "&b*** &b&lIsland Crystal &b***", Arrays.asList("", "&b%amount% Island Crystals", "&b&l[!] &bRight-Click to Redeem"));
 
     public XSound islandLevelUpSound = XSound.ENTITY_PLAYER_LEVELUP;
+    public MissionSortBy sortMissionsBy = MissionSortBy.KEY;
 
     public NumberFormatter numberFormatter = new NumberFormatter();
 
@@ -131,6 +132,10 @@ public class Configuration {
             .build();
     
 
+    public enum MissionSortBy
+    {
+        KEY,DISPLAYNAME,SLOT,FILE
+    }
     /**
      * Settings for the {@link org.bukkit.generator.ChunkGenerator} of IridiumSkyblock.
      * Allows fine-tuning of the {@link com.iridium.iridiumskyblock.generators.OceanGenerator}.
