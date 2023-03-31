@@ -4,10 +4,14 @@ import com.iridium.iridiumcore.utils.Placeholder;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandUpgrade;
 import com.iridium.iridiumskyblock.database.User;
+import com.iridium.iridiumskyblock.placeholders.Placeholders;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.bukkit.entity.Player;
 
 public class PlaceholderBuilder {
     private final List<Placeholder> placeholderList = new ArrayList<>();
@@ -16,16 +20,29 @@ public class PlaceholderBuilder {
         placeholderList.add(new Placeholder("prefix", IridiumSkyblock.getInstance().getConfiguration().prefix));
     }
 
+    private static class PlaceholderAdapter extends Placeholder
+    {
+        private com.iridium.iridiumskyblock.placeholders.Placeholders.Placeholder placeholder;
+        public PlaceholderAdapter(String key, Placeholders.Placeholder value) {
+            super(key, null);
+            this.placeholder = value;
+        }
+        @Override
+        public String process(String line) {
+            return new Placeholder(getKey(), placeholder.placeholderProcess(null)).process(line);
+        }
+        
+    }
     public PlaceholderBuilder applyIslandPlaceholders(Island island) {
         IslandUpgrade islandUpgrade = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(island, "member");
         int memberLimit = IridiumSkyblock.getInstance().getUpgrades().memberUpgrade.upgrades.get(islandUpgrade.getLevel()).amount;
-        placeholderList.add(new Placeholder("island_name", island.getName()));
-        placeholderList.add(new Placeholder("island_owner", island.getOwner().getName()));
-        placeholderList.add(new Placeholder("island_value", IridiumSkyblock.getInstance().getNumberFormatter().format(island.getValue())));
-        placeholderList.add(new Placeholder("island_rank", IridiumSkyblock.getInstance().getNumberFormatter().format(island.getRank())));
-        placeholderList.add(new Placeholder("island_members", IridiumSkyblock.getInstance().getNumberFormatter().format(island.getMembers().size())));
+
+        placeholderList.addAll(Placeholders.getIslandPlaceholders("island", new Placeholders.IslandGetter(){
+            @Override
+            public Optional<Island> getIsland(Player player) {
+               return Optional.ofNullable(island);    }
+        }).entrySet().stream().map(p->new PlaceholderAdapter(p.getKey(),p.getValue())).toList());
         placeholderList.add(new Placeholder("island_members_limit", IridiumSkyblock.getInstance().getNumberFormatter().format(memberLimit)));
-        placeholderList.add(new Placeholder("island_level", IridiumSkyblock.getInstance().getNumberFormatter().format(island.getLevel())));
         placeholderList.add(new Placeholder("island_create", island.getCreateTime().format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
 
         IridiumSkyblock.getInstance().getBlockValues().blockValues.keySet().stream()
@@ -40,9 +57,12 @@ public class PlaceholderBuilder {
 
     public PlaceholderBuilder applyPlayerPlaceholders(User user) {
         placeholderList.add(new Placeholder("player_name", user.getName()));
-        placeholderList.add(new Placeholder("has_island", user.getIsland().isPresent() ? IridiumSkyblock.getInstance().getMessages().yes : IridiumSkyblock.getInstance().getMessages().no));
+        placeholderList.add(new Placeholder("has_island",
+                user.getIsland().isPresent() ? IridiumSkyblock.getInstance().getMessages().yes
+                        : IridiumSkyblock.getInstance().getMessages().no));
         placeholderList.add(new Placeholder("player_rank", user.getIslandRank().getDisplayName()));
-        placeholderList.add(new Placeholder("player_join", user.getJoinTime().format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
+        placeholderList.add(new Placeholder("player_join", user.getJoinTime()
+                .format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
         return this;
     }
 

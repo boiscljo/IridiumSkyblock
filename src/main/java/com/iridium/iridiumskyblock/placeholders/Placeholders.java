@@ -37,7 +37,7 @@ public class Placeholders {
             .putAll(getIslandTopPlaceholders())
             .build();
 
-    private static Map<String, Placeholder> getIslandPlaceholders(String startKey, IslandGetter islandGetter) {
+    public static Map<String, Placeholder> getIslandPlaceholders(String startKey, IslandGetter islandGetter) {
         ImmutableMap.Builder<String, Placeholder> placeholderBuilder = ImmutableMap.<String, Placeholder>builder()
                 .put(startKey + "_name", player ->
                         islandGetter.getIsland(player).map(Island::getName).orElse(placeholdersConfig.islandName)
