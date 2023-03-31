@@ -45,7 +45,7 @@ public class RewardsCommand extends Command {
         }
 
         Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons ? player.getOpenInventory().getTopInventory() : null;
-        player.openInventory(new IslandRewardsGUI(island.get(), previousInventory).getInventory());
+        player.openInventory(new IslandRewardsGUI(player,island.get(), previousInventory).getInventory());
         return true;
     }
 

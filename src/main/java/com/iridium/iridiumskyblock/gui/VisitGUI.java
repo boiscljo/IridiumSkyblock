@@ -8,7 +8,11 @@ import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
+
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -23,8 +27,10 @@ import java.util.stream.Collectors;
 public class VisitGUI extends PagedGUI<Island> {
 
     private final User viewer;
+    @Getter
+    private Player player;
 
-    public VisitGUI(User viewer, Inventory previousInventory) {
+    public VisitGUI(Player player,User viewer, Inventory previousInventory) {
         super(1,
                 IridiumSkyblock.getInstance().getInventories().visitGUI.size,
                 IridiumSkyblock.getInstance().getInventories().visitGUI.background,
@@ -33,6 +39,7 @@ public class VisitGUI extends PagedGUI<Island> {
                 previousInventory,
                 IridiumSkyblock.getInstance().getInventories().backButton
         );
+        this.player = player;
         this.viewer = viewer;
     }
 
@@ -54,7 +61,7 @@ public class VisitGUI extends PagedGUI<Island> {
 
     @Override
     public ItemStack getItemStack(Island island) {
-        return ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().visitGUI.item, new PlaceholderBuilder().applyIslandPlaceholders(island).build());
+        return ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().visitGUI.item, new PlaceholderBuilder().papi(player).applyIslandPlaceholders(island).build());
     }
 
     /**

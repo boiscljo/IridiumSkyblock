@@ -55,7 +55,7 @@ public class TrustCommand extends Command {
 
         if (args.length != 2) {
             Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons ? player.getOpenInventory().getTopInventory() : null;
-            player.openInventory(new IslandTrustedGUI(island.get(), previousInventory).getInventory());
+            player.openInventory(new IslandTrustedGUI(player,island.get(), previousInventory).getInventory());
             return true;
         }
 

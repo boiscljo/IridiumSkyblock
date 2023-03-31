@@ -9,7 +9,11 @@ import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandBan;
+
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,8 +29,10 @@ import java.util.List;
 public class IslandBansGUI extends PagedGUI<IslandBan> {
 
     private final Island island;
+    @Getter
+    private Player player;
 
-    public IslandBansGUI(Island island, Inventory previousInventory) {
+    public IslandBansGUI(Player player,Island island, Inventory previousInventory) {
         super(1,
                 IridiumSkyblock.getInstance().getInventories().bansGUI.size,
                 IridiumSkyblock.getInstance().getInventories().bansGUI.background,
@@ -35,6 +41,7 @@ public class IslandBansGUI extends PagedGUI<IslandBan> {
                 previousInventory,
                 IridiumSkyblock.getInstance().getInventories().backButton
         );
+        this.player = player;
         this.island = island;
     }
 
@@ -54,11 +61,12 @@ public class IslandBansGUI extends PagedGUI<IslandBan> {
 
     @Override
     public ItemStack getItemStack(IslandBan islandBan) {
-        List<Placeholder> placeholderList = new PlaceholderBuilder().applyPlayerPlaceholders(islandBan.getBannedUser())
+        List<Placeholder> placeholderList = new PlaceholderBuilder().applyPlayerPlaceholders(islandBan.getBannedUser()).papi(islandBan.getBannedUser().getPlayer())
                 .applyIslandPlaceholders(island)
                 .build();
         placeholderList.add(new Placeholder("ban_time", islandBan.getBanTime().format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
         placeholderList.add(new Placeholder("banned_by", islandBan.getBanner().getName()));
+        placeholderList.add(new PlaceholderBuilder.PapiPlacheolder(player));
         return ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().bansGUI.item, placeholderList);
     }
 

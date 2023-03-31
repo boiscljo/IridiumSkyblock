@@ -32,6 +32,7 @@ public class IslandRegenGUI extends SchematicGUI {
      *                         success
      */
     public IslandRegenGUI(@NotNull Player player, @NotNull CooldownProvider<CommandSender> cooldownProvider) {
+        super(player);
         this.player = player;
         this.cooldownProvider = cooldownProvider;
     }
@@ -50,7 +51,7 @@ public class IslandRegenGUI extends SchematicGUI {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.islandRegen,
+                    new ConfirmationGUI(player,IridiumSkyblock.getInstance().getConfiguration().confirmation.islandRegen,
                             () -> {
 
                                 if (PlayerUtils.pay(player, island.get(), regenSettings.crystalPrice,

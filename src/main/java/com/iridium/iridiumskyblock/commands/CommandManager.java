@@ -104,7 +104,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 Optional<Island> island = user.getIsland();
                 if (island.isPresent()) {
                     if (IridiumSkyblock.getInstance().getConfiguration().islandMenu) {
-                        player.openInventory(new InventoryConfigGUI(IridiumSkyblock.getInstance().getInventories().islandMenu, player.getOpenInventory().getTopInventory()).getInventory());
+                        player.openInventory(new InventoryConfigGUI(player,IridiumSkyblock.getInstance().getInventories().islandMenu, player.getOpenInventory().getTopInventory()).getInventory());
                     } else {
                         IridiumSkyblock.getInstance().getCommands().helpCommand.execute(player, new String[]{});
                     }

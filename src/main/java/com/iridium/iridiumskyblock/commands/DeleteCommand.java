@@ -76,7 +76,7 @@ public class DeleteCommand extends Command {
                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
-       new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.islandDelete,
+       new ConfirmationGUI(player,IridiumSkyblock.getInstance().getConfiguration().confirmation.islandDelete,
                     () -> IridiumSkyblock.getInstance().getIslandManager().deleteIsland(island.get(), user),
                     getCooldownProvider()).open(player);
         // Always return false because the cooldown is set by the ConfirmationGUI

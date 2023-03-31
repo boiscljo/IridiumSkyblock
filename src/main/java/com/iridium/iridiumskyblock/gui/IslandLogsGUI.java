@@ -10,6 +10,8 @@ import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.LogInventoryConfig;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandLog;
+
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -42,8 +44,8 @@ public class IslandLogsGUI extends IslandGUI {
      *
      * @param island The Island this GUI belongs to
      */
-    public IslandLogsGUI(@NotNull Island island, Inventory previousInventory) {
-        super(IridiumSkyblock.getInstance().getInventories().logsGUI, previousInventory, island);
+    public IslandLogsGUI(Player player,@NotNull Island island, Inventory previousInventory) {
+        super(player,IridiumSkyblock.getInstance().getInventories().logsGUI, previousInventory, island);
     }
 
     @Override
@@ -62,12 +64,12 @@ public class IslandLogsGUI extends IslandGUI {
         setItemStack(inventory, logInventoryConfig.IslandRewards, rewardsPage, LogAction.REWARD_REDEEMED);
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 
     public void setItemStack(Inventory inventory, Item item, int page, LogAction... logActions) {
-        ItemStack itemStack = ItemStackUtils.makeItem(item, new PlaceholderBuilder().applyIslandPlaceholders(getIsland()).build());
+        ItemStack itemStack = ItemStackUtils.makeItem(item, new PlaceholderBuilder().papi(getPlayer()).applyIslandPlaceholders(getIsland()).build());
         ItemMeta itemMeta = itemStack.getItemMeta();
         List<String> lore = new ArrayList<>();
 

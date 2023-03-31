@@ -6,6 +6,7 @@ import com.iridium.iridiumcore.utils.Placeholder;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.PermissionType;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.Setting;
 import com.iridium.iridiumskyblock.SettingType;
 import com.iridium.iridiumskyblock.api.IslandSettingChangeEvent;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,8 +35,8 @@ public class IslandSettingsGUI extends IslandGUI {
      *
      * @param island The Island this GUI belongs to
      */
-    public IslandSettingsGUI(@NotNull Island island, Inventory previousInventory) {
-        super(IridiumSkyblock.getInstance().getInventories().islandSettingsGUI, previousInventory, island);
+    public IslandSettingsGUI(Player player,@NotNull Island island, Inventory previousInventory) {
+        super(player,IridiumSkyblock.getInstance().getInventories().islandSettingsGUI, previousInventory, island);
     }
 
     @Override
@@ -46,11 +48,11 @@ public class IslandSettingsGUI extends IslandGUI {
             if (!setting.getValue().isModifiable()) continue;
 
             IslandSetting islandSetting = IridiumSkyblock.getInstance().getIslandManager().getIslandSetting(getIsland(), setting.getKey(), setting.getValue().getDefaultValue());
-            inventory.setItem(setting.getValue().getItem().slot, ItemStackUtils.makeItem(setting.getValue().getItem(), Collections.singletonList(new Placeholder("value", WordUtils.capitalize(islandSetting.getValue().toLowerCase().replace("_", " "))))));
+            inventory.setItem(setting.getValue().getItem().slot, ItemStackUtils.makeItem(setting.getValue().getItem(), List.of(new PlaceholderBuilder.PapiPlacheolder(getPlayer()),new Placeholder("value", WordUtils.capitalize(islandSetting.getValue().toLowerCase().replace("_", " "))))));
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 

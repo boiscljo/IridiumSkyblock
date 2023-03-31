@@ -4,6 +4,7 @@ import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.shop.ShopCategory;
 import com.iridium.iridiumskyblock.shop.ShopItem;
 import org.bukkit.Bukkit;
@@ -30,8 +31,8 @@ public class ShopCategoryGUI extends GUI {
      *
      * @param category The category whose items should be displayed in this GUI
      */
-    public ShopCategoryGUI(ShopCategory category, Inventory previousInventory) {
-        super(previousInventory);
+    public ShopCategoryGUI(Player player,ShopCategory category, Inventory previousInventory) {
+        super(player,previousInventory);
         this.category = category;
     }
 
@@ -78,7 +79,7 @@ public class ShopCategoryGUI extends GUI {
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 
@@ -144,6 +145,7 @@ public class ShopCategoryGUI extends GUI {
 
         IridiumSkyblock.getInstance().getShop().shopItemLore.stream()
                 .map(StringUtils::color)
+                .map(str->StringUtils.processMultiplePlaceholders(str,new PlaceholderBuilder().papi(getPlayer()).build()))
                 .forEach(line -> lore.add(
                         line.replace("%amount%", String.valueOf(item.defaultAmount))
                 ));

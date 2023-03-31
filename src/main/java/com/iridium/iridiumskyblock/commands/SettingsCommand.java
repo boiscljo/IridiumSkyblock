@@ -43,7 +43,7 @@ public class SettingsCommand extends Command {
             return false;
         }
 
-        player.openInventory(new IslandSettingsGUI(island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+        player.openInventory(new IslandSettingsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
         return true;
     }
 

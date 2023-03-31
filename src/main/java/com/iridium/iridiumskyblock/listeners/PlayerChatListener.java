@@ -27,7 +27,7 @@ public class PlayerChatListener implements Listener {
             for (User islandUser : island.get().getMembers()) {
                 Player recipient = Bukkit.getPlayer(islandUser.getUuid());
                 if (recipient != null) {
-                    recipient.sendMessage(StringUtils.color(StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandMemberChat, new PlaceholderBuilder().applyIslandPlaceholders(island.get()).build())
+                    recipient.sendMessage(StringUtils.color(StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandMemberChat, new PlaceholderBuilder().papi( event.getPlayer()).applyIslandPlaceholders(island.get()).build())
                             .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
                             .replace("%player%", event.getPlayer().getName())
                             .replace("%message%", event.getMessage()))
@@ -39,7 +39,7 @@ public class PlayerChatListener implements Listener {
                 User onlineUser = IridiumSkyblockAPI.getInstance().getUser(player);
 
                 if (onlineUser.isIslandChatSpying()) {
-                    player.sendMessage(StringUtils.color(StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandChatSpyMessage, new PlaceholderBuilder().applyIslandPlaceholders(island.get()).build())
+                    player.sendMessage(StringUtils.color(StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandChatSpyMessage, new PlaceholderBuilder().papi( event.getPlayer()).applyIslandPlaceholders(island.get()).build())
                             .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
                             .replace("%island%", island.get().getName())
                             .replace("%player%", event.getPlayer().getName())

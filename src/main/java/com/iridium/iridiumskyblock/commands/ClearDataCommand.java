@@ -39,7 +39,7 @@ public class ClearDataCommand extends Command {
 
         Player player = (Player) sender;
 
-        new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.warpDeletion,() -> execute(player), getCooldownProvider()).open(player);
+        new ConfirmationGUI(player,IridiumSkyblock.getInstance().getConfiguration().confirmation.warpDeletion,() -> execute(player), getCooldownProvider()).open(player);
 
         // Return false because the cooldown is set by the ConfirmationGUI
         return false;

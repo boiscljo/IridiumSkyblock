@@ -4,8 +4,10 @@ import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.biomes.BiomeCategory;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +17,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BiomeOverviewGUI extends GUI {
 
-    public BiomeOverviewGUI(Inventory previousInventory) {
-        super(previousInventory);
+    private Player player;
+
+    public BiomeOverviewGUI(Player player,Inventory previousInventory) {
+        super(player,previousInventory);
+        this.player = player;
     }
 
     /**
@@ -44,11 +49,11 @@ public class BiomeOverviewGUI extends GUI {
         InventoryUtils.fillInventory(inventory, IridiumSkyblock.getInstance().getBiomes().overviewBackground);
 
         for (BiomeCategory category : IridiumSkyblock.getInstance().getBiomesManager().getCategories()) {
-            inventory.setItem(category.item.slot, ItemStackUtils.makeItem(category.item));
+            inventory.setItem(category.item.slot, ItemStackUtils.makeItem(category.item,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 

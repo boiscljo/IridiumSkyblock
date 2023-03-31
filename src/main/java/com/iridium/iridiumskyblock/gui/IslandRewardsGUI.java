@@ -8,6 +8,9 @@ import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandReward;
+
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,8 +23,10 @@ import java.util.Collection;
 public class IslandRewardsGUI extends PagedGUI<IslandReward> {
 
     private final Island island;
+    @Getter
+    private Player player;
 
-    public IslandRewardsGUI(Island island, Inventory previousInventory) {
+    public IslandRewardsGUI(Player player,Island island, Inventory previousInventory) {
         super(1,
                 IridiumSkyblock.getInstance().getInventories().islandReward.size,
                 IridiumSkyblock.getInstance().getInventories().islandReward.background,
@@ -30,6 +35,7 @@ public class IslandRewardsGUI extends PagedGUI<IslandReward> {
                 previousInventory,
                 IridiumSkyblock.getInstance().getInventories().backButton
         );
+        this.player = player;
         this.island = island;
     }
 
@@ -50,6 +56,7 @@ public class IslandRewardsGUI extends PagedGUI<IslandReward> {
     @Override
     public ItemStack getItemStack(IslandReward islandReward) {
         return ItemStackUtils.makeItem(islandReward.getReward().item, new PlaceholderBuilder()
+                .papi(getPlayer())
                 .applyIslandPlaceholders(island)
                 .build()
         );

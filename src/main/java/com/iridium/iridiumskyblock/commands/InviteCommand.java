@@ -58,7 +58,7 @@ public class InviteCommand extends Command {
             Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons
                     ? player.getOpenInventory().getTopInventory()
                     : null;
-            player.openInventory(new IslandInvitesGUI(island.get(), previousInventory).getInventory());
+            player.openInventory(new IslandInvitesGUI(player,island.get(), previousInventory).getInventory());
             return true;
         }
 

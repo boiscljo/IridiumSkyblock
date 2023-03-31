@@ -6,6 +6,8 @@ import com.iridium.iridiumskyblock.database.IslandUpgrade;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.placeholders.Placeholders;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,38 +22,72 @@ public class PlaceholderBuilder {
         placeholderList.add(new Placeholder("prefix", IridiumSkyblock.getInstance().getConfiguration().prefix));
     }
 
-    private static class PlaceholderAdapter extends Placeholder
-    {
+    private static class PlaceholderAdapter extends Placeholder {
         private com.iridium.iridiumskyblock.placeholders.Placeholders.Placeholder placeholder;
+
         public PlaceholderAdapter(String key, Placeholders.Placeholder value) {
             super(key, null);
             this.placeholder = value;
         }
+
         @Override
         public String process(String line) {
             return new Placeholder(getKey(), placeholder.placeholderProcess(null)).process(line);
         }
-        
-    }
-    public PlaceholderBuilder applyIslandPlaceholders(Island island) {
-        IslandUpgrade islandUpgrade = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(island, "member");
-        int memberLimit = IridiumSkyblock.getInstance().getUpgrades().memberUpgrade.upgrades.get(islandUpgrade.getLevel()).amount;
 
-        placeholderList.addAll(Placeholders.getIslandPlaceholders("island", new Placeholders.IslandGetter(){
+    }
+
+    public PlaceholderBuilder applyIslandPlaceholders(Island island) {
+        IslandUpgrade islandUpgrade = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(island,
+                "member");
+        int memberLimit = IridiumSkyblock.getInstance().getUpgrades().memberUpgrade.upgrades
+                .get(islandUpgrade.getLevel()).amount;
+
+        placeholderList.addAll(Placeholders.getIslandPlaceholders("island", new Placeholders.IslandGetter() {
             @Override
             public Optional<Island> getIsland(Player player) {
-               return Optional.ofNullable(island);    }
-        }).entrySet().stream().map(p->new PlaceholderAdapter(p.getKey(),p.getValue())).toList());
-        placeholderList.add(new Placeholder("island_members_limit", IridiumSkyblock.getInstance().getNumberFormatter().format(memberLimit)));
-        placeholderList.add(new Placeholder("island_create", island.getCreateTime().format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
+                return Optional.ofNullable(island);
+            }
+        }).entrySet().stream().map(p -> new PlaceholderAdapter(p.getKey(), p.getValue())).toList());
+        placeholderList.add(new Placeholder("island_members_limit",
+                IridiumSkyblock.getInstance().getNumberFormatter().format(memberLimit)));
+        placeholderList.add(new Placeholder("island_create", island.getCreateTime()
+                .format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
 
         IridiumSkyblock.getInstance().getBlockValues().blockValues.keySet().stream()
-                .map(material -> new Placeholder(material.name() + "_AMOUNT", IridiumSkyblock.getInstance().getNumberFormatter().format(IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(island, material))))
+                .map(material -> new Placeholder(material.name() + "_AMOUNT",
+                        IridiumSkyblock.getInstance().getNumberFormatter()
+                                .format(IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(island,
+                                        material))))
                 .forEach(placeholderList::add);
 
         IridiumSkyblock.getInstance().getBlockValues().spawnerValues.keySet().stream()
-                .map(entity -> new Placeholder(entity.name() + "_AMOUNT", IridiumSkyblock.getInstance().getNumberFormatter().format(IridiumSkyblock.getInstance().getIslandManager().getIslandSpawnerAmount(island, entity))))
+                .map(entity -> new Placeholder(entity.name() + "_AMOUNT",
+                        IridiumSkyblock.getInstance().getNumberFormatter()
+                                .format(IridiumSkyblock.getInstance().getIslandManager().getIslandSpawnerAmount(island,
+                                        entity))))
                 .forEach(placeholderList::add);
+        return this;
+    }
+
+    public static class PapiPlacheolder extends Placeholder {
+
+        private Player player;
+
+        public PapiPlacheolder(Player p) {
+            super("papi", null);
+            this.player = p;
+        }
+
+        @Override
+        public String process(String line) {
+            return PlaceholderAPI.setPlaceholders(player, line);
+        }
+
+    }
+
+    public PlaceholderBuilder papi(Player p) {
+        placeholderList.add(new PapiPlacheolder(p));
         return this;
     }
 

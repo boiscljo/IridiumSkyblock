@@ -78,7 +78,7 @@ public class DeleteWarpCommand extends Command {
         player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().deletingWarp
                 .replace("%name%", islandWarp.get().getName())
                 .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-        new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.warpDeletion,() -> {
+        new ConfirmationGUI(player,IridiumSkyblock.getInstance().getConfiguration().confirmation.warpDeletion,() -> {
                 IridiumSkyblock.getInstance().getDatabaseManager().getIslandWarpTableManager().delete(islandWarp.get());
             }, getCooldownProvider()).open(player);
 

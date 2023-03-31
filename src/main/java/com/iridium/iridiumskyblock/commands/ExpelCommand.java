@@ -52,7 +52,7 @@ public class ExpelCommand extends Command {
 
         if (args.length == 1) {
             Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons ? player.getOpenInventory().getTopInventory() : null;
-            player.openInventory(new IslandVisitorsGUI(island.get(), previousInventory).getInventory());
+            player.openInventory(new IslandVisitorsGUI(player,island.get(), previousInventory).getInventory());
             return true;
         }
 

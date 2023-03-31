@@ -6,8 +6,11 @@ import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.Placeholder;
 import com.iridium.iridiumskyblock.Booster;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandBooster;
+
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +30,8 @@ public class IslandBoostersGUI extends IslandGUI {
      *
      * @param island The Island this GUI belongs to
      */
-    public IslandBoostersGUI(@NotNull Island island, Inventory previousInventory) {
-        super(IridiumSkyblock.getInstance().getInventories().boostersGUI, previousInventory, island);
+    public IslandBoostersGUI(Player player,@NotNull Island island, Inventory previousInventory) {
+        super(player,IridiumSkyblock.getInstance().getInventories().boostersGUI, previousInventory, island);
     }
 
     @Override
@@ -42,6 +45,7 @@ public class IslandBoostersGUI extends IslandGUI {
             long minutes = LocalDateTime.now().until(islandBooster.getTime(), ChronoUnit.MINUTES);
             long seconds = LocalDateTime.now().until(islandBooster.getTime(), ChronoUnit.SECONDS) - minutes * 60;
             inventory.setItem(item.slot, ItemStackUtils.makeItem(item, Arrays.asList(
+                    new PlaceholderBuilder.PapiPlacheolder(getPlayer()),
                     new Placeholder("timeremaining_minutes", String.valueOf(Math.max(minutes, 0))),
                     new Placeholder("timeremaining_seconds", String.valueOf(Math.max(seconds, 0))),
                     new Placeholder("crystalcost", IridiumSkyblock.getInstance().getNumberFormatter().format(entry.getValue().crystalsCost)),
@@ -50,7 +54,7 @@ public class IslandBoostersGUI extends IslandGUI {
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 

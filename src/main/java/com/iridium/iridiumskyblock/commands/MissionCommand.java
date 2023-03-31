@@ -47,15 +47,15 @@ public class MissionCommand extends Command {
         }
 
         if (args.length != 2) {
-            player.openInventory(new InventoryConfigGUI(IridiumSkyblock.getInstance().getInventories().missionSelectGUI, player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new InventoryConfigGUI(player,IridiumSkyblock.getInstance().getInventories().missionSelectGUI, player.getOpenInventory().getTopInventory()).getInventory());
             return true;
         }
         switch (Mission.MissionType.getMission(args[1])) {
             case ONCE:
-                player.openInventory(new IslandMissionsGUI(island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+                player.openInventory(new IslandMissionsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
                 return true;
             case DAILY:
-                player.openInventory(new DailyIslandMissionsGUI(island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+                player.openInventory(new DailyIslandMissionsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
                 return true;
             default:
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().invalidMissionType.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));

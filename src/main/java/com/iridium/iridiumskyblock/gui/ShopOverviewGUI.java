@@ -4,8 +4,10 @@ import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.shop.ShopCategory;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ShopOverviewGUI extends GUI {
 
-    public ShopOverviewGUI(Inventory previousInventory) {
-        super(previousInventory);
+    public ShopOverviewGUI(Player player,Inventory previousInventory) {
+        super(player,previousInventory);
     }
 
     /**
@@ -44,11 +46,11 @@ public class ShopOverviewGUI extends GUI {
         InventoryUtils.fillInventory(inventory, IridiumSkyblock.getInstance().getShop().overviewBackground);
 
         for (ShopCategory category : IridiumSkyblock.getInstance().getShopManager().getCategories()) {
-            inventory.setItem(category.item.slot, ItemStackUtils.makeItem(category.item));
+            inventory.setItem(category.item.slot, ItemStackUtils.makeItem(category.item,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 

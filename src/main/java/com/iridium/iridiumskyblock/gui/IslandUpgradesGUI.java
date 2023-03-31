@@ -5,9 +5,12 @@ import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.Placeholder;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.Upgrade;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.upgrades.UpgradeData;
+
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +29,8 @@ public class IslandUpgradesGUI extends IslandGUI {
      *
      * @param island The Island this GUI belongs to
      */
-    public IslandUpgradesGUI(@NotNull Island island, Inventory previousInventory) {
-        super(IridiumSkyblock.getInstance().getInventories().upgradesGUI, previousInventory, island);
+    public IslandUpgradesGUI(Player player,@NotNull Island island, Inventory previousInventory) {
+        super(player,IridiumSkyblock.getInstance().getInventories().upgradesGUI, previousInventory, island);
     }
 
     @Override
@@ -53,12 +56,13 @@ public class IslandUpgradesGUI extends IslandGUI {
                 placeholderList.add(new Placeholder("crystalscost", IridiumSkyblock.getInstance().getPlaceholders().crystalCost));
                 placeholderList.add(new Placeholder("vaultcost", IridiumSkyblock.getInstance().getPlaceholders().vaultCost));
             }
+            placeholderList.add(new PlaceholderBuilder.PapiPlacheolder(getPlayer()));
 
             inventory.setItem(item.slot, ItemStackUtils.makeItem(item, placeholderList));
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 

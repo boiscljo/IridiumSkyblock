@@ -3,6 +3,7 @@ package com.iridium.iridiumskyblock.gui;
 import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.managers.CooldownProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,9 +29,9 @@ public class ConfirmationGUI extends GUI {
      * @param cooldownProvider The provider for cooldowns that should be started on
      *                         success
      */
-    public ConfirmationGUI(boolean required, @NotNull Runnable runnable,
+    public ConfirmationGUI(Player player,boolean required, @NotNull Runnable runnable,
             @NotNull CooldownProvider<CommandSender> cooldownProvider) {
-        super(IridiumSkyblock.getInstance().getInventories().confirmationGUI);
+        super(player,IridiumSkyblock.getInstance().getInventories().confirmationGUI);
         this.runnable = runnable;
         this.cooldownProvider = cooldownProvider;
 
@@ -61,9 +62,9 @@ public class ConfirmationGUI extends GUI {
         InventoryUtils.fillInventory(inventory, getNoItemGUI().background);
 
         inventory.setItem(IridiumSkyblock.getInstance().getInventories().confirmationGUI.no.slot,
-                ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().confirmationGUI.no));
+                ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().confirmationGUI.no,new PlaceholderBuilder().papi(getPlayer()).build()));
         inventory.setItem(IridiumSkyblock.getInstance().getInventories().confirmationGUI.yes.slot,
-                ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().confirmationGUI.yes));
+                ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().confirmationGUI.yes,new PlaceholderBuilder().papi(getPlayer()).build()));
     }
 
     /**

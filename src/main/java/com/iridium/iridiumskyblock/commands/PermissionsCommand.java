@@ -44,7 +44,7 @@ public class PermissionsCommand extends Command {
             return false;
         }
 
-        player.openInventory(new IslandRanksGUI(island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+        player.openInventory(new IslandRanksGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
         return true;
     }
 

@@ -50,7 +50,7 @@ public class ChatCommand extends Command {
                 Player recipient = Bukkit.getPlayer(user.getUuid());
                 if (recipient != null) {
                     recipient.sendMessage(StringUtils.color(
-                            StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandMemberChat, new PlaceholderBuilder().applyIslandPlaceholders(island.get()).build())
+                            StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandMemberChat, new PlaceholderBuilder().papi(recipient).applyIslandPlaceholders(island.get()).build())
                                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
                                     .replace("%player%", player.getName())
                                     .replace("%message%", message))

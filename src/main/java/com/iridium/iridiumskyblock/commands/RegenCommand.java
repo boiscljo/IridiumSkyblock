@@ -72,7 +72,7 @@ public class RegenCommand extends Command {
                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
-        new ConfirmationGUI(IridiumSkyblock.getInstance().getConfiguration().confirmation.islandRegen, () -> {
+        new ConfirmationGUI(player,IridiumSkyblock.getInstance().getConfiguration().confirmation.islandRegen, () -> {
 
             IridiumSkyblock.getInstance().getIslandManager().regenerateIsland(island.get(), user,
                     schematicConfig.get());

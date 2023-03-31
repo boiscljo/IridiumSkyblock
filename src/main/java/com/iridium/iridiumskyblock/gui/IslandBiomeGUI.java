@@ -5,6 +5,7 @@ import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.Placeholder;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.managers.CooldownProvider;
 import org.apache.commons.lang.WordUtils;
@@ -27,8 +28,8 @@ public class IslandBiomeGUI extends IslandGUI {
     private final World.Environment environment;
     private final CooldownProvider<CommandSender> cooldownProvider;
 
-    public IslandBiomeGUI(int page, Island island, World.Environment environment, CooldownProvider<CommandSender> cooldownProvider, Inventory previousInventory) {
-        super(IridiumSkyblock.getInstance().getInventories().biomeGUI, previousInventory, island);
+    public IslandBiomeGUI(Player player,int page, Island island, World.Environment environment, CooldownProvider<CommandSender> cooldownProvider, Inventory previousInventory) {
+        super(player,IridiumSkyblock.getInstance().getInventories().biomeGUI, previousInventory, island);
         this.biomes = Arrays.stream(XBiome.VALUES)
                 .filter(biome -> biome.getEnvironment() == environment)
                 .filter(biome -> biome.getBiome() != null)
@@ -46,8 +47,8 @@ public class IslandBiomeGUI extends IslandGUI {
         inventory.clear();
         InventoryUtils.fillInventory(inventory, IridiumSkyblock.getInstance().getInventories().biomeGUI.background);
 
-        inventory.setItem(inventory.getSize() - 3, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().nextPage));
-        inventory.setItem(inventory.getSize() - 7, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().previousPage));
+        inventory.setItem(inventory.getSize() - 3, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().nextPage,new PlaceholderBuilder().papi(getPlayer()).build()));
+        inventory.setItem(inventory.getSize() - 7, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().previousPage,new PlaceholderBuilder().papi(getPlayer()).build()));
 
         AtomicInteger index = new AtomicInteger(0);
 
@@ -56,11 +57,11 @@ public class IslandBiomeGUI extends IslandGUI {
                 .skip((page - 1) * elementsPerPage)
                 .limit(elementsPerPage)
                 .forEach(xBiome ->
-                        inventory.setItem(index.getAndIncrement(), ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().biomeGUI.item, Collections.singletonList(new Placeholder("biome", WordUtils.capitalizeFully(xBiome.name().toLowerCase().replace("_", " "))))))
+                        inventory.setItem(index.getAndIncrement(), ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().biomeGUI.item, List.of(new PlaceholderBuilder.PapiPlacheolder(getPlayer()),new Placeholder("biome", WordUtils.capitalizeFully(xBiome.name().toLowerCase().replace("_", " "))))))
                 );
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 
@@ -71,12 +72,12 @@ public class IslandBiomeGUI extends IslandGUI {
 
         Player player = (Player) event.getWhoClicked();
         if (event.getSlot() == size - 7 && page > 1) {
-            player.openInventory(new IslandBiomeGUI(page - 1, getIsland(), environment, cooldownProvider, getPreviousInventory()).getInventory());
+            player.openInventory(new IslandBiomeGUI(getPlayer(),page - 1, getIsland(), environment, cooldownProvider, getPreviousInventory()).getInventory());
             return;
         }
 
         if (event.getSlot() == size - 3 && (size - 9) * page < biomes.size()) {
-            player.openInventory(new IslandBiomeGUI(page + 1, getIsland(), environment, cooldownProvider, getPreviousInventory()).getInventory());
+            player.openInventory(new IslandBiomeGUI(getPlayer(),page + 1, getIsland(), environment, cooldownProvider, getPreviousInventory()).getInventory());
             return;
         }
 

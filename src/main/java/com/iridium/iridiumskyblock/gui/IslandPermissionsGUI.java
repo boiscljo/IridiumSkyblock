@@ -8,6 +8,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.Permission;
 import com.iridium.iridiumskyblock.PermissionType;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
 import org.bukkit.entity.Player;
@@ -32,8 +33,8 @@ public class IslandPermissionsGUI extends IslandGUI {
      * @param island     The Island this GUI belongs to
      * @param islandRank The rank which is being configured
      */
-    public IslandPermissionsGUI(@NotNull Island island, @NotNull IslandRank islandRank, Inventory previousInventory, int page) {
-        super(IridiumSkyblock.getInstance().getInventories().islandPermissionsGUI, previousInventory, island);
+    public IslandPermissionsGUI(Player player,@NotNull Island island, @NotNull IslandRank islandRank, Inventory previousInventory, int page) {
+        super(player,IridiumSkyblock.getInstance().getInventories().islandPermissionsGUI, previousInventory, island);
         this.islandRank = islandRank;
         this.page = page;
     }
@@ -42,8 +43,8 @@ public class IslandPermissionsGUI extends IslandGUI {
     public void addContent(Inventory inventory) {
         inventory.clear();
         InventoryUtils.fillInventory(inventory, IridiumSkyblock.getInstance().getInventories().islandPermissionsGUI.background);
-        inventory.setItem(inventory.getSize() - 3, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().nextPage));
-        inventory.setItem(inventory.getSize() - 7, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().previousPage));
+        inventory.setItem(inventory.getSize() - 3, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().nextPage,new PlaceholderBuilder().papi(getPlayer()).build()));
+        inventory.setItem(inventory.getSize() - 7, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().previousPage,new PlaceholderBuilder().papi(getPlayer()).build()));
 
         for (Map.Entry<String, Permission> permission : IridiumSkyblock.getInstance().getPermissionList().entrySet()) {
             if (permission.getValue().getPage() != page) continue;

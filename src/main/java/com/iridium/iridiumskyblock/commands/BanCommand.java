@@ -55,7 +55,7 @@ public class BanCommand extends Command {
 
         if (args.length == 1) {
             Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons ? player.getOpenInventory().getTopInventory() : null;
-            player.openInventory(new IslandBansGUI(island.get(), previousInventory).getInventory());
+            player.openInventory(new IslandBansGUI(player,island.get(), previousInventory).getInventory());
             return false;
         }
 

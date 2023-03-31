@@ -44,7 +44,7 @@ public class WarpsCommand extends Command {
         }
 
         if (args.length != 2 && args.length != 3) {
-            player.openInventory(new IslandWarpsGUI(island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new IslandWarpsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
             return true;
         }
 

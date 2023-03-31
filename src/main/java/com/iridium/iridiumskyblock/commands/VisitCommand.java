@@ -49,7 +49,7 @@ public class VisitCommand extends Command {
             Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons
                     ? player.getOpenInventory().getTopInventory()
                     : null;
-            player.openInventory(new VisitGUI(user, previousInventory).getInventory());
+            player.openInventory(new VisitGUI(player,user, previousInventory).getInventory());
             return true;
         }
 

@@ -9,7 +9,11 @@ import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandTrusted;
+
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -24,8 +28,10 @@ import java.util.List;
 public class IslandTrustedGUI extends PagedGUI<IslandTrusted> {
 
     private final Island island;
+    @Getter
+    private Player player;
 
-    public IslandTrustedGUI(Island island, Inventory previousInventory) {
+    public IslandTrustedGUI(Player player,Island island, Inventory previousInventory) {
         super(1,
                 IridiumSkyblock.getInstance().getInventories().trustedGUI.size,
                 IridiumSkyblock.getInstance().getInventories().trustedGUI.background,
@@ -34,6 +40,7 @@ public class IslandTrustedGUI extends PagedGUI<IslandTrusted> {
                 previousInventory,
                 IridiumSkyblock.getInstance().getInventories().backButton
         );
+        this.player = player;
         this.island = island;
     }
 
@@ -58,6 +65,7 @@ public class IslandTrustedGUI extends PagedGUI<IslandTrusted> {
                 .applyIslandPlaceholders(island)
                 .build();
         placeholderList.add(new Placeholder("trustee", islandTrusted.getTruster().getName()));
+        placeholderList.add(new PlaceholderBuilder.PapiPlacheolder(player));
         return ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().trustedGUI.item, placeholderList);
     }
 

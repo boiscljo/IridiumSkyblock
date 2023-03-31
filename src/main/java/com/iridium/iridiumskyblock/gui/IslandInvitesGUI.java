@@ -9,7 +9,11 @@ import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandInvite;
+
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,8 +29,10 @@ import java.util.List;
 public class IslandInvitesGUI extends PagedGUI<IslandInvite> {
 
     private final Island island;
+    @Getter
+    private Player player;
 
-    public IslandInvitesGUI(Island island, Inventory previousInventory) {
+    public IslandInvitesGUI(Player player,Island island, Inventory previousInventory) {
         super(1,
                 IridiumSkyblock.getInstance().getInventories().islandInvitesGUI.size,
                 IridiumSkyblock.getInstance().getInventories().islandInvitesGUI.background,
@@ -35,6 +41,7 @@ public class IslandInvitesGUI extends PagedGUI<IslandInvite> {
                 previousInventory,
                 IridiumSkyblock.getInstance().getInventories().backButton
         );
+        this.player = player;
         this.island = island;
     }
 
@@ -56,8 +63,10 @@ public class IslandInvitesGUI extends PagedGUI<IslandInvite> {
     public ItemStack getItemStack(IslandInvite islandInvite) {
         List<Placeholder> placeholderList = new PlaceholderBuilder()
                 .applyPlayerPlaceholders(islandInvite.getUser())
+                .papi(islandInvite.getUser().getPlayer())
                 .applyIslandPlaceholders(island)
                 .build();
+        placeholderList.add(new PlaceholderBuilder.PapiPlacheolder(getPlayer()));
         placeholderList.add(new Placeholder("inviter", islandInvite.getInviter().getName()));
         placeholderList.add(new Placeholder("time", islandInvite.getTime().format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
         return ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().islandInvitesGUI.item, placeholderList);

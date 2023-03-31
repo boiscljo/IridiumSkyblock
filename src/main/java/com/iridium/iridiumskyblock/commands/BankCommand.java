@@ -55,7 +55,7 @@ public class BankCommand extends Command {
             return false;
         }
 
-        player.openInventory(new IslandBankGUI(island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+        player.openInventory(new IslandBankGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
         return true;
     }
 

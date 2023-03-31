@@ -30,7 +30,7 @@ public class TopCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        player.openInventory(new IslandTopGUI().getInventory());
+        player.openInventory(new IslandTopGUI(player).getInventory());
         return true;
     }
 

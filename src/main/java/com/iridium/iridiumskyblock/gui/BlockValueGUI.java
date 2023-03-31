@@ -6,6 +6,7 @@ import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.BlockValues.ValuableBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -25,15 +26,14 @@ public class BlockValueGUI extends GUI {
 
     private final BlockValueType guiType;
     private int page = 1;
-
-
+  
     /**
      * The default constructor.
      *
      * @param type The type of valuable block shown in this GUI
      */
-    public BlockValueGUI(BlockValueType type, Inventory previousInventory) {
-        super(IridiumSkyblock.getInstance().getInventories().blockValue, previousInventory);
+    public BlockValueGUI(Player player,BlockValueType type, Inventory previousInventory) {
+        super(player,IridiumSkyblock.getInstance().getInventories().blockValue, previousInventory);
         this.guiType = type;
     }
 
@@ -43,8 +43,8 @@ public class BlockValueGUI extends GUI {
 
         InventoryUtils.fillInventory(inventory, getNoItemGUI().background);
 
-        inventory.setItem(inventory.getSize() - 3, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().nextPage));
-        inventory.setItem(inventory.getSize() - 7, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().previousPage));
+        inventory.setItem(inventory.getSize() - 3, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().nextPage,new PlaceholderBuilder().papi(getPlayer()).build()));
+        inventory.setItem(inventory.getSize() - 7, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().previousPage,new PlaceholderBuilder().papi(getPlayer()).build()));
 
         if (guiType == BlockValueType.BLOCK) {
             IridiumSkyblock.getInstance().getBlockValues().blockValues.entrySet().stream()
@@ -52,7 +52,7 @@ public class BlockValueGUI extends GUI {
                     .forEachOrdered(valuableBlock -> {
                         ObsidianMaterial material = valuableBlock.getKey();
                         ValuableBlock blockInfo = valuableBlock.getValue();
-                        ItemStack blockItem = ItemStackUtils.makeItem(material, 1, StringUtils.color(blockInfo.name), getColoredValueLore(blockInfo.value));
+                        ItemStack blockItem = ItemStackUtils.makeItem(material, 1, StringUtils.color(blockInfo.name), StringUtils.processMultiplePlaceholders(getColoredValueLore(blockInfo.value),new PlaceholderBuilder().papi(getPlayer()).build()));
                         inventory.setItem(blockInfo.slot, blockItem);
                     });
 
@@ -61,13 +61,13 @@ public class BlockValueGUI extends GUI {
                     .filter(valuableSpawnerEntry -> (page == 1 ? valuableSpawnerEntry.getValue().page <= 1 : valuableSpawnerEntry.getValue().page == page))
                     .forEachOrdered(valuableSpawner -> {
                         ValuableBlock spawnerInfo = valuableSpawner.getValue();
-                        ItemStack spawnerItem = ItemStackUtils.makeItem(ObsidianMaterial.valueOf("SPAWNER"), 1, StringUtils.color(spawnerInfo.name), getColoredValueLore(spawnerInfo.value));
+                        ItemStack spawnerItem = ItemStackUtils.makeItem(ObsidianMaterial.valueOf("SPAWNER"), 1, StringUtils.color(spawnerInfo.name), StringUtils.processMultiplePlaceholders(getColoredValueLore(spawnerInfo.value),new PlaceholderBuilder().papi(getPlayer()).build()));
                         inventory.setItem(spawnerInfo.slot, spawnerItem);
                     });
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 

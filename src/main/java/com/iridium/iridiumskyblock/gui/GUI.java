@@ -6,6 +6,7 @@ import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -21,8 +22,11 @@ public abstract class GUI implements InventoryHolder {
 
     private NoItemGUI noItemGUI;
     private Inventory previousInventory;
+    @Getter
+    private Player player;
 
-    public GUI(Inventory previousInventory){
+    public GUI(Player player,Inventory previousInventory){
+        this.player= player;
         if (previousInventory != null && previousInventory.getHolder() != null && previousInventory.getHolder() instanceof GUI) {
             this.previousInventory = previousInventory;
         }
@@ -34,7 +38,8 @@ public abstract class GUI implements InventoryHolder {
      * @param noItemGUI         The NoItemGUI of this GUI
      * @param previousInventory The previous Inventory
      */
-    public GUI(@NotNull NoItemGUI noItemGUI, Inventory previousInventory) {
+    public GUI(Player player,@NotNull NoItemGUI noItemGUI, Inventory previousInventory) {
+        this.player = player;
         this.noItemGUI = noItemGUI;
         if (previousInventory != null && previousInventory.getHolder() != null && previousInventory.getHolder() instanceof GUI) {
             this.previousInventory = previousInventory;
@@ -46,7 +51,8 @@ public abstract class GUI implements InventoryHolder {
      *
      * @param noItemGUI The NoItemGUI of this GUI
      */
-    public GUI(@NotNull NoItemGUI noItemGUI) {
+    public GUI(Player player,@NotNull NoItemGUI noItemGUI) {
+        this.player = player;
         this.noItemGUI = noItemGUI;
     }
 

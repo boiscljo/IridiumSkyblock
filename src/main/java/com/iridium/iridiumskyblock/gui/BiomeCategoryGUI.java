@@ -4,6 +4,7 @@ import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.biomes.BiomeCategory;
 import com.iridium.iridiumskyblock.biomes.BiomeItem;
 import org.bukkit.Bukkit;
@@ -24,14 +25,16 @@ import java.util.Optional;
 public class BiomeCategoryGUI extends GUI {
 
     private final BiomeCategory category;
+    private Player player;
 
     /**
      * The default constructor.
      *
      * @param category The category whose items should be displayed in this GUI
      */
-    public BiomeCategoryGUI(BiomeCategory category, Inventory previousInventory) {
-        super(previousInventory);
+    public BiomeCategoryGUI(Player player,BiomeCategory category, Inventory previousInventory) {
+        super(player,previousInventory);
+        this.player = player;
         this.category = category;
     }
 
@@ -80,7 +83,7 @@ public class BiomeCategoryGUI extends GUI {
         }
 
         if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton));
+            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
         }
     }
 
@@ -124,6 +127,7 @@ public class BiomeCategoryGUI extends GUI {
 
         IridiumSkyblock.getInstance().getBiomes().biomeItemLore.stream()
                 .map(StringUtils::color)
+                .map(str->StringUtils.processMultiplePlaceholders(str,new PlaceholderBuilder().papi(getPlayer()).build()))
                 .forEach(line -> lore.add(
                         line.replace("%amount%", String.valueOf(item.defaultAmount))
                 ));

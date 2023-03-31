@@ -53,6 +53,7 @@ public class Configuration {
     public boolean extraDebugMessage = false;
     public boolean respectNetherRatio=false;
     public boolean forceNetherGeneratorInNether=true;
+    public boolean useBedrockGeneratorInstead=false;
     
     public IslandRegenSettings regenSettings = new IslandRegenSettings();
 
@@ -142,6 +143,7 @@ public class Configuration {
      */
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GeneratorSettings {
 
         public GeneratorType generatorType = GeneratorType.SKYBLOCK;
@@ -158,6 +160,7 @@ public class Configuration {
      */
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class IslandRegenSettings {
 
         public double moneyPrice = 0;
@@ -184,6 +187,7 @@ public class Configuration {
      */
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class IslandDeleteSettings {
 
         public boolean clearInventories = false;
@@ -197,6 +201,7 @@ public class Configuration {
      */
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PerformanceSettings {
         public boolean disableWaterCheck = false;
         public boolean disableIslandRecalculationTimer = false;
@@ -217,6 +222,7 @@ public class Configuration {
      */
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ConfirmationSettings {
         public boolean islandRegen = true;
         public boolean warpDeletion = true;
@@ -227,6 +233,7 @@ public class Configuration {
 
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class IslandDamageSettings {
 
         public boolean pvpOnIslands = false;

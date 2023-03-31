@@ -51,7 +51,7 @@ public class BorderCommand extends Command {
         }
 
         if (args.length != 2) {
-            player.openInventory(new InventoryConfigGUI(IridiumSkyblock.getInstance().getInventories().islandBorder, player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new InventoryConfigGUI(player,IridiumSkyblock.getInstance().getInventories().islandBorder, player.getOpenInventory().getTopInventory()).getInventory());
             return true;
         }
 

@@ -24,6 +24,7 @@ public class IslandCreateGUI extends SchematicGUI {
      * @param islandName       The name of the new Island
      */
     public IslandCreateGUI(@NotNull Player player, String islandName) {
+        super(player);
         this.player = player;
         this.islandName = islandName;
     }

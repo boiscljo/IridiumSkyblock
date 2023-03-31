@@ -7,9 +7,12 @@ import com.iridium.iridiumcore.utils.Placeholder;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Mission;
+import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -29,13 +33,15 @@ import java.util.stream.IntStream;
 public class IslandMissionsGUI extends PagedGUI<Map.Entry<String, Mission>> {
 
     private final Island island;
+    @Getter
+    private Player player;
 
     /**
      * The default constructor.
      *
      * @param island The Island this GUI belongs to
      */
-    public IslandMissionsGUI(@NotNull Island island, Inventory previousInventory) {
+    public IslandMissionsGUI(Player player, @NotNull Island island, Inventory previousInventory) {
         super(1,
                 IridiumSkyblock.getInstance().getInventories().missionsGUI.size,
                 IridiumSkyblock.getInstance().getInventories().missionsGUI.background,
@@ -43,6 +49,7 @@ public class IslandMissionsGUI extends PagedGUI<Map.Entry<String, Mission>> {
                 IridiumSkyblock.getInstance().getInventories().nextPage,
                 previousInventory,
                 IridiumSkyblock.getInstance().getInventories().backButton);
+        this.player = player;
         this.island = island;
     }
 
@@ -68,15 +75,19 @@ public class IslandMissionsGUI extends PagedGUI<Map.Entry<String, Mission>> {
                 break;
             case DISPLAYNAME:
                 missions.sort((a, b) -> {
-                    if (a.getValue().getItem().displayName==null) return 1;
-                    if (b.getValue().getItem().displayName==null) return -1;
+                    if (a.getValue().getItem().displayName == null)
+                        return 1;
+                    if (b.getValue().getItem().displayName == null)
+                        return -1;
                     return a.getValue().getItem().displayName.compareTo(b.getValue().getItem().displayName);
                 });
                 break;
             case SLOT:
                 missions.sort((a, b) -> {
-                    if (a.getValue().getItem().slot==null) return 1;
-                    if (b.getValue().getItem().slot==null) return -1;
+                    if (a.getValue().getItem().slot == null)
+                        return 1;
+                    if (b.getValue().getItem().slot == null)
+                        return -1;
                     return a.getValue().getItem().slot.compareTo(b.getValue().getItem().slot);
                 });
                 break;
@@ -89,13 +100,14 @@ public class IslandMissionsGUI extends PagedGUI<Map.Entry<String, Mission>> {
 
     @Override
     public ItemStack getItemStack(Map.Entry<String, Mission> entry) {
-        List<Placeholder> placeholders = IntStream.range(0, entry.getValue().getMissions().size())
+        List<Placeholder> placeholders = new ArrayList<>(IntStream.range(0, entry.getValue().getMissions().size())
                 .boxed()
                 .map(integer -> IridiumSkyblock.getInstance().getIslandManager().getIslandMission(this.island,
                         entry.getValue(), entry.getKey(), integer))
                 .map(islandMission -> new Placeholder("progress_" + (islandMission.getMissionIndex() + 1),
                         String.valueOf(islandMission.getProgress())))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        placeholders.add(new PlaceholderBuilder.PapiPlacheolder(getPlayer()));
 
         return ItemStackUtils.makeItem(entry.getValue().getItem(), placeholders);
     }

@@ -46,7 +46,7 @@ public class MembersCommand extends Command {
         }
 
         Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons ? player.getOpenInventory().getTopInventory() : null;
-        player.openInventory(new IslandMembersGUI(island.get(), previousInventory).getInventory());
+        player.openInventory(new IslandMembersGUI(player,island.get(), previousInventory).getInventory());
         return true;
     }
 

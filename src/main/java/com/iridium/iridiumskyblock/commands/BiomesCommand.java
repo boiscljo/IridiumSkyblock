@@ -47,7 +47,7 @@ public class BiomesCommand extends Command {
         }
 
         if (arguments.length == 1) {
-            player.openInventory(new BiomeOverviewGUI(player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new BiomeOverviewGUI(player,player.getOpenInventory().getTopInventory()).getInventory());
         } else {
             String[] commandArguments = Arrays.copyOfRange(arguments, 1, arguments.length);
             String categoryName = String.join(" ", commandArguments);
@@ -58,7 +58,7 @@ public class BiomesCommand extends Command {
                 return false;
             }
 
-            player.openInventory(new BiomeCategoryGUI(category.get(), player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new BiomeCategoryGUI(player,category.get(), player.getOpenInventory().getTopInventory()).getInventory());
         }
 
         return true;

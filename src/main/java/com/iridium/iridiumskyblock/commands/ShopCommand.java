@@ -47,7 +47,7 @@ public class ShopCommand extends Command {
         }
 
         if (arguments.length == 1) {
-            player.openInventory(new ShopOverviewGUI(player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new ShopOverviewGUI(player,player.getOpenInventory().getTopInventory()).getInventory());
         } else {
             String[] commandArguments = Arrays.copyOfRange(arguments, 1, arguments.length);
             String categoryName = String.join(" ", commandArguments);
@@ -58,7 +58,7 @@ public class ShopCommand extends Command {
                 return false;
             }
 
-            player.openInventory(new ShopCategoryGUI(category.get(), player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new ShopCategoryGUI(player,category.get(), player.getOpenInventory().getTopInventory()).getInventory());
         }
 
         return true;

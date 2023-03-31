@@ -48,7 +48,7 @@ public class BoosterCommand extends Command {
         }
 
         if (args.length != 2) {
-            player.openInventory(new IslandBoostersGUI(island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(new IslandBoostersGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
             return true;
         }
 
