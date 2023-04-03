@@ -136,6 +136,7 @@ public class IslandManager {
             xBiome.setBiome(pos1, pos2).thenRun(() -> {
                 for (Chunk chunk : chunks) {
                     chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+                    chunk.setForceLoaded(false);
                 }
             });
         }).exceptionally(throwable -> {
@@ -1049,7 +1050,8 @@ public class IslandManager {
      * @param chunks The Island's Chunks
      */
     private void recalculateIsland(@NotNull Island island, @NotNull List<Chunk> chunks) {
-        chunks.stream().map(chunk -> chunk.getChunkSnapshot(true, false, false)).forEach(chunk -> {
+        chunks.stream().forEach(chunk_ -> {
+            ChunkSnapshot chunk = chunk_.getChunkSnapshot(true, false, false);
             World world = Bukkit.getWorld(chunk.getWorldName());
             boolean ignoreMainMaterial = IridiumSkyblock.getInstance().getChunkGenerator().ignoreMainMaterial();
             int maxHeight = world == null ? 255 : world.getMaxHeight() - 1;
@@ -1073,6 +1075,7 @@ public class IslandManager {
                     }
                 }
             }
+            chunk_.setForceLoaded(false);
         });
 
         if (Bukkit.isPrimaryThread()) {
@@ -1108,7 +1111,8 @@ public class IslandManager {
                         this.cancel();
                         return;
                     } else {
-                        ChunkSnapshot chunk = iterator.next().getChunkSnapshot(true, false, false);
+                        Chunk chk = iterator.next();
+                        ChunkSnapshot chunk = chk.getChunkSnapshot(true, false, false);
                         World world = Bukkit.getWorld(chunk.getWorldName());
                         boolean ignoreMainMaterial = IridiumSkyblock.getInstance().getChunkGenerator()
                                 .ignoreMainMaterial();
@@ -1134,6 +1138,7 @@ public class IslandManager {
                                 }
                             }
                         }
+                        chk.setForceLoaded(false);
                     }
             }
         }.runTaskTimer(IridiumSkyblock.getInstance(), delay, delay);
@@ -1194,6 +1199,7 @@ public class IslandManager {
             Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
                 List<Entity> entities = new ArrayList<>();
                 for (Chunk chunk : chunks) {
+                    chunk.setForceLoaded(false);
                     for (Entity entity : chunk.getEntities()) {
                         if (island.isInIsland(entity.getLocation())) {
                             entities.add(entity);
