@@ -100,7 +100,7 @@ public class IridiumSkyblock extends IridiumCore {
 
     private Economy economy;
 
-    private StackerSupport stackerSupport;
+    private List<StackerSupport> stackerSupport = new ArrayList<>();
 
     private PlayerTrackListener track;
 
@@ -153,7 +153,7 @@ public class IridiumSkyblock extends IridiumCore {
     @Override
     public void onEnable() {
         super.onEnable();
-        
+
         // Convert old IridiumSkyblock data
         DataConverter.copyLegacyData();
 
@@ -234,7 +234,8 @@ public class IridiumSkyblock extends IridiumCore {
     }
 
     private void createRecalcTimer() {
-        if (this.islandManager==null) return;
+        if (this.islandManager == null)
+            return;
         if (this.islandRecalcTimer != null) {
             this.islandRecalcTimer.cancel();
             this.islandRecalcTimer = null;
@@ -306,22 +307,13 @@ public class IridiumSkyblock extends IridiumCore {
         }
     }
 
-    private StackerSupport registerBlockStackerSupport() {
+    private List<StackerSupport> registerBlockStackerSupport() {
+        List<StackerSupport> support = new ArrayList<>();
         if (Bukkit.getPluginManager().isPluginEnabled("RoseStacker"))
-            return new RoseStackerSupport();
+            support.add(new RoseStackerSupport());
         if (Bukkit.getPluginManager().isPluginEnabled("WildStacker"))
-            return new WildStackerSupport();
-        return new StackerSupport() {
-            @Override
-            public int getExtraBlocks(Island island, ObsidianMaterial material) {
-                return 0;
-            }
-
-            @Override
-            public int getExtraSpawners(Island island, EntityType entityType) {
-                return 0;
-            }
-        };
+            support.add(new WildStackerSupport());
+        return support;
     }
 
     /**
