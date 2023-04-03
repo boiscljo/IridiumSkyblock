@@ -216,7 +216,7 @@ public class IridiumSkyblock extends IridiumCore {
             Metrics metrics = new Metrics(this, 5825);
             metrics.addCustomChart(new SimplePie("database_type", () -> sql.driver.name()));
 
-            if (getConfiguration().enableCheckVersion) {
+            if (false && getConfiguration().enableCheckVersion) {
                 UpdateChecker.init(this, 62480)
                         .checkEveryXHours(24)
                         .setDownloadLink(62480)
