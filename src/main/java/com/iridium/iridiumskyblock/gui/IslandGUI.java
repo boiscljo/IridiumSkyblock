@@ -36,7 +36,7 @@ public abstract class IslandGUI extends GUI {
     @Override
     public Inventory getInventory() {
 
-        String title = StringUtils.processMultiplePlaceholders(getNoItemGUI().title, new PlaceholderBuilder().applyIslandPlaceholders(island).build());
+        String title = StringUtils.processMultiplePlaceholders(getNoItemGUI().title, new PlaceholderBuilder().papi(getPlayer()).applyIslandPlaceholders(island).build());
         Inventory inventory = Bukkit.createInventory(this, getNoItemGUI().size, StringUtils.color(title));
 
         Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> addContent(inventory));
