@@ -136,7 +136,6 @@ public class IslandManager {
             xBiome.setBiome(pos1, pos2).thenRun(() -> {
                 for (Chunk chunk : chunks) {
                     chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
-                    chunk.setForceLoaded(false);
                 }
             });
         }).exceptionally(throwable -> {
@@ -496,7 +495,6 @@ public class IslandManager {
             chunks.forEach(futureChunk -> {
                 futureChunk.thenAccept(chunk -> {
                     returnValue.add(chunk);
-                    chunk.setForceLoaded(true);
                     if (numberOfChunk.decrementAndGet() <= 0)
                         returnFuture.complete(returnValue);
                 });
@@ -1075,7 +1073,6 @@ public class IslandManager {
                     }
                 }
             }
-            chunk_.setForceLoaded(false);
         });
 
         if (Bukkit.isPrimaryThread()) {
@@ -1138,7 +1135,6 @@ public class IslandManager {
                                 }
                             }
                         }
-                        chk.setForceLoaded(false);
                     }
             }
         }.runTaskTimer(IridiumSkyblock.getInstance(), delay, delay);
@@ -1199,7 +1195,6 @@ public class IslandManager {
             Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
                 List<Entity> entities = new ArrayList<>();
                 for (Chunk chunk : chunks) {
-                    chunk.setForceLoaded(false);
                     for (Entity entity : chunk.getEntities()) {
                         if (island.isInIsland(entity.getLocation())) {
                             entities.add(entity);

@@ -81,6 +81,16 @@ public class PlaceholderBuilder {
 
         @Override
         public String process(String line) {
+            try{
+                return executePapi(line);
+            }
+            catch(Throwable t)
+            {
+                return line;
+            }
+        }
+
+        private String executePapi(String line){
             return PlaceholderAPI.setPlaceholders(player, line);
         }
 
