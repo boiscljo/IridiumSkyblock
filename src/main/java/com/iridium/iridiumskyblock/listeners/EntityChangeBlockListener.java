@@ -3,8 +3,11 @@ package com.iridium.iridiumskyblock.listeners;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.SettingType;
 import com.iridium.iridiumskyblock.database.IslandSetting;
+import com.iridium.iridiumskyblock.utils.IslandBlockUtils;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 
@@ -22,6 +25,11 @@ public class EntityChangeBlockListener implements Listener {
                 }
             }
         });
+    }
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void monitorBlockSpread(EntityChangeBlockEvent event) {
+        IslandBlockUtils.blockRemoved(event.getBlock());
+        IslandBlockUtils.blockAdded(event.getBlockData(), event.getBlock().getLocation());
     }
 
 }
