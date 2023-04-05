@@ -8,6 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -77,14 +78,14 @@ public final class User extends DatabaseObject {
         this.island = island.getId();
     }
 
-
     /**
      * Returns the Island of this user.
      *
      * @return The user's Island
      */
     public @NotNull Optional<Island> getIsland() {
-        if (island == null) return Optional.empty();
+        if (island == null)
+            return Optional.empty();
         return IridiumSkyblock.getInstance().getIslandManager().getIslandById(island);
     }
 
@@ -98,9 +99,9 @@ public final class User extends DatabaseObject {
         this.island = island == null ? null : island.getId();
         setJoinTime(LocalDateTime.now());
         if (island != null) {
-            IridiumSkyblock.getInstance().getDatabaseManager().getIslandTrustedTableManager().getEntry(new IslandTrusted(island, this, this)).ifPresent(trusted ->
-                    IridiumSkyblock.getInstance().getDatabaseManager().getIslandTrustedTableManager().delete(trusted)
-            );
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandTrustedTableManager()
+                    .getEntry(new IslandTrusted(island, this, this)).ifPresent(trusted -> IridiumSkyblock.getInstance()
+                            .getDatabaseManager().getIslandTrustedTableManager().delete(trusted));
         }
         IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().resortIsland(this);
     }
@@ -131,6 +132,25 @@ public final class User extends DatabaseObject {
      */
     public @Nullable Player getPlayer() {
         return Bukkit.getPlayer(uuid);
+    }
+
+     /**
+     * Gets the user as Player
+     *
+     * @return The player object if one was found, null otherwise
+     */
+    @Deprecated
+    public @Nullable OfflinePlayer toOfflinePlayer() {
+        return getOfflinePlayer();
+    }
+
+    /**
+     * Gets the user as Player
+     *
+     * @return The player object if one was found, null otherwise
+     */
+    public @Nullable OfflinePlayer getOfflinePlayer() {
+        return Bukkit.getOfflinePlayer(uuid);
     }
 
     /**
@@ -180,5 +200,13 @@ public final class User extends DatabaseObject {
 
     public void setTeleportingTask(BukkitTask teleportingTask) {
         this.teleportingTask = teleportingTask;
+    }
+
+    public int getTeleportDelay() {
+        if (bypassing)
+            return 0;
+        if(getPlayer()!=null && getPlayer().hasPermission("iridiumskyblock.no-teleport-delay"))
+            return 0;
+        return IridiumSkyblock.getInstance().getConfiguration().teleportDelay;
     }
 }
