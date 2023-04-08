@@ -21,6 +21,7 @@ public class Mission {
     private XSound completeSound;
     private Reward reward;
     private List<String> message;
+    private String requiredMissionBefore;
 
     /**
      * The default constructor.

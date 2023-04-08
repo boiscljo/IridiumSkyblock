@@ -789,7 +789,7 @@ public class Shop {
                             1,
                             23,
                             new BuyCost(5000, 50),
-                            new SellReward(0, 0)
+                            new SellReward(0, 0),null
                     )
                     )
             )

@@ -107,6 +107,16 @@ public class ShopManager {
             return;
         }
 
+        if(shopItem.requiredMission!=null)
+        {
+            canPurchase = IridiumSkyblock.getInstance().getMissionManager().hasCompletedMission(island.get(), shopItem.requiredMission);
+        }
+        if (!canPurchase) {
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().missionNotCompleted.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            IridiumSkyblock.getInstance().getShop().failSound.play(player);
+            return;
+        }
+
         ShopPurchaseEvent shopPurchaseEvent = new ShopPurchaseEvent(player, shopItem, amount);
         Bukkit.getPluginManager().callEvent(shopPurchaseEvent);
         if (shopPurchaseEvent.isCancelled()) return;

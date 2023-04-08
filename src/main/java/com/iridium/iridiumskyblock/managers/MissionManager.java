@@ -23,12 +23,14 @@ public class MissionManager {
      * @param identifier  The mission identifier e.g. COBBLESTONE
      * @param amount      The amount we are incrementing by
      */
-    public void handleMissionUpdates(@NotNull Island island, @NotNull String missionType, @NotNull String identifier, int amount) {
+    public void handleMissionUpdates(@NotNull Island island, @NotNull String missionType, @NotNull String identifier,
+            int amount) {
         incrementMission(island, missionType + ":" + identifier, amount);
 
         incrementMission(island, missionType + ":ANY", amount);
 
-        for (Map.Entry<String, List<String>> itemList : IridiumSkyblock.getInstance().getMissions().customMaterialLists.entrySet()) {
+        for (Map.Entry<String, List<String>> itemList : IridiumSkyblock.getInstance().getMissions().customMaterialLists
+                .entrySet()) {
             if (itemList.getValue().contains(identifier)) {
                 incrementMission(island, missionType + ":" + itemList.getKey(), amount);
             }
@@ -46,25 +48,36 @@ public class MissionManager {
         String[] missionConditions = missionData.toUpperCase().split(":");
 
         for (Map.Entry<String, Mission> entry : IridiumSkyblock.getInstance().getMissionsList().entrySet()) {
+            if (!canComplete(island, entry.getKey()))
+                continue;
+
             boolean completedBefore = true;
             List<String> missions = entry.getValue().getMissions();
             for (int i = 0; i < entry.getValue().getMissions().size(); i++) {
                 String missionRequirement = missions.get(i).toUpperCase();
                 String[] conditions = missionRequirement.split(":");
-                // If the conditions are the same length (+1 because missionConditions doesn't include amount)
-                if (missionConditions.length + 1 != conditions.length) continue;
+                // If the conditions are the same length (+1 because missionConditions doesn't
+                // include amount)
+                if (missionConditions.length + 1 != conditions.length)
+                    continue;
 
                 // Check if this is a mission we want to increment
                 boolean matches = matchesMission(missionConditions, conditions);
-                if (!matches) continue;
+                if (!matches)
+                    continue;
 
-                IslandMission islandMission = IridiumSkyblock.getInstance().getIslandManager().getIslandMission(island, entry.getValue(), entry.getKey(), i);
+                IslandMission islandMission = IridiumSkyblock.getInstance().getIslandManager().getIslandMission(island,
+                        entry.getValue(), entry.getKey(), i);
                 String number = conditions[missionData.split(":").length];
 
                 // Validate the required number for this condition
                 if (number.matches("^[0-9]+$")) {
                     int totalAmount = Integer.parseInt(number);
-                    if (islandMission.getProgress() >= totalAmount) break;
+                    if (islandMission.getProgress() == totalAmount)
+                        break;
+                    if (islandMission.getProgress() > totalAmount)
+                        islandMission.setProgress(totalAmount - 1);
+
                     completedBefore = false;
                     islandMission.setProgress(Math.min(islandMission.getProgress() + amount, totalAmount));
                 } else {
@@ -75,11 +88,16 @@ public class MissionManager {
 
             // Check if this mission is now completed
             if (!completedBefore && hasCompletedMission(island, entry.getValue(), entry.getKey())) {
-                island.getMembers().stream().map(user -> Bukkit.getPlayer(user.getUuid())).filter(Objects::nonNull).forEach(player -> {
-                    entry.getValue().getMessage().stream().map(string -> StringUtils.color(string.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix))).forEach(player::sendMessage);
-                    entry.getValue().getCompleteSound().play(player);
-                });
-                IridiumSkyblock.getInstance().getDatabaseManager().getIslandRewardTableManager().addEntry(new IslandReward(island, entry.getValue().getReward()));
+                island.getMembers().stream().map(user -> Bukkit.getPlayer(user.getUuid())).filter(Objects::nonNull)
+                        .forEach(player -> {
+                            entry.getValue().getMessage().stream()
+                                    .map(string -> StringUtils.color(string.replace("%prefix%",
+                                            IridiumSkyblock.getInstance().getConfiguration().prefix)))
+                                    .forEach(player::sendMessage);
+                            entry.getValue().getCompleteSound().play(player);
+                        });
+                IridiumSkyblock.getInstance().getDatabaseManager().getIslandRewardTableManager()
+                        .addEntry(new IslandReward(island, entry.getValue().getReward()));
             }
         }
     }
@@ -112,7 +130,8 @@ public class MissionManager {
         List<String> missions = mission.getMissions();
         for (int i = 0; i < mission.getMissions().size(); i++) {
             String missionRequirement = missions.get(i).toUpperCase();
-            IslandMission islandMission = IridiumSkyblock.getInstance().getIslandManager().getIslandMission(island, mission, key, i);
+            IslandMission islandMission = IridiumSkyblock.getInstance().getIslandManager().getIslandMission(island,
+                    mission, key, i);
             String[] conditions = missionRequirement.split(":");
             String number = conditions[conditions.length - 1];
 
@@ -127,6 +146,22 @@ public class MissionManager {
                 IridiumSkyblock.getInstance().getLogger().warning(number + " Is not a number");
             }
         }
+        return true;
+    }
+
+    public boolean hasCompletedMission(@NotNull Island island, @NotNull String mission_id) {
+        Mission m = IridiumSkyblock.getInstance().getMissionsList().get(mission_id);
+        if (m == null)
+            return false;
+        return hasCompletedMission(island, m, mission_id);
+    }
+
+    public boolean canComplete(@NotNull Island island, @NotNull String mission_id) {
+        Mission m = IridiumSkyblock.getInstance().getMissionsList().get(mission_id);
+        if (m == null)
+            return false;
+        if (m.getRequiredMissionBefore() != null)
+            return hasCompletedMission(island, m.getRequiredMissionBefore());
         return true;
     }
 

@@ -26,6 +26,7 @@ public class ShopItem {
     public int slot;
     public BuyCost buyCost;
     public SellReward sellReward;
+    public String requiredMission;
 
     /**
      * A short version of the default constructor.
