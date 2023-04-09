@@ -34,6 +34,7 @@ public class Messages {
     public String islandDeleted = "%prefix% &7Your Island has been deleted.";
     public String otherIslandDeleted = "%prefix% &7The Island has been deleted.";
     public String teleportingHome = "%prefix% &7Teleporting to your Island home.";
+    public String teleportingHub = "%prefix% &7Teleporting to your the hub.";
     public String teleportingHomeOther = "%prefix% &7Teleporting to %owner%'s Island home.";
     public String setHome = "%prefix% &7Your Island home has been set to this location.";
     public String notSafe = "%prefix% &7This location is not safe.";
@@ -124,6 +125,8 @@ public class Messages {
     public String maxLevelReached = "%prefix% &7Maximum level reached.";
     public String cannotAfford = "%prefix% &7You cannot afford this.";
     public String missionNotCompleted = "%prefix% &7You cannot buy this since you didn't complete the mission first.";
+    public String netherMissionNotCompleted = "%prefix% &7You cannot enter the nether because you have uncompleted missions.";
+    public String endMissionNotCompleted = "%prefix% &7You cannot enter the end because you have uncompleted missions.";
     public String unknownUpgrade = "%prefix% &7Unknown Island upgrade.";
     public String unknownBooster = "%prefix% &7Unknown Island booster.";
     public String successfullyBoughtBooster = "%prefix% &7You have successfully bought the %booster% Booster &r&7for $%vault_cost% and %crystal_cost% Crystals.";

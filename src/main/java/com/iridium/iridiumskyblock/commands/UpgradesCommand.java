@@ -26,16 +26,21 @@ public class UpgradesCommand extends Command {
      * The default constructor.
      */
     public UpgradesCommand() {
-        super(Arrays.asList("upgrades", "upgrade"), "Open the Island Upgrades Menu", "%prefix% &7/is upgrade <name>", "", true, Duration.ZERO);
+        super(Arrays.asList("upgrades", "upgrade"), "Open the Island Upgrades Menu", "%prefix% &7/is upgrade <name>",
+                "", true, Duration.ZERO);
     }
 
     /**
-     * Executes the command for the specified {@link CommandSender} with the provided arguments.
-     * Not called when the command execution was invalid (no permission, no player or command disabled).
-     * Shows an overview over the members of the Island and allows quick rank management.
+     * Executes the command for the specified {@link CommandSender} with the
+     * provided arguments.
+     * Not called when the command execution was invalid (no permission, no player
+     * or command disabled).
+     * Shows an overview over the members of the Island and allows quick rank
+     * management.
      *
      * @param sender The CommandSender which executes this command
-     * @param args   The arguments used with this command. They contain the sub-command
+     * @param args   The arguments used with this command. They contain the
+     *               sub-command
      */
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -43,31 +48,46 @@ public class UpgradesCommand extends Command {
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
         Optional<Island> island = user.getIsland();
         if (!island.isPresent()) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().noIsland
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
         if (args.length != 2) {
-            player.openInventory(new IslandUpgradesGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+            player.openInventory(
+                    new IslandUpgradesGUI(player, island.get(), player.getOpenInventory().getTopInventory())
+                            .getInventory());
             return true;
         }
 
         String upgradeName = args[1];
         Upgrade<?> upgrade = IridiumSkyblock.getInstance().getUpgradesList().get(upgradeName);
         if (upgrade == null) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().unknownUpgrade.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().unknownUpgrade
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
-        IslandUpgrade islandUpgrade = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(island.get(), upgradeName);
+        IslandUpgrade islandUpgrade = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(island.get(),
+                upgradeName);
         UpgradeData upgradeData = upgrade.upgrades.get(islandUpgrade.getLevel() + 1);
         if (upgradeData == null) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().maxLevelReached.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().maxLevelReached
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
+        if (upgradeData.requiredMission != null)
+            if (!IridiumSkyblock.getInstance().getMissionManager().hasCompletedMission(island.get(),
+                    upgradeData.requiredMission)) {
+                player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().missionNotCompleted
+                        .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                IridiumSkyblock.getInstance().getShop().failSound.play(player);
+                return false;
+            }
 
         if (!PlayerUtils.pay(player, island.get(), upgradeData.crystals, upgradeData.money)) {
-            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotAfford.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+            player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotAfford
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
 
@@ -80,8 +100,8 @@ public class UpgradesCommand extends Command {
                 .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
                 .replace("%upgrade%", upgrade.name)
                 .replace("%vault_cost%", IridiumSkyblock.getInstance().getNumberFormatter().format(upgradeData.money))
-                .replace("%crystal_cost%", IridiumSkyblock.getInstance().getNumberFormatter().format(upgradeData.crystals))
-        ));
+                .replace("%crystal_cost%",
+                        IridiumSkyblock.getInstance().getNumberFormatter().format(upgradeData.crystals))));
         return true;
     }
 
@@ -95,7 +115,8 @@ public class UpgradesCommand extends Command {
      * @return The list of tab completions for this command
      */
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String label,
+            String[] args) {
         return new ArrayList<>(IridiumSkyblock.getInstance().getUpgradesList().keySet());
     }
 

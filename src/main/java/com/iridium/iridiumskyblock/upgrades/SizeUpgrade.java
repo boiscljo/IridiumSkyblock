@@ -12,7 +12,7 @@ public class SizeUpgrade extends UpgradeData {
     public int size;
 
     public SizeUpgrade(int money, int crystals, int size) {
-        super(money, crystals);
+        super(money, crystals,null);
         this.size = size;
     }
 

@@ -27,14 +27,18 @@ public class PlayerPortalListener implements Listener {
     public void onPlayerPortal(PlayerPortalEvent event) {
         IslandManager islandManager = IridiumSkyblock.getInstance().getIslandManager();
 
-        final Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getFrom());
+        final Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager()
+                .getIslandViaLocation(event.getFrom());
         if (!island.isPresent())
             return;
 
         final User user = IridiumSkyblock.getInstance().getUserManager().getUser(event.getPlayer());
-        if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(), user, PermissionType.PORTAL)) {
+        if (!IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(), user,
+                PermissionType.PORTAL)) {
             if (hasNoCooldown(event.getPlayer())) {
-                event.getPlayer().sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotUsePortal.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                event.getPlayer()
+                        .sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotUsePortal
+                                .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             }
 
             event.setCancelled(true);
@@ -43,14 +47,23 @@ public class PlayerPortalListener implements Listener {
 
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
             if (IridiumSkyblock.getInstance().getConfiguration().netherIslands) {
-                World world = Objects.equals(event.getFrom().getWorld(), islandManager.getNetherWorld()) ? islandManager.getWorld() : islandManager.getNetherWorld();
+                World world = Objects.equals(event.getFrom().getWorld(), islandManager.getNetherWorld())
+                        ? islandManager.getWorld()
+                        : islandManager.getNetherWorld();
                 event.setTo(island.get().getCenter(world));
-                return;
+                if (IridiumSkyblock.getInstance().getConfiguration().questForNether != null) {
+                    if (IridiumSkyblock.getInstance().getMissionManager().hasCompletedMission(island.get(),
+                            IridiumSkyblock.getInstance().getConfiguration().questForNether))
+                        return;
+                } else
+                    return;
             }
 
             event.setCancelled(true);
             if (hasNoCooldown(event.getPlayer())) {
-                event.getPlayer().sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().netherIslandsDisabled.replace("%prefix", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                event.getPlayer()
+                        .sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().netherIslandsDisabled
+                                .replace("%prefix", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             }
             return;
         }
@@ -59,13 +72,22 @@ public class PlayerPortalListener implements Listener {
             event.setCancelled(true);
 
             if (IridiumSkyblock.getInstance().getConfiguration().endIslands) {
-                World world = Objects.equals(event.getFrom().getWorld(), islandManager.getEndWorld()) ? islandManager.getWorld() : islandManager.getEndWorld();
+                World world = Objects.equals(event.getFrom().getWorld(), islandManager.getEndWorld())
+                        ? islandManager.getWorld()
+                        : islandManager.getEndWorld();
                 event.getPlayer().teleport(LocationUtils.getSafeLocation(island.get().getCenter(world), island.get()));
-                return;
+                if (IridiumSkyblock.getInstance().getConfiguration().questForTheEnd != null) {
+                    if (IridiumSkyblock.getInstance().getMissionManager().hasCompletedMission(island.get(),
+                            IridiumSkyblock.getInstance().getConfiguration().questForTheEnd))
+                        return;
+                } else
+                    return;
             }
 
             if (hasNoCooldown(event.getPlayer())) {
-                event.getPlayer().sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().endIslandsDisabled.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                event.getPlayer()
+                        .sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().endIslandsDisabled
+                                .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             }
         }
     }

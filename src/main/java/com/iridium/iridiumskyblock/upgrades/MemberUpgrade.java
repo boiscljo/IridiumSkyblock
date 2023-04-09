@@ -13,7 +13,7 @@ public class MemberUpgrade extends UpgradeData{
     public int amount;
 
     public MemberUpgrade(int money, int crystals, int amount) {
-        super(money, crystals);
+        super(money, crystals,null);
         this.amount = amount;
     }
 

@@ -12,7 +12,7 @@ public class WarpsUpgrade extends UpgradeData {
     public int amount;
 
     public WarpsUpgrade(int money, int crystals, int amount) {
-        super(money, crystals);
+        super(money, crystals,null);
         this.amount = amount;
     }
 

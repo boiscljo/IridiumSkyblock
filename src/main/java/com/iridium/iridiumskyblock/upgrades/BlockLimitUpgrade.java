@@ -11,7 +11,7 @@ public class BlockLimitUpgrade extends UpgradeData {
     public Map<ObsidianMaterial, Integer> limits;
 
     public BlockLimitUpgrade(int money, int crystals, Map<ObsidianMaterial, Integer> limits) {
-        super(money, crystals);
+        super(money, crystals,null);
         this.limits = limits;
     }
 }

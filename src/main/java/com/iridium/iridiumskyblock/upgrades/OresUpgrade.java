@@ -13,7 +13,7 @@ public class OresUpgrade extends UpgradeData {
     public Map<ObsidianMaterial, Integer> endOres;
 
     public OresUpgrade(int money, int crystals, Map<ObsidianMaterial, Integer> ores, Map<ObsidianMaterial, Integer> netherOres, Map<ObsidianMaterial, Integer> endOres) {
-        super(money, crystals);
+        super(money, crystals,null);
         this.ores = ores;
         this.netherOres = netherOres;
     }

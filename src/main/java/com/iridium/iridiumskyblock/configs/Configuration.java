@@ -35,6 +35,8 @@ public class Configuration {
     public String islandLevelEquation = "abs(cbrt($1+1))";
     public String defaultIslandName = "%island_owner_name%'s Island";
     public String paster = "worldedit";
+    public String questForNether = null;
+    public String questForTheEnd = null;
 
     public boolean enableCheckVersion = true;
     public boolean defaultIslandPublic = true;
