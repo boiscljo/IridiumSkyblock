@@ -65,7 +65,9 @@ public class IslandMissionsGUI extends PagedGUI<Map.Entry<String, Mission>> {
     @Override
     public Collection<Map.Entry<String, Mission>> getPageObjects() {
         List<Map.Entry<String, Mission>> missions = IridiumSkyblock.getInstance().getMissionsList().entrySet().stream()
-                .filter(e -> e.getValue().getMissionType() == Mission.MissionType.ONCE).collect(Collectors.toList());
+                .filter(e -> e.getValue().getMissionType() == Mission.MissionType.ONCE)
+                .filter(e -> IridiumSkyblock.getInstance().getMissionManager().canComplete(island, e.getKey()))
+                .collect(Collectors.toList());
 
         switch (IridiumSkyblock.getInstance().getConfiguration().sortMissionsBy) {
             case KEY:

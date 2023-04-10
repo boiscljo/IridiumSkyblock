@@ -943,6 +943,7 @@ public class IslandManager {
         List<String> islandMissions = IridiumSkyblock.getInstance().getDatabaseManager().getIslandMissionTableManager()
                 .getEntries(island).stream()
                 .filter(islandMission -> islandMission.getType() == Mission.MissionType.DAILY)
+                .filter(e -> IridiumSkyblock.getInstance().getMissionManager().canComplete(island, e.getMissionName()))
                 .map(IslandMission::getMissionName)
                 .distinct()
                 .collect(Collectors.toList());
@@ -955,6 +956,7 @@ public class IslandManager {
         List<String> availableMissions = IridiumSkyblock.getInstance().getMissionsList().keySet().stream()
                 .filter(mission -> IridiumSkyblock.getInstance().getMissionsList().get(mission)
                         .getMissionType() == Mission.MissionType.DAILY)
+                .filter(e -> IridiumSkyblock.getInstance().getMissionManager().canComplete(island, e))
                 .filter(mission -> islandMissions.stream().noneMatch(m -> m.equals(mission)))
                 .collect(Collectors.toList());
 
