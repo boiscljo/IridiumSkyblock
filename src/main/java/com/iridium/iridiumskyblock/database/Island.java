@@ -43,7 +43,7 @@ import java.util.UUID;
 @DatabaseTable(tableName = "islands")
 public final class Island extends DatabaseObject {
 
-    private final static CompiledExpression islandLevelEquation = Crunch.compileExpression(IridiumSkyblock.getInstance().getConfiguration().islandLevelEquation);
+    private CompiledExpression islandLevelEquation = null;
 
     @DatabaseField(columnName = "id", generatedId = true, canBeNull = false)
     private int id;
@@ -52,9 +52,9 @@ public final class Island extends DatabaseObject {
     private String name;
 
     /*
-    The islands home relative to the island center as a string.
-    Format: x,y,z,pitch,yaw
-    */
+     * The islands home relative to the island center as a string.
+     * Format: x,y,z,pitch,yaw
+     */
     @DatabaseField(columnName = "home")
     private @NotNull String home;
 
@@ -78,7 +78,7 @@ public final class Island extends DatabaseObject {
 
     // Cache
     private Integer size;
-    
+
     // Cache Position Island Reset every 5 seconds
     private final Cache<Location> pos1LocationCache = new Cache<>(5000);
     private final Cache<Location> pos2LocationCache = new Cache<>(5000);
@@ -97,7 +97,8 @@ public final class Island extends DatabaseObject {
     public Island(@NotNull String name, @NotNull Schematics.SchematicConfig schematicConfig) {
         this.name = name;
         this.visitable = IridiumSkyblock.getInstance().getConfiguration().defaultIslandPublic;
-        this.home = schematicConfig.xHome + "," + schematicConfig.yHome + "," + schematicConfig.zHome + ",0," + schematicConfig.yawHome;
+        this.home = schematicConfig.xHome + "," + schematicConfig.yHome + "," + schematicConfig.zHome + ",0,"
+                + schematicConfig.yawHome;
         this.time = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.color = IridiumSkyblock.getInstance().getBorder().defaultColor;
     }
@@ -110,7 +111,8 @@ public final class Island extends DatabaseObject {
     }
 
     public String getName() {
-        return name == null ? IridiumSkyblock.getInstance().getConfiguration().defaultIslandName.replace("%island_owner_name%", getOwner().getName()) : name;
+        return name == null ? IridiumSkyblock.getInstance().getConfiguration().defaultIslandName
+                .replace("%island_owner_name%", getOwner().getName()) : name;
     }
 
     /**
@@ -119,7 +121,33 @@ public final class Island extends DatabaseObject {
      * @return The islands level
      */
     public int getLevel() {
-        return (int) islandLevelEquation.evaluate(experience);
+        CompiledExpression ce = getIslandLevelEquation();
+        if (ce != null) {
+            if (ce.getVariableCount() == 1) {
+                return (int) islandLevelEquation.evaluate(experience);
+            } else if (ce.getVariableCount() == 0) {
+                return 0;// Level disabled
+            } else if (ce.getVariableCount() == 2) {
+                return (int) islandLevelEquation.evaluate(experience, getValue());
+            } else {
+                Throwable t = new Throwable("Island equation cannot contain more than 1 variable");
+                t.printStackTrace();
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    private CompiledExpression getIslandLevelEquation() {
+        if (islandLevelEquation != null)
+            return islandLevelEquation;
+        try {
+            islandLevelEquation = Crunch
+                    .compileExpression(IridiumSkyblock.getInstance().getConfiguration().islandLevelEquation);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return islandLevelEquation;
     }
 
     /**
@@ -170,7 +198,7 @@ public final class Island extends DatabaseObject {
      * @return the required experience required to levelup
      */
     public int getExperienceRequiredToLevelUp() {
-        return getExperienceRequired(getLevel() + 1);
+        return getExperienceRequired(getLevel() + 1) ;
     }
 
     /**
@@ -179,7 +207,7 @@ public final class Island extends DatabaseObject {
      * @return the remaining experience required to levelup
      */
     public int getExperienceRemainingToLevelUp() {
-        return getExperience() - getExperienceRequiredToLevelUp();
+        return getExperienceRequiredToLevelUp() - getTotalExperience();
     }
 
     /**
@@ -197,9 +225,9 @@ public final class Island extends DatabaseObject {
      * @return The owner of the Island
      */
     public User getOwner() {
-        return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(this).stream().filter(user ->
-                user.getIslandRank().equals(IslandRank.OWNER)
-        ).findFirst().orElse(new User(UUID.randomUUID(), IridiumSkyblock.getInstance().getMessages().none));
+        return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(this).stream()
+                .filter(user -> user.getIslandRank().equals(IslandRank.OWNER)).findFirst()
+                .orElse(new User(UUID.randomUUID(), IridiumSkyblock.getInstance().getMessages().none));
     }
 
     /**
@@ -210,7 +238,9 @@ public final class Island extends DatabaseObject {
     public @NotNull Location getHome() {
         String[] params = home.split(",");
         World world = IridiumSkyblock.getInstance().getIslandManager().getWorld();
-        return new Location(world, Double.parseDouble(params[0]), Double.parseDouble(params[1]), Double.parseDouble(params[2]), Float.parseFloat(params[4]), Float.parseFloat(params[3])).add(getCenter(world));
+        return new Location(world, Double.parseDouble(params[0]), Double.parseDouble(params[1]),
+                Double.parseDouble(params[2]), Float.parseFloat(params[4]), Float.parseFloat(params[3]))
+                .add(getCenter(world));
     }
 
     /**
@@ -220,7 +250,8 @@ public final class Island extends DatabaseObject {
      */
     public void setHome(@NotNull Location location) {
         Location homeLocation = location.subtract(getCenter(location.getWorld()));
-        this.home = homeLocation.getX() + "," + homeLocation.getY() + "," + homeLocation.getZ() + "," + homeLocation.getPitch() + "," + homeLocation.getYaw();
+        this.home = homeLocation.getX() + "," + homeLocation.getY() + "," + homeLocation.getZ() + ","
+                + homeLocation.getPitch() + "," + homeLocation.getYaw();
         setChanged(true);
     }
 
@@ -242,12 +273,16 @@ public final class Island extends DatabaseObject {
         return valueCache.getCache(() -> {
             double value = extraValue;
 
-            for (Map.Entry<ObsidianMaterial, BlockValues.ValuableBlock> valuableBlock : IridiumSkyblock.getInstance().getBlockValues().blockValues.entrySet()) {
-                value += IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(this, valuableBlock.getKey()) * valuableBlock.getValue().value;
+            for (Map.Entry<ObsidianMaterial, BlockValues.ValuableBlock> valuableBlock : IridiumSkyblock.getInstance()
+                    .getBlockValues().blockValues.entrySet()) {
+                value += IridiumSkyblock.getInstance().getIslandManager().getIslandBlockAmount(this,
+                        valuableBlock.getKey()) * valuableBlock.getValue().value;
             }
 
-            for (Map.Entry<EntityType, BlockValues.ValuableBlock> valuableSpawner : IridiumSkyblock.getInstance().getBlockValues().spawnerValues.entrySet()) {
-                value += IridiumSkyblock.getInstance().getIslandManager().getIslandSpawnerAmount(this, valuableSpawner.getKey()) * valuableSpawner.getValue().value;
+            for (Map.Entry<EntityType, BlockValues.ValuableBlock> valuableSpawner : IridiumSkyblock.getInstance()
+                    .getBlockValues().spawnerValues.entrySet()) {
+                value += IridiumSkyblock.getInstance().getIslandManager().getIslandSpawnerAmount(this,
+                        valuableSpawner.getKey()) * valuableSpawner.getValue().value;
             }
 
             return value;
@@ -261,7 +296,8 @@ public final class Island extends DatabaseObject {
      * @return The value of this block on the island, 0 if it isn't valuable
      */
     public double getValueOf(ObsidianMaterial material) {
-        return IridiumSkyblock.getInstance().getBlockValues().blockValues.getOrDefault(material, new BlockValues.ValuableBlock(0, "", 0, 0)).value;
+        return IridiumSkyblock.getInstance().getBlockValues().blockValues.getOrDefault(material,
+                new BlockValues.ValuableBlock(0, "", 0, 0)).value;
     }
 
     /**
@@ -271,7 +307,8 @@ public final class Island extends DatabaseObject {
      * @return The value of this block on the island, 0 if it isn't valuable
      */
     public double getValueOf(EntityType spawnerType) {
-        return IridiumSkyblock.getInstance().getBlockValues().spawnerValues.getOrDefault(spawnerType, new BlockValues.ValuableBlock(0, "", 0, 0)).value;
+        return IridiumSkyblock.getInstance().getBlockValues().spawnerValues.getOrDefault(spawnerType,
+                new BlockValues.ValuableBlock(0, "", 0, 0)).value;
     }
 
     /**
@@ -280,12 +317,11 @@ public final class Island extends DatabaseObject {
      */
     public int getSize() {
         if (size == null) {
-            size=1;
+            size = 1;
             int sizeLevel = IridiumSkyblock.getInstance().getIslandManager().getIslandUpgrade(this, "size").getLevel();
-            SizeUpgrade upgrade=null;
-            while(upgrade==null && sizeLevel>0)
-            {
-                upgrade=IridiumSkyblock.getInstance().getUpgrades().sizeUpgrade.upgrades.get(sizeLevel);
+            SizeUpgrade upgrade = null;
+            while (upgrade == null && sizeLevel > 0) {
+                upgrade = IridiumSkyblock.getInstance().getUpgrades().sizeUpgrade.upgrades.get(sizeLevel);
                 sizeLevel--;
                 size = upgrade.size;
             }
@@ -317,8 +353,10 @@ public final class Island extends DatabaseObject {
      * @return The center Location of this island
      */
     public Location getCenter(World world) {
-        if (id == 1) return new Location(world, 0, 0, 0);
-        // In this algorithm position 2 is where id 1 is, position 3 is where id 2 is, ect.
+        if (id == 1)
+            return new Location(world, 0, 0, 0);
+        // In this algorithm position 2 is where id 1 is, position 3 is where id 2 is,
+        // ect.
         int position = id - 1;
 
         // The radius of the last completed square
@@ -350,7 +388,8 @@ public final class Island extends DatabaseObject {
             default:
                 throw new IllegalStateException("Could not find island location with ID: " + id);
         }
-        if(IridiumSkyblock.getInstance().getConfiguration().respectNetherRatio && world.getEnvironment() != Environment.NETHER)
+        if (IridiumSkyblock.getInstance().getConfiguration().respectNetherRatio
+                && world.getEnvironment() != Environment.NETHER)
             location = location.multiply(8);
         return location.multiply(IridiumSkyblock.getInstance().getConfiguration().distance);
     }
@@ -369,7 +408,7 @@ public final class Island extends DatabaseObject {
                 return getCenter(null).subtract(new Location(null, size, 0, size));
             });
         }
-        
+
         double size = getSize() / 2.00;
         return getCenter(world).subtract(new Location(world, size, 0, size));
     }
@@ -388,7 +427,7 @@ public final class Island extends DatabaseObject {
                 return getCenter(null).add(new Location(null, size, 0, size));
             });
         }
-        
+
         double size = getSize() / 2.00;
         return getCenter(world).add(new Location(world, size, 0, size));
     }
@@ -399,7 +438,8 @@ public final class Island extends DatabaseObject {
      * @return The islands rank
      */
     public int getRank() {
-        return IridiumSkyblock.getInstance().getIslandManager().getIslands(IslandManager.SortType.VALUE).indexOf(this) + 1;
+        return IridiumSkyblock.getInstance().getIslandManager().getIslands(IslandManager.SortType.VALUE).indexOf(this)
+                + 1;
     }
 
     /**
@@ -411,7 +451,8 @@ public final class Island extends DatabaseObject {
     public boolean isInIsland(@NotNull Location location) {
         IslandManager islandManager = IridiumSkyblock.getInstance().getIslandManager();
         World world = location.getWorld();
-        if (Objects.equals(world, islandManager.getWorld()) || Objects.equals(world, islandManager.getNetherWorld()) || Objects.equals(world, islandManager.getEndWorld())) {
+        if (Objects.equals(world, islandManager.getWorld()) || Objects.equals(world, islandManager.getNetherWorld())
+                || Objects.equals(world, islandManager.getEndWorld())) {
             return isInIsland(location.getBlockX(), location.getBlockZ(), location.getWorld());
         } else {
             return false;
