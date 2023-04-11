@@ -8,6 +8,7 @@ import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.api.UserDemoteEvent;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandLog;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
 import java.time.Duration;
@@ -68,8 +69,9 @@ public class DemoteCommand extends Command {
                 return false;
             }
 
-            IslandRank nextRank = IslandRank.getByLevel(offlinePlayerUser.getIslandRank().getLevel() - 1);
-            if (nextRank == null || offlinePlayerUser.getIslandRank().getLevel() >= user.getIslandRank().getLevel()
+            IslandMember membership = island.get().getMembership(offlinePlayerUser);
+            IslandRank nextRank = IslandRank.getByLevel(membership.getIslandRank().getLevel() - 1);
+            if (nextRank == null || membership.getIslandRank().getLevel() >= user.getCurrentIslandRank().getLevel()
                     || !IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(),
                             IridiumSkyblock.getInstance().getUserManager().getUser(player), PermissionType.DEMOTE)) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotDemoteUser
@@ -87,9 +89,10 @@ public class DemoteCommand extends Command {
             if (userDemoteEvent.isCancelled())
                 return false;
 
-            offlinePlayerUser.setIslandRank(nextRank);
-            for (User member : island.get().getMembers()) {
-                Player islandMember = Bukkit.getPlayer(member.getUuid());
+            membership.setIslandRank(nextRank);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().save(membership);
+            for (IslandMember member : island.get().getMembers()) {
+                Player islandMember = Bukkit.getPlayer(member.getUserId());
                 if (islandMember == null)
                     continue;
                 if (islandMember.equals(player)) {

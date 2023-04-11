@@ -66,7 +66,7 @@ public class InviteCommand extends Command {
         if (offlinePlayerUser != null) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user.getUuid());
 
-            List<User> islandMembers = IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(island.get());
+            List<IslandMember> islandMembers = IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(island.get());
             IslandUpgrade islandUpgrade = IridiumSkyblock.getInstance().getIslandManager()
                     .getIslandUpgrade(island.get(), "member");
             int memberLimit = IridiumSkyblock.getInstance().getUpgrades().memberUpgrade.upgrades
@@ -108,8 +108,8 @@ public class InviteCommand extends Command {
                             .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
 
             // Send a message to all other members
-            for (User member : islandMembers) {
-                Player islandMember = Bukkit.getPlayer(member.getUuid());
+            for (IslandMember member : islandMembers) {
+                Player islandMember = Bukkit.getPlayer(member.getUserId());
                 if (islandMember == null || islandMember.equals(player))
                     continue;
                 islandMember.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userInvitedPlayer

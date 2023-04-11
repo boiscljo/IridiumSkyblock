@@ -5,6 +5,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.database.Island;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.placeholders.Placeholders;
 import org.bukkit.Bukkit;
@@ -24,8 +25,8 @@ public class PlayerChatListener implements Listener {
         Optional<Island> island = user.getIsland();
         if (user.isIslandChat() && island.isPresent()) {
             event.setCancelled(true);
-            for (User islandUser : island.get().getMembers()) {
-                Player recipient = Bukkit.getPlayer(islandUser.getUuid());
+            for (IslandMember islandUser : island.get().getMembers()) {
+                Player recipient = Bukkit.getPlayer(islandUser.getUserId());
                 if (recipient != null) {
                     recipient.sendMessage(StringUtils.color(StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandMemberChat, new PlaceholderBuilder().papi( event.getPlayer()).applyIslandPlaceholders(island.get()).build())
                             .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)

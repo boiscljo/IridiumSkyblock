@@ -5,6 +5,9 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.IslandRank;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
@@ -18,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,6 +46,7 @@ public final class User extends DatabaseObject {
     private long joinTime;
 
     @DatabaseField(columnName = "island_rank")
+    @Getter(AccessLevel.NONE)
     private @NotNull IslandRank islandRank;
 
     private boolean bypassing = false;
@@ -134,7 +139,7 @@ public final class User extends DatabaseObject {
         return Bukkit.getPlayer(uuid);
     }
 
-     /**
+    /**
      * Gets the user as Player
      *
      * @return The player object if one was found, null otherwise
@@ -173,10 +178,10 @@ public final class User extends DatabaseObject {
         setChanged(true);
     }
 
-    public void setIslandRank(@NotNull IslandRank islandRank) {
-        this.islandRank = islandRank;
-        setChanged(true);
-    }
+    // public void setIslandRank(@NotNull IslandRank islandRank) {
+    //     this.islandRank = islandRank;
+    //     setChanged(true);
+    // }
 
     public void setBypassing(boolean bypassing) {
         this.bypassing = bypassing;
@@ -205,8 +210,45 @@ public final class User extends DatabaseObject {
     public int getTeleportDelay() {
         if (bypassing)
             return 0;
-        if(getPlayer()!=null && getPlayer().hasPermission("iridiumskyblock.no-teleport-delay"))
+        if (getPlayer() != null && getPlayer().hasPermission("iridiumskyblock.no-teleport-delay"))
             return 0;
         return IridiumSkyblock.getInstance().getConfiguration().teleportDelay;
+    }
+
+    public IslandRank getCurrentIslandRank() {
+        Optional<IslandMember> membership = getCurrentIslandMembership();
+        if (membership.isPresent())
+            return membership.get().getIslandRank();
+        return IslandRank.VISITOR;
+    }
+
+    public Optional<IslandMember> getCurrentIslandMembership() {
+        return getIslandMembership(island);
+    }
+
+    public Optional<IslandMember> getIslandMembership(Integer island) {
+        return getMemberships().stream().filter(membership -> membership.getIslandId() == island.intValue()).findAny();
+    }
+
+    public List<IslandMember> getMemberships() {
+        return IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().getEntries().stream()
+                .filter(
+                        entry -> entry.getUser().uuid.equals(uuid))
+                .toList();
+    }
+
+    public void migrateToMembership() {
+        if (islandRank != IslandRank.VISITOR) {
+            getIsland().ifPresent(island -> {
+                IslandMember membership = new IslandMember(island, this, islandRank);
+                IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().save(membership);
+                IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().addEntry(membership);
+
+                islandRank = IslandRank.VISITOR;
+                setChanged(true);
+                IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(this);
+            });
+        }
+
     }
 }

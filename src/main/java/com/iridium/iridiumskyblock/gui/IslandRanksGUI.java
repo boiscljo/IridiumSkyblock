@@ -8,6 +8,7 @@ import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.configs.inventories.IslandRanksInventoryConfig;
 import com.iridium.iridiumskyblock.database.Island;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.User;
 
 import org.bukkit.entity.Player;
@@ -39,7 +40,7 @@ public class IslandRanksGUI extends IslandGUI {
         inventory.clear();
         IslandRanksInventoryConfig islandRanks = IridiumSkyblock.getInstance().getInventories().islandRanksGUI;
         InventoryUtils.fillInventory(inventory, islandRanks.background);
-        List<User> members = IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(getIsland());
+        List<IslandMember> members = IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(getIsland());
         PlaceholderBuilder.PapiPlacheolder papi = new PlaceholderBuilder.PapiPlacheolder(getPlayer());
 
         inventory.setItem(islandRanks.owner.slot, ItemStackUtils.makeItem(islandRanks.owner,
@@ -48,17 +49,17 @@ public class IslandRanksGUI extends IslandGUI {
                 List.of(papi,
                         new Placeholder("members",
                                 members.stream().filter(member -> member.getIslandRank().equals(IslandRank.CO_OWNER))
-                                        .map(User::getName).collect(Collectors.joining(", "))))));
+                                        .map(member->member.getUser().getName()).collect(Collectors.joining(", "))))));
         inventory.setItem(islandRanks.moderator.slot, ItemStackUtils.makeItem(islandRanks.moderator,
                 List.of(papi,
                         new Placeholder("members",
                                 members.stream().filter(member -> member.getIslandRank().equals(IslandRank.MODERATOR))
-                                        .map(User::getName).collect(Collectors.joining(", "))))));
+                                        .map(member->member.getUser().getName()).collect(Collectors.joining(", "))))));
         inventory.setItem(islandRanks.member.slot, ItemStackUtils.makeItem(islandRanks.member,
                 List.of(papi,
                         new Placeholder("members",
                                 members.stream().filter(member -> member.getIslandRank().equals(IslandRank.MEMBER))
-                                        .map(User::getName).collect(Collectors.joining(", "))))));
+                                        .map(member->member.getUser().getName()).collect(Collectors.joining(", "))))));
         inventory.setItem(islandRanks.visitor.slot,
                 ItemStackUtils.makeItem(islandRanks.visitor, new PlaceholderBuilder().papi(getPlayer()).build()));
 

@@ -88,7 +88,7 @@ public class MissionManager {
 
             // Check if this mission is now completed
             if (!completedBefore && hasCompletedMission(island, entry.getValue(), entry.getKey())) {
-                island.getMembers().stream().map(user -> Bukkit.getPlayer(user.getUuid())).filter(Objects::nonNull)
+                island.getMembers().stream().map(user -> Bukkit.getPlayer(user.getUserId())).filter(Objects::nonNull)
                         .forEach(player -> {
                             entry.getValue().getMessage().stream()
                                     .map(string -> StringUtils.color(string.replace("%prefix%",

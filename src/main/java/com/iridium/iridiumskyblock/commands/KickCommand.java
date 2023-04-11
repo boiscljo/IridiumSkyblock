@@ -7,6 +7,7 @@ import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.api.UserKickEvent;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandLog;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
 import java.time.Duration;
@@ -66,9 +67,12 @@ public class KickCommand extends Command {
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;
             }
+            IslandMember targetMembership = island.get().getMembership(targetUser);
 
-            if (targetUser.getIslandRank().getLevel() >= user.getIslandRank().getLevel() || !IridiumSkyblock
-                    .getInstance().getIslandManager().getIslandPermission(island.get(), user, PermissionType.KICK)) {
+            if (targetMembership.getIslandRank().getLevel() >= user.getCurrentIslandRank().getLevel()
+                    || !IridiumSkyblock
+                            .getInstance().getIslandManager()
+                            .getIslandPermission(island.get(), user, PermissionType.KICK)) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotKickUser
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;
@@ -88,11 +92,20 @@ public class KickCommand extends Command {
                 PlayerUtils.teleportSpawn((Player) targetPlayer);
             }
 
-            targetUser.setIsland(null);
+            IslandMember membership = island.get().getMembership(targetUser);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager()
+                    .delete(membership);
+            targetUser.getCurrentIslandMembership().ifPresent(
+                    current_membership -> {
+                        if (current_membership.getIslandId() == island.get().getId()) {
+                            targetUser.setIsland(null);
+                            IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(targetUser); 
+                        }
+                    });
 
             // Send a message to all other members
-            for (User member : island.get().getMembers()) {
-                Player islandMember = Bukkit.getPlayer(member.getUuid());
+            for (IslandMember member : island.get().getMembers()) {
+                Player islandMember = Bukkit.getPlayer(member.getUserId());
                 if (islandMember != null) {
                     if (!islandMember.equals(player)) {
                         islandMember

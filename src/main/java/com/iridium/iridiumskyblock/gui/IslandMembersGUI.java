@@ -53,7 +53,7 @@ public class IslandMembersGUI extends PagedGUI<User> {
 
     @Override
     public Collection<User> getPageObjects() {
-        return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(island);
+        return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(island).stream().map(member->member.getUser()).toList();
     }
 
     @Override

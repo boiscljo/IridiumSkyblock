@@ -71,7 +71,7 @@ public class DeleteCommand extends Command {
             return false;
         }
 
-        if (!user.getIslandRank().equals(IslandRank.OWNER)) {
+        if (!user.getCurrentIslandRank().equals(IslandRank.OWNER)) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotDeleteIsland
                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;

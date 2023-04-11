@@ -8,6 +8,7 @@ import com.iridium.iridiumskyblock.api.UserJoinEvent;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandInvite;
 import com.iridium.iridiumskyblock.database.IslandLog;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.IslandUpgrade;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
@@ -54,7 +55,7 @@ public class JoinCommand extends Command {
 
         Player player = (Player) sender;
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-        if (user.getIsland().isPresent()) {
+        if (user.getIsland().isPresent() && IridiumSkyblock.getInstance().getConfiguration().singleIslandOnly) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().alreadyHaveIsland
                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
@@ -95,8 +96,8 @@ public class JoinCommand extends Command {
                 return false;
 
             // Send a message to all other members
-            for (User member : island.get().getMembers()) {
-                Player islandMember = Bukkit.getPlayer(member.getName());
+            for (IslandMember member : island.get().getMembers()) {
+                Player islandMember = Bukkit.getPlayer(member.getUserId());
                 if (islandMember != null) {
                     islandMember.sendMessage(
                             StringUtils.color(IridiumSkyblock.getInstance().getMessages().playerJoinedYourIsland
@@ -104,9 +105,10 @@ public class JoinCommand extends Command {
                                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 }
             }
+            IslandMember membership = island.get().getMembership(user);
+            membership.setIslandRank(IslandRank.MEMBER);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().save(membership);
 
-            user.setIsland(island.get());
-            user.setIslandRank(IslandRank.MEMBER);
             islandInvite.ifPresent(invite -> IridiumSkyblock.getInstance().getDatabaseManager()
                     .getIslandInviteTableManager().delete(invite));
             IridiumSkyblock.getInstance().getIslandManager().teleportHome(player, island.get(), 0);

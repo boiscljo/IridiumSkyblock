@@ -57,7 +57,7 @@ public class DataConverter {
 
     public static void updateDatabaseData(int oldVersion, int newVersion, ConnectionSource connectionSource, SQL.Driver driver) {
         IridiumSkyblock.getInstance().getLogger().info("Updating database from version " + oldVersion + " to " + newVersion);
-
+        
         try {
             DatabaseConnection connection = connectionSource.getReadWriteConnection(null);
             for (int version = oldVersion + 1; version <= newVersion; version++) {
@@ -66,6 +66,11 @@ public class DataConverter {
 
                 for (String statement : CharStreams.toString(new InputStreamReader(inputStream)).split("\n")) {
                     connection.executeStatement(statement, DatabaseConnection.DEFAULT_RESULT_FLAGS);
+                }
+                if(version==5 && oldVersion<5)
+                {
+                    //Code need to be manual
+                    
                 }
             }
 

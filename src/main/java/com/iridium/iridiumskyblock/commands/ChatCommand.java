@@ -5,6 +5,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.PlaceholderBuilder;
 import com.iridium.iridiumskyblock.api.UserChatToggleEvent;
 import com.iridium.iridiumskyblock.database.Island;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.User;
 import java.time.Duration;
 import java.util.Arrays;
@@ -46,8 +47,8 @@ public class ChatCommand extends Command {
 
         if (args.length > 1) {
             String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-            for (User user : island.get().getMembers()) {
-                Player recipient = Bukkit.getPlayer(user.getUuid());
+            for (IslandMember user : island.get().getMembers()) {
+                Player recipient = Bukkit.getPlayer(user.getUserId());
                 if (recipient != null) {
                     recipient.sendMessage(StringUtils.color(
                             StringUtils.processMultiplePlaceholders(IridiumSkyblock.getInstance().getMessages().islandMemberChat, new PlaceholderBuilder().papi(recipient).applyIslandPlaceholders(island.get()).build())

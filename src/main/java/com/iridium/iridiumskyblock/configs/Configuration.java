@@ -56,6 +56,7 @@ public class Configuration {
     public boolean respectNetherRatio=false;
     public boolean forceNetherGeneratorInNether=true;
     public boolean useBedrockGeneratorInstead=false;
+    public boolean singleIslandOnly=false;
     
     public IslandRegenSettings regenSettings = new IslandRegenSettings();
 

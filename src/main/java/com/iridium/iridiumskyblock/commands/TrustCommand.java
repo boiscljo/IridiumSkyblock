@@ -79,7 +79,7 @@ public class TrustCommand extends Command {
         IslandTrusted islandTrusted = new IslandTrusted(island.get(), targetUser, user);
         IridiumSkyblock.getInstance().getDatabaseManager().getIslandTrustedTableManager().addEntry(islandTrusted);
 
-        island.get().getMembers().stream().map(user1 -> Bukkit.getPlayer(user1.getUuid())).filter(Objects::nonNull).forEach(onlineMember ->
+        island.get().getMembers().stream().map(user1 -> Bukkit.getPlayer(user1.getUserId())).filter(Objects::nonNull).forEach(onlineMember ->
                 onlineMember.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().trustedPlayer
                         .replace("%truster%", player.getName())
                         .replace("%player%", targetPlayer.getName())

@@ -215,7 +215,7 @@ public final class Island extends DatabaseObject {
      *
      * @return A list of all Users belonging to the island
      */
-    public List<User> getMembers() {
+    public List<IslandMember> getMembers() {
         return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(this);
     }
 
@@ -227,6 +227,7 @@ public final class Island extends DatabaseObject {
     public User getOwner() {
         return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(this).stream()
                 .filter(user -> user.getIslandRank().equals(IslandRank.OWNER)).findFirst()
+                .map(member->member.getUser())
                 .orElse(new User(UUID.randomUUID(), IridiumSkyblock.getInstance().getMessages().none));
     }
 
@@ -589,6 +590,12 @@ public final class Island extends DatabaseObject {
 
     public void setSize(Integer size) {
         this.size = size;
+    }
+
+    public IslandMember getMembership(User user)
+    {
+        return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(this).stream().filter(membership->membership.getUserId().equals(user.getUuid()))
+        .findAny().orElse(new IslandMember(this,user, IslandRank.VISITOR));
     }
 
 }

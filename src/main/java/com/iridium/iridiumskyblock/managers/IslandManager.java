@@ -280,10 +280,13 @@ public class IslandManager {
 
             IridiumSkyblock.getInstance().getDatabaseManager().registerIsland(island).join();
 
-            user.setIsland(island);
-            user.setIslandRank(IslandRank.OWNER);
-
+            user.setIsland(island);// Set it in the current profile
+            // user.setIslandRank(IslandRank.OWNER);
             IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(user);
+
+            IslandMember membership = new IslandMember(island, user, IslandRank.OWNER);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().save(membership);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().addEntry(membership);
 
             Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(),
                     () -> pasteSchematic(island, schematic).thenRun(() -> completableFuture.complete(island)));
@@ -323,7 +326,8 @@ public class IslandManager {
         }
         toComplete.thenAccept((Void) -> {
             IslandRegenSettings regenSettings = IridiumSkyblock.getInstance().getConfiguration().regenSettings;
-            getIslandMembers(island).stream().map(User::getPlayer).forEach(player -> {
+            getIslandMembers(island).stream().map(member -> member.getUser()).forEach(targetUser -> {
+                Player player = user.getPlayer();
                 if (player != null) {
                     if (regenSettings.clearInventories)
                         player.getInventory().clear();
@@ -337,10 +341,19 @@ public class IslandManager {
                                 StringUtils.color(IridiumSkyblock.getInstance().getMessages().youHaveBeenKicked
                                         .replace("%player%", user.getName())
                                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
-                        IridiumSkyblock.getInstance().getUserManager().getUser(player).setIsland(null);
                     }
                     PlayerUtils.teleportSpawn(player);
                 }
+                IslandMember membership = island.getMembership(targetUser);
+                IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager()
+                        .delete(membership);
+                targetUser.getCurrentIslandMembership().ifPresent(
+                        current_membership -> {
+                            if (current_membership.getIslandId() == island.getId()) {
+                                targetUser.setIsland(null);
+                                IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(targetUser); 
+                            }
+                        });
             });
 
             if (regenSettings.resetIslandBank) {
@@ -513,8 +526,8 @@ public class IslandManager {
      * @param island The specified Island
      * @return A list of users
      */
-    public @NotNull List<User> getIslandMembers(@NotNull Island island) {
-        return IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().getEntries(island);
+    public @NotNull List<IslandMember> getIslandMembers(@NotNull Island island) {
+        return IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().getEntries(island);
     }
 
     /**
@@ -638,8 +651,8 @@ public class IslandManager {
      */
     public boolean getIslandPermission(@NotNull Island island, @NotNull User user, @NotNull Permission permission,
             @NotNull String key) {
-        IslandRank islandRank = island.equals(user.getIsland().orElse(null)) ? user.getIslandRank()
-                : IslandRank.VISITOR;
+        IslandRank islandRank = island.getMembership(user).getIslandRank();
+
         if (getIslandTrusted(island, user).isPresent()) {
             islandRank = IslandRank.MEMBER;
         }
@@ -829,7 +842,7 @@ public class IslandManager {
         deleteIslandBlocks(island, getEndWorld(), 3);
         deleteIslandDatabaseEntries(island);
 
-        getIslandMembers(island).stream().map(User::getPlayer).forEach(player -> {
+        getIslandMembers(island).stream().map(member -> member.getUser().getPlayer()).forEach(player -> {
             if (player != null) {
                 if (IridiumSkyblock.getInstance().getConfiguration().deleteSettings.clearInventories) {
                     player.getInventory().clear();
@@ -1211,8 +1224,8 @@ public class IslandManager {
 
     public synchronized void islandLevelUp(Island island, int newLevel) {
 
-        for (User user : getIslandMembers(island)) {
-            Player player = Bukkit.getPlayer(user.getUuid());
+        for (IslandMember user : getIslandMembers(island)) {
+            Player player = Bukkit.getPlayer(user.getUserId());
             if (player != null) {
                 IridiumSkyblock.getInstance().getConfiguration().islandLevelUpSound.play(player);
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().islandLevelUp

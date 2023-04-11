@@ -8,6 +8,7 @@ import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.api.UserPromoteEvent;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandLog;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
 import java.time.Duration;
@@ -67,9 +68,9 @@ public class PromoteCommand extends Command {
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;
             }
-
-            IslandRank nextRank = IslandRank.getByLevel(targetUser.getIslandRank().getLevel() + 1);
-            if (nextRank == null || nextRank.getLevel() >= user.getIslandRank().getLevel()
+            IslandMember targetMembership = island.get().getMembership(targetUser);
+            IslandRank nextRank = IslandRank.getByLevel(targetMembership.getIslandRank().getLevel() + 1);
+            if (nextRank == null || nextRank.getLevel() >= user.getCurrentIslandRank().getLevel()
                     || !IridiumSkyblock.getInstance().getIslandManager().getIslandPermission(island.get(),
                             IridiumSkyblock.getInstance().getUserManager().getUser(player), PermissionType.PROMOTE)) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotPromoteUser
@@ -82,10 +83,12 @@ public class PromoteCommand extends Command {
             if (userPromoteEvent.isCancelled())
                 return false;
 
-            targetUser.setIslandRank(nextRank);
+            IslandMember membership = island.get().getMembership(targetUser);
+            membership.setIslandRank(nextRank);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().save(membership);
 
-            for (User member : island.get().getMembers()) {
-                Player islandMember = Bukkit.getPlayer(member.getUuid());
+            for (IslandMember member : island.get().getMembers()) {
+                Player islandMember = Bukkit.getPlayer(member.getUserId());
                 if (islandMember != null) {
                     if (islandMember.equals(player)) {
                         islandMember.sendMessage(

@@ -106,7 +106,7 @@ public class PlaceholderBuilder {
         placeholderList.add(new Placeholder("has_island",
                 user.getIsland().isPresent() ? IridiumSkyblock.getInstance().getMessages().yes
                         : IridiumSkyblock.getInstance().getMessages().no));
-        placeholderList.add(new Placeholder("player_rank", user.getIslandRank().getDisplayName()));
+        placeholderList.add(new Placeholder("player_rank", user.getCurrentIslandRank().getDisplayName()));
         placeholderList.add(new Placeholder("player_join", user.getJoinTime()
                 .format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
         return this;

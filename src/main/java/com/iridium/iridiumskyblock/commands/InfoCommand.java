@@ -90,6 +90,7 @@ public class InfoCommand extends Command {
      */
     private void sendInfo(CommandSender sender, Island island, User requestedUser) {
         String members = island.getMembers().stream()
+                .map(member->member.getUser())
                 .filter(user -> user != island.getOwner())
                 .map(User::getName)
                 .collect(Collectors.joining(", "));

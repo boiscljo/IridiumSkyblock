@@ -7,6 +7,7 @@ import com.iridium.iridiumskyblock.LogAction;
 import com.iridium.iridiumskyblock.api.UserLeaveEvent;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandLog;
+import com.iridium.iridiumskyblock.database.IslandMember;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.gui.ConfirmationGUI;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
@@ -48,7 +49,7 @@ public class LeaveCommand extends Command {
             return false;
         }
 
-        if (user.getIslandRank().equals(IslandRank.OWNER)) {
+        if (user.getCurrentIslandRank().equals(IslandRank.OWNER)) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotLeaveIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
@@ -57,11 +58,17 @@ public class LeaveCommand extends Command {
             Bukkit.getPluginManager().callEvent(userLeaveEvent);
             if (userLeaveEvent.isCancelled()) return;
 
+            IslandMember membership = island.get().getMembership(user);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager()
+                    .delete(membership);
             user.setIsland(null);
+            IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(user); 
+
+
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().youHaveLeftIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
 
-            for (User member : island.get().getMembers()) {
-                Player islandMember = Bukkit.getPlayer(member.getUuid());
+            for (IslandMember member : island.get().getMembers()) {
+                Player islandMember = Bukkit.getPlayer(member.getUserId());
                 if (islandMember != null) {
                     islandMember.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().playerLeftIsland.replace("%player%", player.getName()).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 }

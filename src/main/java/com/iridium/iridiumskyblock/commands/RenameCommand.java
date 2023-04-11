@@ -45,7 +45,7 @@ public class RenameCommand extends Command {
         }
 
         String name = String.join(" ", Arrays.asList(args).subList(1, args.length));
-        if (!user.getIslandRank().equals(IslandRank.OWNER)) {
+        if (!user.getCurrentIslandRank().equals(IslandRank.OWNER)) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().cannotChangeName.replace("%prefix%", (IridiumSkyblock.getInstance().getConfiguration()).prefix)));
             return false;
         }
@@ -80,7 +80,7 @@ public class RenameCommand extends Command {
         final String finalName = islandRenameEvent.getIslandName();
         island.get().setName(finalName);
         island.get().getMembers().forEach(member -> {
-            Player islandMember = Bukkit.getPlayer(member.getUuid());
+            Player islandMember = Bukkit.getPlayer(member.getUserId());
             if (islandMember != null) {
                 islandMember.sendMessage(StringUtils.color((IridiumSkyblock.getInstance().getMessages()).islandNameChanged
                         .replace("%prefix%", (IridiumSkyblock.getInstance().getConfiguration()).prefix)

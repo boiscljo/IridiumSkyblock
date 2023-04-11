@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
 @Getter
 public class DatabaseManager {
 
-    private final int version = 4;
+    private final int version = 5;
     private IslandTableManager islandTableManager;
     private UserTableManager userTableManager;
     private ForeignIslandTableManager<IslandBan, Integer> islandBanTableManager;
@@ -46,6 +46,7 @@ public class DatabaseManager {
     private ForeignIslandTableManager<IslandReward, Integer> islandRewardTableManager;
     private ForeignIslandTableManager<IslandSpawners, Integer> islandSpawnersTableManager;
     private ForeignIslandTableManager<IslandTrusted, Integer> islandTrustedTableManager;
+    private ForeignIslandTableManager<IslandMember, Integer> islandMemberTableManager;
     private ForeignIslandTableManager<IslandUpgrade, Integer> islandUpgradeTableManager;
     private ForeignIslandTableManager<IslandWarp, Integer> islandWarpTableManager;
     private ForeignIslandTableManager<IslandSetting, Integer> islandSettingTableManager;
@@ -85,6 +86,7 @@ public class DatabaseManager {
         this.islandRewardTableManager = new ForeignIslandTableManager<>(connectionSource, IslandReward.class, Comparator.comparing(IslandReward::getIslandId));
         this.islandUpgradeTableManager = new ForeignIslandTableManager<>(connectionSource, IslandUpgrade.class, Comparator.comparing(IslandUpgrade::getIslandId).thenComparing(IslandUpgrade::getUpgrade));
         this.islandTrustedTableManager = new ForeignIslandTableManager<>(connectionSource, IslandTrusted.class, Comparator.comparing(IslandTrusted::getIslandId).thenComparing(islandTrusted -> islandTrusted.getUser().getUuid()));
+        this.islandMemberTableManager = new ForeignIslandTableManager<>(connectionSource, IslandMember.class, Comparator.comparing(IslandMember::getIslandId).thenComparing(islandMember -> islandMember.getUser().getUuid()));
         this.islandBoosterTableManager = new ForeignIslandTableManager<>(connectionSource, IslandBooster.class, Comparator.comparing(IslandBooster::getIslandId).thenComparing(IslandBooster::getBooster));
         this.islandWarpTableManager = new ForeignIslandTableManager<>(connectionSource, IslandWarp.class, Comparator.comparing(IslandWarp::getIslandId));
         this.islandLogTableManager = new ForeignIslandTableManager<>(connectionSource, IslandLog.class, Comparator.comparing(IslandLog::getIslandId));
@@ -142,5 +144,7 @@ public class DatabaseManager {
             islandTableManager.addEntry(island);
         });
     }
+
+    
 
 }

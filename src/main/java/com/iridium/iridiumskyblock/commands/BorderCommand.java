@@ -68,7 +68,7 @@ public class BorderCommand extends Command {
 
         island.get().setColor(color);
         island.get().getMembers().stream()
-            .map(islandUser -> Bukkit.getPlayer(islandUser.getUuid()))
+            .map(islandUser -> Bukkit.getPlayer(islandUser.getUserId()))
             .filter(Objects::nonNull)
             .forEach(islandPlayer -> islandPlayer.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().islandBorderChanged.replace("%player%", player.getName()).replace("%color%", color.toString()).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)))
         );

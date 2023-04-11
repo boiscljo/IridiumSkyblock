@@ -31,7 +31,7 @@ public class Placeholders {
                     IridiumSkyblock.getInstance().getIslandManager().getIslandViaPlayerLocation(player))
             ) .put("player_rank", player -> {
                 User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-                return user.getIslandRank().getDisplayName();
+                return user.getCurrentIslandRank().getDisplayName();
             }).build();
     public static Map<String, Placeholder> placeholders_np = ImmutableMap.<String, Placeholder>builder()
             .putAll(getIslandTopPlaceholders())
@@ -64,7 +64,7 @@ public class Placeholders {
                         islandGetter.getIsland(player).map(island -> IridiumSkyblock.getInstance().getNumberFormatter().format(island.getMembers().size())).orElse(placeholdersConfig.islandMembers)
                 )
                 .put(startKey + "_member_names", player ->
-                        islandGetter.getIsland(player).map(island -> island.getMembers().stream().map(User::getName).collect(Collectors.joining(", "))).orElse(placeholdersConfig.islandMemberNames)
+                        islandGetter.getIsland(player).map(island -> island.getMembers().stream().map(member->member.getUser().getName()).collect(Collectors.joining(", "))).orElse(placeholdersConfig.islandMemberNames)
                 )
                 .put(startKey + "_visitors", player ->
                         islandGetter.getIsland(player).map(island -> IridiumSkyblock.getInstance().getNumberFormatter().format(IridiumSkyblock.getInstance().getIslandManager().getPlayersOnIsland(island).stream().filter(user -> !island.equals(user.getIsland().orElse(null))).count())).orElse(placeholdersConfig.islandVisitors)
