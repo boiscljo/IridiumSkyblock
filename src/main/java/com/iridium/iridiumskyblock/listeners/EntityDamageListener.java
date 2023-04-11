@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.listeners;
 
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.configs.Configuration;
 import com.iridium.iridiumskyblock.database.Island;
@@ -105,8 +106,8 @@ public class EntityDamageListener implements Listener {
         User victimUser = IridiumSkyblock.getInstance().getUserManager().getUser(victim);
         Optional<IslandTrusted> attackerTrusted = IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island, attackerUser);
         Optional<IslandTrusted> victimTrusted = IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island, victimUser);
-        boolean attackerIsMember = island.equals(attackerUser.getIsland().orElse(null)) || attackerTrusted.isPresent();
-        boolean victimIsMember = island.equals(victimUser.getIsland().orElse(null)) || victimTrusted.isPresent();
+        boolean attackerIsMember = island.getMembership(attackerUser).getIslandRank() != IslandRank.VISITOR || attackerTrusted.isPresent();
+        boolean victimIsMember =island.getMembership(victimUser).getIslandRank() != IslandRank.VISITOR  || victimTrusted.isPresent();
 
         //If pvp between members is allowed or neither attacker or victim is a member, return
         if (configuration.pvpSettings.pvpBetweenMembers || !(attackerIsMember || victimIsMember)) return;
@@ -123,7 +124,7 @@ public class EntityDamageListener implements Listener {
         Player player = (Player) event.getEntity();
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
         Optional<IslandTrusted> trusted = IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island, user);
-        boolean isMember = island.equals(user.getIsland().orElse(null)) || trusted.isPresent();
+        boolean isMember = island.getMembership(user).getIslandRank() != IslandRank.VISITOR || trusted.isPresent();
 
         List<EntityDamageEvent.DamageCause> preventCauses = isMember ? pvpSettings.membersPreventedDamages : pvpSettings.visitorsPreventedDamages;
 

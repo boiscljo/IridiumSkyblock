@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.commands;
 
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
@@ -46,7 +47,7 @@ public class PrivateCommand extends Command {
         island.get().setVisitable(false);
         int visitorCount = 0;
         for (User visitor : IridiumSkyblock.getInstance().getIslandManager().getPlayersOnIsland(island.get())) {
-            if (visitor.isBypassing() || visitor.getIsland().map(Island::getId).orElse(0) == island.get().getId() || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island.get(), visitor).isPresent()) {
+            if (visitor.isBypassing() || island.get().getMembership(visitor).getIslandRank() != IslandRank.VISITOR || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island.get(), visitor).isPresent()) {
                 continue;
             }
 

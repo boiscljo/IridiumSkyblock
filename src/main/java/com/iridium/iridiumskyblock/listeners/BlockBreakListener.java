@@ -60,6 +60,7 @@ public class BlockBreakListener implements Listener {
         ObsidianMaterial material = ObsidianMaterial.valueOf(event.getBlock().getType());
 
         user.getIsland().ifPresent(island -> {
+            if(!island.isInIsland(event.getBlock().getLocation()))return;
             BlockData blockData = event.getBlock().getBlockData();
             if (blockData instanceof Ageable) {
                 Ageable ageable = (Ageable) blockData;

@@ -63,7 +63,7 @@ public class DemoteCommand extends Command {
 
         User offlinePlayerUser = IridiumSkyblock.getInstance().getUserManager().getUser(args[1]);
         if (offlinePlayerUser != null) {
-            if (!island.get().equals(offlinePlayerUser.getIsland().orElse(null))) {
+            if (island.get().getMembership(offlinePlayerUser).getIslandRank() == IslandRank.VISITOR) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNotInYourIsland
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;

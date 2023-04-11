@@ -42,8 +42,7 @@ public class HubCommand extends Command {
     public boolean execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
-        Optional<Island> island = user.getIsland();
-
+       
         PlayerUtils.teleportSpawn(player);
         player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().teleportingHub.replace("%prefix%",
                 IridiumSkyblock.getInstance().getConfiguration().prefix)));

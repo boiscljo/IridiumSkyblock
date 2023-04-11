@@ -66,7 +66,7 @@ public class TransferCommand extends Command {
                 return false;
             }
 
-            if (!island.get().equals(targetUser.getIsland().orElse(null))) {
+            if (island.get().getMembership(targetUser).getIslandRank()== IslandRank.VISITOR) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNotInYourIsland
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;

@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.commands;
 
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.LogAction;
 import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.api.UserKickEvent;
@@ -62,7 +63,7 @@ public class KickCommand extends Command {
 
         User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser(args[1]);
         if (targetUser != null) {
-            if (!island.get().equals(targetUser.getIsland().orElse(null))) {
+            if (island.get().getMembership(targetUser).getIslandRank() == IslandRank.VISITOR) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userNotInYourIsland
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;

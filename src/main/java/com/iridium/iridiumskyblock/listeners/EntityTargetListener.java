@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.listeners;
 
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandTrusted;
 import com.iridium.iridiumskyblock.database.User;
@@ -34,7 +35,7 @@ public class EntityTargetListener implements Listener {
         Player targetPlayer = (Player) event.getTarget();
         User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser(targetPlayer);
         Optional<IslandTrusted> targetTrusted = IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island.get(), targetUser);
-        if (island.get().equals(targetUser.getIsland().orElse(null)) || targetTrusted.isPresent()) return;
+        if (island.get().getMembership(targetPlayer).getIslandRank() != IslandRank.VISITOR || targetTrusted.isPresent()) return;
 
         if (!canSearchTarget(event.getEntity())) {
             return;
@@ -45,7 +46,7 @@ public class EntityTargetListener implements Listener {
                 .filter(entity -> island.get().isInIsland(entity.getLocation()))
                 .map(entity -> (Player) entity)
                 .filter(player -> player != targetPlayer)
-                .filter(player -> island.get().equals(IridiumSkyblock.getInstance().getUserManager().getUser(player).getIsland().orElse(null)))
+                .filter(player -> island.get().getMembership(IridiumSkyblock.getInstance().getUserManager().getUser(player)).getIslandRank() != IslandRank.VISITOR)
                 .filter(player -> IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island.get(), IridiumSkyblock.getInstance().getUserManager().getUser(player)).isPresent())
                 .filter(player -> player.hasLineOfSight(event.getEntity()))
                 .collect(Collectors.toList());

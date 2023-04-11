@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.commands;
 
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.LogAction;
 import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.database.Island;
@@ -66,7 +67,7 @@ public class TrustCommand extends Command {
         }
 
         User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser(targetPlayer);
-        if (targetUser.getIsland().map(Island::getId).orElse(0) == island.get().getId()) {
+        if (island.get().getMembership(targetUser).getIslandRank()!= IslandRank.VISITOR) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().alreadyInYourIsland.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }

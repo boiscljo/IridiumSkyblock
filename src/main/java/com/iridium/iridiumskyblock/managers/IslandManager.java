@@ -161,7 +161,7 @@ public class IslandManager {
             return;
         }
         boolean trusted = getIslandTrusted(island, user).isPresent();
-        boolean inIsland = user.getIsland().map(Island::getId).orElse(0) == island.getId();
+        boolean inIsland = island.getMembership(user).getIslandRank() != IslandRank.VISITOR;
         if (!island.isVisitable() && !inIsland && !trusted && !user.isBypassing()) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().islandIsPrivate
                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
@@ -203,7 +203,7 @@ public class IslandManager {
             return false;
         }
         boolean trusted = getIslandTrusted(island, user).isPresent();
-        boolean inIsland = user.getIsland().map(Island::getId).orElse(0) == island.getId();
+        boolean inIsland = island.getMembership(user).getIslandRank() != IslandRank.VISITOR;
         if (!island.isVisitable() && !inIsland && !trusted && !user.isBypassing()) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().islandIsPrivate
                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));

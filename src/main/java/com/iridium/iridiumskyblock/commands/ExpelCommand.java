@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.commands;
 
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.IslandRank;
 import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
@@ -63,7 +64,7 @@ public class ExpelCommand extends Command {
         }
 
         User targetUser = IridiumSkyblock.getInstance().getUserManager().getUser(targetPlayer);
-        if (island.get().equals(targetUser.getIsland().orElse(null)) || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island.get(), targetUser).isPresent()) {
+        if (island.get().getMembership(targetUser).getIslandRank() != IslandRank.VISITOR || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island.get(), targetUser).isPresent()) {
             sender.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().inYourTeam.replace("%player%", targetUser.getName()).replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             return false;
         }
@@ -104,7 +105,7 @@ public class ExpelCommand extends Command {
         Player player = (Player) commandSender;
         return IridiumSkyblock.getInstance().getUserManager().getUser(player).getIsland().map(island ->
                 IridiumSkyblock.getInstance().getIslandManager().getPlayersOnIsland(island).stream()
-                        .filter(user -> user.getIsland().map(Island::getId).orElse(0) == island.getId())
+                        //.filter(user -> user.getIsland().map(Island::getId).orElse(0) == island.getId())
                         .map(User::getName)
                         .collect(Collectors.toList())
         ).orElse(Collections.emptyList());
