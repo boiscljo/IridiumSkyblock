@@ -80,6 +80,9 @@ public class Inventories {
             "&b&l[!] &7Right Click to promote",
             "&b&l[!] &7Left click to demote/kick"
     )));
+    public SingleItemGUI membershipGUI = new SingleItemGUI(27, "&7Island Members", background1, new Item(ObsidianMaterial.valueOf("PLAYER_HEAD"), 0, 1, "&b&l%player_name%", "%player_name%", Arrays.asList(
+            "&b&l[!] &7Left click to switch main island"
+    )));
     public SingleItemGUI bansGUI = new SingleItemGUI(27, "&7Island Bans", background1, new Item(ObsidianMaterial.valueOf("PLAYER_HEAD"), 0, 1, "&b&l%player_name%", "%player_name%", Arrays.asList(
             "&7Banned time: %ban_time%",
             "&7Banned by: %banned_by%",

@@ -594,7 +594,8 @@ public final class Island extends DatabaseObject {
 
     public IslandMember getMembership(User user)
     {
-        return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(this).stream().filter(membership->membership.getUserId().equals(user.getUuid()))
+        return IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(this).stream()
+        .filter(membership->membership.getUserId().equals(user.getUuid()))
         .findAny().orElse(new IslandMember(this,user, IslandRank.VISITOR));
     }
 

@@ -69,5 +69,6 @@ public class Commands {
     public WarpsCommand warpsCommand = new WarpsCommand();
     public WithdrawCommand withdrawCommand = new WithdrawCommand();
     public HubCommand hubCommand = new HubCommand();
+    public ProfileCommand mainIslandCommand = new ProfileCommand();
 
 }

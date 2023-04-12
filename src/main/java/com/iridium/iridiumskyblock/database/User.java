@@ -178,11 +178,6 @@ public final class User extends DatabaseObject {
         setChanged(true);
     }
 
-    // public void setIslandRank(@NotNull IslandRank islandRank) {
-    //     this.islandRank = islandRank;
-    //     setChanged(true);
-    // }
-
     public void setBypassing(boolean bypassing) {
         this.bypassing = bypassing;
     }
