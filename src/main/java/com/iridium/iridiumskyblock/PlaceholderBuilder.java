@@ -24,15 +24,17 @@ public class PlaceholderBuilder {
 
     private static class PlaceholderAdapter extends Placeholder {
         private com.iridium.iridiumskyblock.placeholders.Placeholders.Placeholder placeholder;
+        private String key;
 
         public PlaceholderAdapter(String key, Placeholders.Placeholder value) {
             super(key, null);
+            this.key = key;
             this.placeholder = value;
         }
 
         @Override
         public String process(String line) {
-            return new Placeholder(getKey(), placeholder.placeholderProcess(null)).process(line);
+            return new Placeholder(this.key, placeholder.placeholderProcess(null)).process(line);
         }
 
     }
@@ -43,6 +45,7 @@ public class PlaceholderBuilder {
         int memberLimit = IridiumSkyblock.getInstance().getUpgrades().memberUpgrade.upgrades
                 .get(islandUpgrade.getLevel()).amount;
 
+        
         placeholderList.addAll(Placeholders.getIslandPlaceholders("island", new Placeholders.IslandGetter() {
             @Override
             public Optional<Island> getIsland(Player player) {

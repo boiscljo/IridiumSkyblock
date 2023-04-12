@@ -45,12 +45,14 @@ public class ProfileCommand extends Command {
     User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
 
     if (args.length == 1) {
-      Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons ? player.getOpenInventory().getTopInventory() : null;
+      Inventory previousInventory = IridiumSkyblock.getInstance().getConfiguration().backButtons
+          ? player.getOpenInventory().getTopInventory()
+          : null;
       player.openInventory(new UserMembershipGUI(player, previousInventory).getInventory());
-      
+
       return true;
     }
-
+    player.closeInventory();
     try {
       int islandId = Integer.valueOf(args[1]);
       if (islandId == 0 || user.getMemberships().stream()
@@ -65,15 +67,25 @@ public class ProfileCommand extends Command {
             return false;
           }
           user.setIsland(null);
-        } else
-          user.setIsland(new Island(islandId));
-
-        player.sendMessage(StringUtils
-            .color(IridiumSkyblock.getInstance().getMessages().noIslandFound
+          player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance()
+                .getMessages().setIslandProfileToNone
                 .replace("%prefix%", IridiumSkyblock.getInstance()
                     .getConfiguration().prefix)));
-        IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(user);
+          return true;
+        } else {
+          user.setIsland(new Island(islandId));
+          player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance()
+          .getMessages().setIslandProfile
+          .replace("%prefix%", IridiumSkyblock.getInstance()
+              .getConfiguration().prefix)));
+          return true;
+        }
       }
+      player.sendMessage(StringUtils
+          .color(IridiumSkyblock.getInstance().getMessages().noIslandFound
+              .replace("%prefix%", IridiumSkyblock.getInstance()
+                  .getConfiguration().prefix)));
+      IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(user);
     } catch (Throwable t) {
       player.sendMessage(StringUtils
           .color(IridiumSkyblock.getInstance().getMessages().noIslandFound

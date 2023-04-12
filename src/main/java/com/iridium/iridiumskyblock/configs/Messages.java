@@ -26,7 +26,7 @@ public class Messages {
     public String helpCommandPreviousPageHover = "&7Click to go to the previous page.";
     public String creatingIsland = "%prefix% &7Creating Island...";
     public String regeneratingIsland = "%prefix% &7Regenerating Island...";
-    public String alreadyHaveIsland = "%prefix% &7You already have an Island.";
+    public String alreadyHaveIsland = "%prefix% &7You already have the maximum amount of Island or didn't switch /is mainisland 0.";
     public String noIsland = "%prefix% &7You don't have an Island.";
     public String noIslandFound = "%prefix% &7No island found for that player.";
     public String islandWithNameAlreadyExists = "%prefix% &7An Island with that name already exists.";
@@ -199,6 +199,8 @@ public class Messages {
     public String moderatorRankDisplayName = "Moderator";
     public String memberRankDisplayName = "Member";
     public String visitorRankDisplayName = "Visitor";
+    public String setIslandProfileToNone = "";
+    public String setIslandProfile = "";
 
     public String infoTitle = "&8[ &b&lIsland info for %island_name% &8]";
     public String infoFiller = "&8&m ";
@@ -215,5 +217,6 @@ public class Messages {
     public List<String> commandHelpMessage = Arrays.asList(
             "&7Description: &b%description%",
             "&7Syntax: &b%syntax% %subcommands%");
+    
 
 }

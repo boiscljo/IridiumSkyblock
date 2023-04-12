@@ -67,7 +67,7 @@ public class UserMembershipGUI extends PagedGUI<Island> {
   @Override
   public ItemStack getItemStack(Island idl) {
     if (idl == null) {
-      return ItemStackUtils.makeItem(new Item(ObsidianMaterial.wrap(Material.BARRIER),1,null,null),
+      return ItemStackUtils.makeItem(new Item(ObsidianMaterial.wrap(Material.BARRIER),1,null,List.of()),
       new PlaceholderBuilder()
           .papi(getPlayer())
           .applyPlayerPlaceholders(this.user)
