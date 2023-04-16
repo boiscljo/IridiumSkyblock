@@ -28,7 +28,7 @@ repositories {
 dependencies {
     // Dependencies that we want to shade in
     implementation("org.jetbrains:annotations:23.0.0")
-    implementation("com.iridium:IridiumCore:1.6.8-OM")
+    implementation("com.iridium:IridiumCore:1.6.9-OM")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.github.Redempt:Crunch:1.0")
     implementation("com.j256.ormlite:ormlite-core:6.1")
@@ -63,9 +63,8 @@ dependencies {
 
 tasks {
     // "Replace" the build task with the shadowJar task (probably bad but who cares)
-    jar {
+    assemble {
         dependsOn("shadowJar")
-        enabled = false
     }
 
     shadowJar {
