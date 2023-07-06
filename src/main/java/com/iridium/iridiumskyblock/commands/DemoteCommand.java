@@ -103,7 +103,7 @@ public class DemoteCommand extends Command {
                 } else {
                     islandMember
                             .sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userDemotedPlayer
-                                    .replace("%promoter%", player.getName())
+                                    .replace("%demoter%", player.getName())
                                     .replace("%player%", offlinePlayerUser.getName())
                                     .replace("%rank%", nextRank.getDisplayName())
                                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));

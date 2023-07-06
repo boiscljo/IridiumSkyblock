@@ -61,6 +61,7 @@ public class IslandMembersGUI extends PagedGUI<User> {
         return ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().membersGUI.item, new PlaceholderBuilder()
                 .papi(getPlayer())
                 .applyIslandPlaceholders(island)
+                .applyPlayerIslandPlaceholders(user,island)
                 .applyPlayerPlaceholders(user)
                 .build()
         );

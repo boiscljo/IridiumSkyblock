@@ -110,9 +110,12 @@ public class JoinCommand extends Command {
                                     .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 }
             }
-            IslandMember membership = island.get().getMembership(user);
-            membership.setIslandRank(IslandRank.MEMBER);
+            IslandMember membership = new IslandMember(island.get(),user,IslandRank.MEMBER);
+            IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().addEntry(membership);
             IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().save(membership);
+            user.setIsland(island.get());
+            IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(user);
+
 
             islandInvite.ifPresent(invite -> IridiumSkyblock.getInstance().getDatabaseManager()
                     .getIslandInviteTableManager().delete(invite));

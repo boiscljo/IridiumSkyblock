@@ -119,7 +119,7 @@ public class TableManager<T extends DatabaseObject, S> {
             entries.removeAll(t);
             dao.commit(getDatabaseConnection());
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            //exception.printStackTrace();
         }
     }
 

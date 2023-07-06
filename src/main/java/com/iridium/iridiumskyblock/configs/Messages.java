@@ -199,8 +199,8 @@ public class Messages {
     public String moderatorRankDisplayName = "Moderator";
     public String memberRankDisplayName = "Member";
     public String visitorRankDisplayName = "Visitor";
-    public String setIslandProfileToNone = "";
-    public String setIslandProfile = "";
+    public String setIslandProfileToNone = "%prefix% &7You selected an empty profile as main island";
+    public String setIslandProfile = "%prefix% &7You selected your main island";
 
     public String infoTitle = "&8[ &b&lIsland info for %island_name% &8]";
     public String infoFiller = "&8&m ";

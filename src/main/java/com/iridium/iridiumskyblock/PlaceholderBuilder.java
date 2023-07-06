@@ -104,12 +104,16 @@ public class PlaceholderBuilder {
         return this;
     }
 
+    public PlaceholderBuilder applyPlayerIslandPlaceholders(User user,Island island) {
+        placeholderList.add(new Placeholder("player_rank", user.getIslandMembership(island.getId()).get().getIslandRank().getDisplayName()));
+        return this;
+    }
+
     public PlaceholderBuilder applyPlayerPlaceholders(User user) {
         placeholderList.add(new Placeholder("player_name", user.getName()));
         placeholderList.add(new Placeholder("has_island",
                 user.getIsland().isPresent() ? IridiumSkyblock.getInstance().getMessages().yes
                         : IridiumSkyblock.getInstance().getMessages().no));
-        placeholderList.add(new Placeholder("player_rank", user.getCurrentIslandRank().getDisplayName()));
         placeholderList.add(new Placeholder("player_join", user.getJoinTime()
                 .format(DateTimeFormatter.ofPattern(IridiumSkyblock.getInstance().getConfiguration().dateTimeFormat))));
         return this;
