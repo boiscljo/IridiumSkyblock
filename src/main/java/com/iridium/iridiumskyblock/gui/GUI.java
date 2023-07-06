@@ -78,4 +78,8 @@ public abstract class GUI implements InventoryHolder {
      * Called when updating the Inventories contents
      */
     public abstract void addContent(Inventory inventory);
+
+    public boolean needRefresh() {
+      return false;
+    }
 }

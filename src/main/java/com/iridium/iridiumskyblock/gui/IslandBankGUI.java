@@ -23,63 +23,77 @@ import java.util.Optional;
  */
 public class IslandBankGUI extends IslandGUI {
 
-    /**
-     * The default constructor.
-     *
-     * @param island The Island this GUI belongs to
-     */
-    public IslandBankGUI(Player player,@NotNull Island island, Inventory previousInventory) {
-        super(player,IridiumSkyblock.getInstance().getInventories().bankGUI, previousInventory, island);
+  /**
+   * The default constructor.
+   *
+   * @param island The Island this GUI belongs to
+   */
+  public IslandBankGUI(Player player, @NotNull Island island, Inventory previousInventory) {
+    super(player, IridiumSkyblock.getInstance().getInventories().bankGUI, previousInventory, island);
+  }
+
+  @Override
+  public void addContent(Inventory inventory) {
+    inventory.clear();
+    InventoryUtils.fillInventory(inventory, getNoItemGUI().background);
+
+    for (BankItem bankItem : IridiumSkyblock.getInstance().getBankItemList()) {
+      IslandBank islandBank = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(getIsland(), bankItem);
+      inventory.setItem(bankItem.getItem().slot,
+          ItemStackUtils.makeItem(bankItem.getItem(),
+              List.of(new PlaceholderBuilder.PapiPlacheolder(getPlayer()), new Placeholder("amount",
+                  IridiumSkyblock.getInstance().getNumberFormatter().format(islandBank.getNumber())))));
     }
 
-    @Override
-    public void addContent(Inventory inventory) {
-        inventory.clear();
-        InventoryUtils.fillInventory(inventory, getNoItemGUI().background);
+    if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
+      inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot,
+          ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,
+              new PlaceholderBuilder().papi(getPlayer()).build()));
+    }
+  }
 
-        for (BankItem bankItem : IridiumSkyblock.getInstance().getBankItemList()) {
-            IslandBank islandBank = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(getIsland(), bankItem);
-            inventory.setItem(bankItem.getItem().slot, ItemStackUtils.makeItem(bankItem.getItem(), List.of(new PlaceholderBuilder.PapiPlacheolder(getPlayer()) ,new Placeholder("amount", IridiumSkyblock.getInstance().getNumberFormatter().format(islandBank.getNumber())))));
-        }
+  /**
+   * Called when there is a click in this GUI.
+   * Cancelled automatically.
+   *
+   * @param event The InventoryClickEvent provided by Bukkit
+   */
+  @Override
+  public void onInventoryClick(InventoryClickEvent event) {
+    Optional<BankItem> bankItemOptional = IridiumSkyblock.getInstance().getBankItemList().stream()
+        .filter(item -> item.getItem().slot == event.getSlot())
+        .findFirst();
+    if (!bankItemOptional.isPresent())
+      return;
 
-        if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
-        }
+    BankItem bankItem = bankItemOptional.get();
+    IslandBank islandBank = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(getIsland(), bankItem);
+
+    switch (event.getClick()) {
+      case LEFT:
+        IridiumSkyblock.getInstance().getCommands().withdrawCommand.execute(event.getWhoClicked(),
+            new String[] { "", bankItem.getName(), String.valueOf(bankItem.getDefaultAmount()) });
+        break;
+      case SHIFT_LEFT:
+        IridiumSkyblock.getInstance().getCommands().withdrawCommand.execute(event.getWhoClicked(),
+            new String[] { "", bankItem.getName(), String.valueOf(islandBank.getNumber()) });
+        break;
+      case RIGHT:
+        IridiumSkyblock.getInstance().getCommands().depositCommand.execute(event.getWhoClicked(),
+            new String[] { "", bankItem.getName(), String.valueOf(bankItem.getDefaultAmount()) });
+        break;
+      case SHIFT_RIGHT:
+        IridiumSkyblock.getInstance().getCommands().depositCommand.execute(event.getWhoClicked(),
+            new String[] { "", bankItem.getName(), String.valueOf(islandBank.getNumber()) });
+        break;
     }
 
-    /**
-     * Called when there is a click in this GUI.
-     * Cancelled automatically.
-     *
-     * @param event The InventoryClickEvent provided by Bukkit
-     */
-    @Override
-    public void onInventoryClick(InventoryClickEvent event) {
-        Optional<BankItem> bankItemOptional = IridiumSkyblock.getInstance().getBankItemList().stream()
-                .filter(item -> item.getItem().slot == event.getSlot())
-                .findFirst();
-        if (!bankItemOptional.isPresent()) return;
+    addContent(event.getInventory());
+  }
 
-        BankItem bankItem = bankItemOptional.get();
-        IslandBank islandBank = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(getIsland(), bankItem);
-
-        switch (event.getClick()) {
-            case LEFT:
-                IridiumSkyblock.getInstance().getCommands().withdrawCommand.execute(event.getWhoClicked(), new String[]{"", bankItem.getName(), String.valueOf(bankItem.getDefaultAmount())});
-                break;
-            case SHIFT_LEFT:
-                IridiumSkyblock.getInstance().getCommands().withdrawCommand.execute(event.getWhoClicked(), new String[]{"", bankItem.getName(), String.valueOf(islandBank.getNumber())});
-                break;
-            case RIGHT:
-                IridiumSkyblock.getInstance().getCommands().depositCommand.execute(event.getWhoClicked(), new String[]{"", bankItem.getName(), String.valueOf(bankItem.getDefaultAmount())});
-                break;
-            case SHIFT_RIGHT:
-                IridiumSkyblock.getInstance().getCommands().depositCommand.execute(event.getWhoClicked(), new String[]{"", bankItem.getName(), String.valueOf(islandBank.getNumber())});
-                break;
-        }
-
-        addContent(event.getInventory());
-    }
-
+  @Override
+  public boolean needRefresh() {
+    return true;
+  }
 
 }

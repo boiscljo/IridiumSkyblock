@@ -60,7 +60,9 @@ public class JoinCommand extends Command {
             (memberships.size() == IridiumSkyblock.getInstance().getConfiguration().maxIslandPerPlayer && user.getIsland().isPresent() )
         ) {
             player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().alreadyHaveIsland
-                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
+                    .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)
+                    .replace("%membership%", String.valueOf(memberships.size()))
+                    .replace("%max%", String.valueOf(IridiumSkyblock.getInstance().getConfiguration().maxIslandPerPlayer))));
             return false;
         }
 

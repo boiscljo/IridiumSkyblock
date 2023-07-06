@@ -247,5 +247,13 @@ public final class User extends DatabaseObject {
       });
     }
 
+    List<IslandMember> toRemove = getMemberships().stream().filter(membership->membership.getIsland().isEmpty()).toList();
+
+    for(IslandMember membership : toRemove)
+    {
+       IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager()
+                    .delete(membership);
+    }
+
   }
 }

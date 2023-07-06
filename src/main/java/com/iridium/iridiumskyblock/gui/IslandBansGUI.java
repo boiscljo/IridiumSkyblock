@@ -78,4 +78,5 @@ public class IslandBansGUI extends PagedGUI<IslandBan> {
         IridiumSkyblock.getInstance().getCommands().promoteCommand.execute(event.getWhoClicked(), new String[]{"", islandBan.getBannedUser().getName()});
         addContent(event.getInventory());
     }
+    
 }

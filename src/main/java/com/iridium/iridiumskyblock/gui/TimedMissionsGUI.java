@@ -65,7 +65,7 @@ public class TimedMissionsGUI extends PagedGUI<Map.Entry<String, Mission>> {
     @Override
     public Collection<Map.Entry<String, Mission>> getPageObjects() {
         List<Map.Entry<String, Mission>> missions = IridiumSkyblock.getInstance().getMissionsList().entrySet().stream()
-                .filter(e -> e.getValue().getMissionType() == Mission.MissionType.TIMED)
+                .filter(e -> e.getValue().getMissionType() == Mission.MissionType.TIMED||e.getValue().getMissionType() == Mission.MissionType.DAILY)
                 .filter(e -> IridiumSkyblock.getInstance().getMissionManager().canComplete(island, e.getKey()))
                 .collect(Collectors.toList());
 

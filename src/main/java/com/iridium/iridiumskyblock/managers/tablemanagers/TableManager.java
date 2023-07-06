@@ -59,7 +59,7 @@ public class TableManager<T extends DatabaseObject, S> {
             }
             dao.commit(getDatabaseConnection());
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            //exception.printStackTrace();
         }
     }
 

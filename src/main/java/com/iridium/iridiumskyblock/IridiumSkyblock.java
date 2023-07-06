@@ -207,7 +207,10 @@ public class IridiumSkyblock extends IridiumCore {
     Bukkit.getScheduler().runTaskTimer(this, () -> Bukkit.getServer().getOnlinePlayers().forEach(player -> {
       InventoryHolder inventoryHolder = player.getOpenInventory().getTopInventory().getHolder();
       if (inventoryHolder instanceof GUI) {
-        ((GUI) inventoryHolder).addContent(player.getOpenInventory().getTopInventory());
+        GUI g = ((GUI) inventoryHolder);
+        if (g.needRefresh()) {
+          ((GUI) inventoryHolder).addContent(player.getOpenInventory().getTopInventory());
+        }
       }
     }), 0, 20);
 
@@ -217,8 +220,10 @@ public class IridiumSkyblock extends IridiumCore {
               databaseManager.getIslandMissionTableManager().getEntries().stream()
                   .filter(islandMission -> islandMission.getType() == Mission.MissionType.TIMED)
                   .filter(islandMission -> islandMission.getIsland().isPresent())
-                  .filter(islandMission -> missionManager.hasCompletedMission(islandMission.getIsland().get(),islandMission.getMissionName()))
-                  .filter(islandMission -> islandMission.getLastUpdate() + islandMission.getMission().getMinutesToCompleteAgain()*60*1000 < System.currentTimeMillis())
+                  .filter(islandMission -> missionManager.hasCompletedMission(islandMission.getIsland().get(),
+                      islandMission.getMissionName()))
+                  .filter(islandMission -> islandMission.getLastUpdate()
+                      + islandMission.getMission().getMinutesToCompleteAgain() * 60 * 1000 < System.currentTimeMillis())
                   .collect(Collectors.toList()));
         }), 0, 20 * 60);
 

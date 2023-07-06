@@ -62,22 +62,22 @@ public class InviteCommand extends Command {
             return true;
         }
 
-        User offlinePlayerUser = IridiumSkyblock.getInstance().getUserManager().getUser(args[1]);
-        if (offlinePlayerUser != null) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user.getUuid());
+        User offlineTargetPlayerUser = IridiumSkyblock.getInstance().getUserManager().getUser(args[1]);
+        if (offlineTargetPlayerUser != null) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offlineTargetPlayerUser.getUuid());
 
             List<IslandMember> islandMembers = IridiumSkyblock.getInstance().getIslandManager().getIslandMembers(island.get());
             IslandUpgrade islandUpgrade = IridiumSkyblock.getInstance().getIslandManager()
                     .getIslandUpgrade(island.get(), "member");
             int memberLimit = IridiumSkyblock.getInstance().getUpgrades().memberUpgrade.upgrades
                     .get(islandUpgrade.getLevel()).amount;
-            if (islandMembers.contains(offlinePlayerUser)) {
+            if (islandMembers.stream().anyMatch(member->member.getUserId().equals(offlineTargetPlayerUser.getUuid()))) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().alreadyInYourIsland
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
                 return false;
             }
 
-            if (IridiumSkyblock.getInstance().getIslandManager().getIslandInvite(island.get(), offlinePlayerUser)
+            if (IridiumSkyblock.getInstance().getIslandManager().getIslandInvite(island.get(), offlineTargetPlayerUser)
                     .isPresent()) {
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().alreadyInvited
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
@@ -98,13 +98,13 @@ public class InviteCommand extends Command {
                 return false;
             }
 
-            IslandInvite islandInvite = new IslandInvite(island.get(), offlinePlayerUser, user);
+            IslandInvite islandInvite = new IslandInvite(island.get(), offlineTargetPlayerUser, user);
             IridiumSkyblock.getInstance().getDatabaseManager().getIslandInviteTableManager().addEntry(islandInvite);
-            IslandLog islandLog = new IslandLog(island.get(), LogAction.USER_INVITED, user, offlinePlayerUser, 0, "");
+            IslandLog islandLog = new IslandLog(island.get(), LogAction.USER_INVITED, user, offlineTargetPlayerUser, 0, "");
             IridiumSkyblock.getInstance().getDatabaseManager().getIslandLogTableManager().addEntry(islandLog);
-            String playerName = offlinePlayer.getName() != null ? offlinePlayerUser.getName() : args[1];
+            String targetPlayerName = offlinePlayer.getName() != null ? offlineTargetPlayerUser.getName() : args[1];
             player.sendMessage(StringUtils
-                    .color(IridiumSkyblock.getInstance().getMessages().invitedPlayer.replace("%player%", playerName)
+                    .color(IridiumSkyblock.getInstance().getMessages().invitedPlayer.replace("%player%", targetPlayerName)
                             .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
 
             // Send a message to all other members
@@ -114,12 +114,11 @@ public class InviteCommand extends Command {
                     continue;
                 islandMember.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().userInvitedPlayer
                         .replace("%inviter%", player.getName())
-                        .replace("%player%", playerName)
+                        .replace("%player%", targetPlayerName)
                         .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
             }
 
             // Send a message to the user if he is online
-           
             if (offlinePlayer instanceof Player) {
                 Player targetPlayer = (Player) offlinePlayer;
                 BaseComponent[] message = TextComponent

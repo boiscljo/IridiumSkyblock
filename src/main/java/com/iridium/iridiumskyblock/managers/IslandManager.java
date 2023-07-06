@@ -841,7 +841,6 @@ public class IslandManager {
     deleteIslandBlocks(island, getWorld(), 3);
     deleteIslandBlocks(island, getNetherWorld(), 3);
     deleteIslandBlocks(island, getEndWorld(), 3);
-    deleteIslandDatabaseEntries(island);
 
     getIslandMembers(island).stream().map(member -> member.getUser().getPlayer()).forEach(player -> {
       if (player != null) {
@@ -859,6 +858,8 @@ public class IslandManager {
             .replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
       }
     });
+    deleteIslandDatabaseEntries(island);
+
     getEntities(island, getWorld(), getEndWorld(), getNetherWorld()).thenAccept(entities -> Bukkit.getScheduler()
         .runTask(IridiumSkyblock.getInstance(), () -> entities.stream()
             .filter(entity -> entity instanceof Player)
@@ -901,6 +902,8 @@ public class IslandManager {
           .forEach(databaseManager.getIslandWarpTableManager()::delete);
       databaseManager.getIslandSettingTableManager().getEntries(island)
           .forEach(databaseManager.getIslandSettingTableManager()::delete);
+      databaseManager.getIslandMemberTableManager().getEntries(island)
+          .forEach(databaseManager.getIslandMemberTableManager()::delete);
     });
   }
 
