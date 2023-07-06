@@ -43,7 +43,7 @@ public class PlayerInteractListener implements Listener {
         User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
         user.getIsland().ifPresent(island -> {
             if (event.getAction() != Action.PHYSICAL) {
-                int islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandCrystals(event.getPlayer().getInventory().getItemInMainHand());
+                double islandCrystals = IridiumSkyblock.getInstance().getIslandManager().getIslandCrystals(event.getPlayer().getInventory().getItemInMainHand());
                 if (islandCrystals > 0) {
                     // Required because Spigot likes to trigger this event for each hand which removes two items
                     if (event.getHand() == EquipmentSlot.HAND) {

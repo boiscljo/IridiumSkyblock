@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.database;
 
+import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Mission;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -30,6 +31,9 @@ public class IslandMission extends IslandData {
     @DatabaseField(columnName = "type")
     private Mission.MissionType type;
 
+    @DatabaseField(columnName = "last_update")
+    private long lastUpdate;
+
     /**
      * The default constructor.
      *
@@ -43,6 +47,7 @@ public class IslandMission extends IslandData {
         this.missionName = missionKey;
         this.type = mission.getMissionType();
         this.missionIndex = missionIndex;
+        this.lastUpdate = System.currentTimeMillis();
     }
 
     @Override
@@ -52,11 +57,18 @@ public class IslandMission extends IslandData {
 
     public void setProgress(int progress) {
         this.progress = progress;
+        this.lastUpdate = System.currentTimeMillis();
         setChanged(true);
     }
 
     public void setType(Mission.MissionType type) {
         this.type = type;
+        this.lastUpdate = System.currentTimeMillis();
         setChanged(true);
+    }
+
+    public Mission getMission()
+    {
+      return IridiumSkyblock.getInstance().getMissionsList().get(missionName);
     }
 }

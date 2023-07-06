@@ -58,7 +58,7 @@ public class Inventories {
 
     public InventoryConfig missionSelectGUI = new InventoryConfig(27, "&7Island Missions", background2, ImmutableMap.<String, Item>builder()
             .put("is missions once", new Item(ObsidianMaterial.valueOf("WRITABLE_BOOK"), 15, 1, "&b&lQuests", Collections.emptyList()))
-            .put("is missions daily", new Item(ObsidianMaterial.valueOf("DIAMOND_SWORD"), 11, 1, "&b&lDaily Missions", Collections.emptyList()))
+            .put("is missions timed", new Item(ObsidianMaterial.valueOf("DIAMOND_SWORD"), 11, 1, "&b&lTimed Missions", Collections.emptyList()))
             .build()
     );
 
@@ -174,7 +174,8 @@ public class Inventories {
 
     public NoItemGUI islandSchematicGUI = new NoItemGUI(27, "&7Select a Schematic", background2);
 
-    public NoItemGUI dailyMissionGUI = new NoItemGUI(27, "&7Daily Island Missions", background2);
+    public NoItemGUI dailyMissionGUI = new NoItemGUI(27, "&7[DEPRECATED]Daily Island Missions", background2);
+    public NoItemGUI timedMissionGUI = new NoItemGUI(27, "&7Timed Island Missions", background1);
 
     public NoItemGUI missionsGUI = new NoItemGUI(45, "&7Island Missions", background1);
 

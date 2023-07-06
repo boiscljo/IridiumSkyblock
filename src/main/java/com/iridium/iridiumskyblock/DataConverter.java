@@ -67,13 +67,7 @@ public class DataConverter {
                 for (String statement : CharStreams.toString(new InputStreamReader(inputStream)).split("\n")) {
                     connection.executeStatement(statement, DatabaseConnection.DEFAULT_RESULT_FLAGS);
                 }
-                if(version==5 && oldVersion<5)
-                {
-                    //Code need to be manual
-                    
-                }
             }
-
             connectionSource.releaseConnection(connection);
             IridiumSkyblock.getInstance().getLogger().info("Update successful!");
         } catch (SQLException | IOException exception) {

@@ -1,0 +1,1 @@
+ALTER TABLE island_mission ADD COLUMN last_update INTEGER DEFAULT 0;

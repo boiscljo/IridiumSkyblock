@@ -43,7 +43,7 @@ public class CrystalsBankItem extends BankItem {
 
         if (island.isPresent()) {
             IslandBank islandBank = IridiumSkyblock.getInstance().getIslandManager().getIslandBank(island.get(), this);
-            int crystals = Math.min(amount.intValue(), (int) islandBank.getNumber());
+            double crystals = Math.min(amount.doubleValue(), (int) islandBank.getNumber());
 
             if (crystals > 0) {
                 islandBank.setNumber(islandBank.getNumber() - crystals);
@@ -83,13 +83,13 @@ public class CrystalsBankItem extends BankItem {
         }
 
         int remainingItemAmount = amount.intValue();
-        int depositAmount = 0;
+        double depositAmount = 0;
 
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length && remainingItemAmount > 0; i++) {
             ItemStack itemStack = contents[i];
 
-            int crystalsPerItem = IridiumSkyblock.getInstance().getIslandManager().getIslandCrystals(itemStack);
+            double crystalsPerItem = IridiumSkyblock.getInstance().getIslandManager().getIslandCrystals(itemStack);
             if (crystalsPerItem == 0) continue;
 
             int itemStackAmount = itemStack.getAmount();

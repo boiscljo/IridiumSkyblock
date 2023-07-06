@@ -22,6 +22,7 @@ public class Mission {
     private Reward reward;
     private List<String> message;
     private String requiredMissionBefore;
+    private int minutesToCompleteAgain = 24*60;
 
     /**
      * The default constructor.
@@ -46,7 +47,7 @@ public class Mission {
      * Currently the amount of times a mission can be completed.
      */
     public enum MissionType {
-        ONCE, DAILY;
+        ONCE, DAILY, TIMED;
 
         /**
          * Returns the mission type with the provided name, null if there is none.

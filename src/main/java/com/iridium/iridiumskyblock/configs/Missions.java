@@ -48,7 +48,7 @@ public class Missions {
                             "&b&lRewards",
                             "&b&l* &75 Island Crystals",
                             "&b&l* &7$1000"
-                    )), Arrays.asList("GROW:SUGAR_CANE:10", "GROW:WHEAT:10", "GROW:CARROTS:10"), Mission.MissionType.DAILY, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lFarmer Reward",
+                    )), Arrays.asList("GROW:SUGAR_CANE:10", "GROW:WHEAT:10", "GROW:CARROTS:10"), Mission.MissionType.TIMED, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lFarmer Reward",
                     Arrays.asList(
                             "&b&l Rewards",
                             "&b&l* &75 Island Crystals",
@@ -74,7 +74,7 @@ public class Missions {
                             "&b&lRewards",
                             "&b&l* &75 Island Crystals",
                             "&b&l* &7$1000"
-                    )), Arrays.asList("KILL:ZOMBIE:10", "KILL:SKELETON:10", "KILL:CREEPER:10"), Mission.MissionType.DAILY, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lHunter Reward",
+                    )), Arrays.asList("KILL:ZOMBIE:10", "KILL:SKELETON:10", "KILL:CREEPER:10"), Mission.MissionType.TIMED, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lHunter Reward",
                     Arrays.asList(
                             "&b&l Rewards",
                             "&b&l* &75 Island Crystals",
@@ -98,7 +98,7 @@ public class Missions {
                             "&b&lRewards",
                             "&b&l* &75 Island Crystals",
                             "&b&l* &7$1000"
-                    )), Collections.singletonList("CRAFT:BREAD:64"), Mission.MissionType.DAILY, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lBaker Reward",
+                    )), Collections.singletonList("CRAFT:BREAD:64"), Mission.MissionType.TIMED, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lBaker Reward",
                     Arrays.asList(
                             "&b&l Rewards",
                             "&b&l* &75 Island Crystals",
@@ -124,7 +124,7 @@ public class Missions {
                             "&b&lRewards",
                             "&b&l* &75 Island Crystals",
                             "&b&l* &7$1000"
-                    )), Arrays.asList("MINE:IRON_ORE:15", "MINE:COAL_ORE:30", "MINE:DIAMOND_ORE:1"), Mission.MissionType.DAILY, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lMiner Reward",
+                    )), Arrays.asList("MINE:IRON_ORE:15", "MINE:COAL_ORE:30", "MINE:DIAMOND_ORE:1"), Mission.MissionType.TIMED, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lMiner Reward",
                     Arrays.asList(
                             "&b&l Rewards",
                             "&b&l* &75 Island Crystals",
@@ -148,7 +148,7 @@ public class Missions {
                             "&b&lRewards",
                             "&b&l* &75 Island Crystals",
                             "&b&l* &7$1000"
-                    )), Collections.singletonList("FISH:ANY:10"), Mission.MissionType.DAILY, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lFisherman Reward",
+                    )), Collections.singletonList("FISH:ANY:10"), Mission.MissionType.TIMED, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lFisherman Reward",
                     Arrays.asList(
                             "&b&l Rewards",
                             "&b&l* &75 Island Crystals",
@@ -173,7 +173,7 @@ public class Missions {
                             "&b&lRewards",
                             "&b&l* &75 Island Crystals",
                             "&b&l* &7$1000"
-                    )), Arrays.asList("SMELT:" + (supports(17) ? ObsidianMaterial.valueOf("RAW_IRON").name() : ObsidianMaterial.valueOf("IRON_ORE").name()) + ":30", "SMELT:" + (supports(17) ? ObsidianMaterial.valueOf("RAW_GOLD").name() : ObsidianMaterial.valueOf("GOLD_ORE").name()) + ":15"), Mission.MissionType.DAILY, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lBlacksmith Reward",
+                    )), Arrays.asList("SMELT:" + (supports(17) ? ObsidianMaterial.valueOf("RAW_IRON").name() : ObsidianMaterial.valueOf("IRON_ORE").name()) + ":30", "SMELT:" + (supports(17) ? ObsidianMaterial.valueOf("RAW_GOLD").name() : ObsidianMaterial.valueOf("GOLD_ORE").name()) + ":15"), Mission.MissionType.TIMED, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lBlacksmith Reward",
                     Arrays.asList(
                             "&b&l Rewards",
                             "&b&l* &75 Island Crystals",
@@ -199,7 +199,7 @@ public class Missions {
                             "&b&l* &75 Island Crystals",
                             "&b&l* &7$1000"
                     )
-            ), Arrays.asList("BREW:SPEED:2:3", "BREW:STRENGTH:2:3"), Mission.MissionType.DAILY, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lPotionBrewer Reward",
+            ), Arrays.asList("BREW:SPEED:2:3", "BREW:STRENGTH:2:3"), Mission.MissionType.TIMED, new Reward(new Item(ObsidianMaterial.valueOf("DIAMOND"), 1, "&b&lPotionBrewer Reward",
                     Arrays.asList(
                             "&b&l Rewards",
                             "&b&l* &75 Island Crystals",

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.iridium"
-version = "3.2.12-OM"
+version = "3.2.12-OM-PDC"
 description = "IridiumSkyblock"
 
 repositories {
@@ -28,7 +28,7 @@ repositories {
 dependencies {
     // Dependencies that we want to shade in
     implementation("org.jetbrains:annotations:23.0.0")
-    implementation("com.iridium:IridiumCore:1.6.9-OM")
+    implementation("com.iridium:IridiumCore:1.6.10-OM")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.github.Redempt:Crunch:1.0")
     implementation("com.j256.ormlite:ormlite-core:6.1")

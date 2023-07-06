@@ -7,6 +7,7 @@ import com.iridium.iridiumskyblock.Mission.MissionType;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
 import com.iridium.iridiumskyblock.gui.DailyIslandMissionsGUI;
+import com.iridium.iridiumskyblock.gui.TimedMissionsGUI;
 import com.iridium.iridiumskyblock.gui.InventoryConfigGUI;
 import com.iridium.iridiumskyblock.gui.IslandMissionsGUI;
 import org.bukkit.command.CommandSender;
@@ -55,7 +56,10 @@ public class MissionCommand extends Command {
                 player.openInventory(new IslandMissionsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
                 return true;
             case DAILY:
-                player.openInventory(new DailyIslandMissionsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+                //player.openInventory(new DailyIslandMissionsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
+                //return true;
+            case TIMED:
+                player.openInventory(new TimedMissionsGUI(player,island.get(), player.getOpenInventory().getTopInventory()).getInventory());
                 return true;
             default:
                 player.sendMessage(StringUtils.color(IridiumSkyblock.getInstance().getMessages().invalidMissionType.replace("%prefix%", IridiumSkyblock.getInstance().getConfiguration().prefix)));
