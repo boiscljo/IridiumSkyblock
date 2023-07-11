@@ -9,6 +9,7 @@ import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.moyskleytech.obsidian.material.dependencies.xseries.XBiome;
 import com.moyskleytech.obsidian.material.dependencies.xseries.XMaterial;
 import com.moyskleytech.obsidian.material.dependencies.xseries.XSound;
+import com.iridium.iridiumcore.dependencies.fasterxml.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Biomes {
 
     public Map<String, BiomeCategoryConfig> categories = ImmutableMap.<String, BiomeCategoryConfig>builder()
@@ -126,6 +128,7 @@ public class Biomes {
      */
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class BiomeCategoryConfig {
         public Item item;
         public int inventoryRows;

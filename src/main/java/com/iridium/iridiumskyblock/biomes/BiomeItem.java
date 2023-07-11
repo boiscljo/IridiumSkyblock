@@ -3,6 +3,7 @@ package com.iridium.iridiumskyblock.biomes;
 import com.iridium.iridiumcore.dependencies.fasterxml.annotation.JsonIgnore;
 import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.moyskleytech.obsidian.material.dependencies.xseries.XBiome;
+import com.iridium.iridiumcore.dependencies.fasterxml.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BiomeItem {
 
     public String name;

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.iridium"
-version = "3.2.12-OM-3"
+version = "3.2.12-OM-4"
 description = "IridiumSkyblock"
 
 repositories {
@@ -28,7 +28,7 @@ repositories {
 dependencies {
     // Dependencies that we want to shade in
     implementation("org.jetbrains:annotations:23.0.0")
-    implementation("com.iridium:IridiumCore:1.6.10-OM")
+    implementation("com.iridium:IridiumCore:1.6.11-OM")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.github.Redempt:Crunch:1.0")
     implementation("com.j256.ormlite:ormlite-core:6.1")
@@ -50,7 +50,6 @@ dependencies {
     compileOnly("com.songoda:UltimateStacker:2.1.7")
     compileOnly("com.songoda:EpicSpawners:7.1.2")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.6-SNAPSHOT")
-
     // Enable lombok annotation processing
     annotationProcessor("org.projectlombok:lombok:1.18.22")
 
