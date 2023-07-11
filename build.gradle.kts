@@ -45,7 +45,7 @@ dependencies {
         exclude("org.spigotmc")
     }
     compileOnly("com.gc:AdvancedSpawners:1.2.6")
-    compileOnly("dev.rosewood:rosestacker:1.4.2")
+    compileOnly("dev.rosewood:rosestacker:1.5.9")
     compileOnly("com.github.OmerBenGera:WildStackerAPI:master")
     compileOnly("com.songoda:UltimateStacker:2.1.7")
     compileOnly("com.songoda:EpicSpawners:7.1.2")
