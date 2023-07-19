@@ -15,7 +15,7 @@ public class WildStackerSupport implements StackerSupport {
 
     @Override
     public int getExtraBlocks(Island island, ObsidianMaterial material) {
-        IslandBlocks islandBlocks = IridiumSkyblock.getInstance().getIslandManager().getIslandBlock(island, material);
+        //IslandBlocks islandBlocks = IridiumSkyblock.getInstance().getIslandManager().getIslandBlock(island, material);
         int stackedBlocks = 0;
         for (StackedBarrel stackedBarrel : WildStackerAPI.getWildStacker().getSystemManager().getStackedBarrels()) {
             if (!island.isInIsland(stackedBarrel.getLocation())) continue;
@@ -25,20 +25,20 @@ public class WildStackerSupport implements StackerSupport {
                 stackedBlocks += stackedBarrel.getStackAmount();
             }
         }
-        islandBlocks.setExtraAmount(stackedBlocks);
+        //islandBlocks.setExtraAmount(stackedBlocks);
         return stackedBlocks;
     }
 
     @Override
     public int getExtraSpawners(Island island, EntityType entityType) {
-        IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager().getIslandSpawners(island, entityType);
+        //IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager().getIslandSpawners(island, entityType);
         int stackedSpawners = 0;
         for (StackedSpawner stackedSpawner : WildStackerAPI.getWildStacker().getSystemManager().getStackedSpawners()) {
             if (!island.isInIsland(stackedSpawner.getLocation())) continue;
             if (stackedSpawner.getSpawnedType() != entityType) continue;
             stackedSpawners += stackedSpawner.getStackAmount();
         }
-        islandSpawners.setExtraAmount(stackedSpawners);
+        //islandSpawners.setExtraAmount(stackedSpawners);
         return stackedSpawners;
     }
 }

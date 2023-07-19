@@ -23,136 +23,142 @@ import java.util.List;
  * @param <S> The Table Primary Id Class
  */
 public class TableManager<T extends DatabaseObject, S> {
-    private final SortedList<T> entries;
-    private final Dao<T, S> dao;
-    private final Class<T> clazz;
+  private final SortedList<T> entries;
+  private final Dao<T, S> dao;
+  private final Class<T> clazz;
 
-    private final ConnectionSource connectionSource;
+  private final ConnectionSource connectionSource;
 
-    public TableManager(ConnectionSource connectionSource, Class<T> clazz, Comparator<T> comparator) throws SQLException {
-        this.connectionSource = connectionSource;
-        this.entries = new SortedList<>(comparator);
-        this.clazz = clazz;
-        if (!IridiumSkyblock.getInstance().isTesting()) {
-            TableUtils.createTableIfNotExists(connectionSource, clazz);
-            this.dao = DaoManager.createDao(connectionSource, clazz);
-            this.dao.setAutoCommit(getDatabaseConnection(), false);
-            this.entries.addAll(dao.queryForAll());
-            entries.forEach(t -> t.setChanged(false));
-            this.entries.sort(comparator);
-        } else {
-            this.dao = new TestingDao<T, S>();
+  public TableManager(ConnectionSource connectionSource, Class<T> clazz, Comparator<T> comparator) throws SQLException {
+    this.connectionSource = connectionSource;
+    this.entries = new SortedList<>(comparator);
+    this.clazz = clazz;
+    if (!IridiumSkyblock.getInstance().isTesting()) {
+      TableUtils.createTableIfNotExists(connectionSource, clazz);
+      this.dao = DaoManager.createDao(connectionSource, clazz);
+      this.dao.setAutoCommit(getDatabaseConnection(), false);
+      this.entries.addAll(dao.queryForAll());
+      entries.forEach(t -> t.setChanged(false));
+      this.entries.sort(comparator);
+    } else {
+      this.dao = new TestingDao<T, S>();
+    }
+  }
+
+  /**
+   * Saves everything to the Database
+   */
+  public void save() {
+    try {
+      List<T> entryList = new ArrayList<>(entries);
+      for (T t : entryList) {
+        if (t.isChanged()) {
+          dao.createOrUpdate(t);
+          t.setChanged(false);
         }
+      }
+      dao.commit(getDatabaseConnection());
+    } catch (SQLException exception) {
+      exception.printStackTrace();
     }
+  }
 
-    /**
-     * Saves everything to the Database
-     */
-    public void save() {
-        try {
-            List<T> entryList = new ArrayList<>(entries);
-            for (T t : entryList) {
-                if (t.isChanged()) {
-                    dao.createOrUpdate(t);
-                    t.setChanged(false);
-                }
-            }
-            dao.commit(getDatabaseConnection());
-        } catch (SQLException exception) {
-            //exception.printStackTrace();
-        }
+  public void save(T t) {
+    try {
+      if (t.isChanged()) {
+        dao.createOrUpdate(t);
+        dao.commit(getDatabaseConnection());
+        t.setChanged(false);
+      }
+    } catch (SQLException exception) {
+      exception.printStackTrace();
     }
+  }
 
-    public void save(T t) {
-        try {
-            if (t.isChanged()) {
-                dao.createOrUpdate(t);
-                dao.commit(getDatabaseConnection());
-                t.setChanged(false);
-            }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+  /**
+   * Adds an entry to list
+   *
+   * @param t the item we are adding
+   */
+  public void addEntry(T t) {
+    entries.add(t);
+    try {
+      dao.createOrUpdate(t);
+    } catch (SQLException exception) {
+      exception.printStackTrace();
     }
+  }
 
-    /**
-     * Adds an entry to list
-     *
-     * @param t the item we are adding
-     */
-    public void addEntry(T t) {
-        entries.add(t);
-    }
+  /**
+   * Gets all T's from cache
+   *
+   * @return The list of all T's
+   */
+  public List<T> getEntries() {
+    return entries;
+  }
 
-    /**
-     * Gets all T's from cache
-     *
-     * @return The list of all T's
-     */
-    public List<T> getEntries() {
-        return entries;
+  /**
+   * Delete T from the database
+   *
+   * @param t the variable we are deleting
+   */
+  public void delete(T t) {
+    try {
+      dao.delete(t);
+      entries.remove(t);
+      dao.commit(getDatabaseConnection());
+    } catch (SQLException exception) {
+      exception.printStackTrace();
     }
+  }
 
-    /**
-     * Delete T from the database
-     *
-     * @param t the variable we are deleting
-     */
-    public void delete(T t) {
-        try {
-            dao.delete(t);
-            entries.remove(t);
-            dao.commit(getDatabaseConnection());
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+  /**
+   * Delete all t's in the database
+   *
+   * @param t The collection of variables we are deleting
+   */
+  public void delete(Collection<T> t) {
+    try {
+      dao.delete(t);
+      entries.removeAll(t);
+      dao.commit(getDatabaseConnection());
+    } catch (SQLException exception) {
+      // exception.printStackTrace();
     }
+  }
 
-    /**
-     * Delete all t's in the database
-     *
-     * @param t The collection of variables we are deleting
-     */
-    public void delete(Collection<T> t) {
-        try {
-            dao.delete(t);
-            entries.removeAll(t);
-            dao.commit(getDatabaseConnection());
-        } catch (SQLException exception) {
-            //exception.printStackTrace();
-        }
-    }
+  /**
+   * Returns a connection from the connection source.
+   *
+   * @return The connection to the database for operations
+   * @throws SQLException If there is an error with the exception
+   */
+  private DatabaseConnection getDatabaseConnection() throws SQLException {
+    if (IridiumSkyblock.getInstance().isTesting())
+      return null;
+    return connectionSource.getReadWriteConnection(null);
+  }
 
-    /**
-     * Returns a connection from the connection source.
-     *
-     * @return The connection to the database for operations
-     * @throws SQLException If there is an error with the exception
-     */
-    private DatabaseConnection getDatabaseConnection() throws SQLException {
-        if (IridiumSkyblock.getInstance().isTesting()) return null;
-        return connectionSource.getReadWriteConnection(null);
+  /**
+   * Clear all entries in the database & cache
+   */
+  public void clear() {
+    try {
+      TableUtils.clearTable(connectionSource, clazz);
+      dao.commit(getDatabaseConnection());
+      entries.clear();
+    } catch (SQLException exception) {
+      exception.printStackTrace();
     }
+  }
 
-    /**
-     * Clear all entries in the database & cache
-     */
-    public void clear() {
-        try {
-            TableUtils.clearTable(connectionSource, clazz);
-            dao.commit(getDatabaseConnection());
-            entries.clear();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    /**
-     * Returns the Dao for this class
-     *
-     * @return The dao
-     */
-    public Dao<T, S> getDao() {
-        return dao;
-    }
+  /**
+   * Returns the Dao for this class
+   *
+   * @return The dao
+   */
+  public Dao<T, S> getDao() {
+    return dao;
+  }
 }

@@ -27,8 +27,11 @@ public class ForeignIslandTableManager<T extends IslandData, S> extends TableMan
 
   @Override
   public void addEntry(T t) {
-    if (getEntry(t).isEmpty())
-      getEntries().add(t);
+    // if (getEntry(t).isEmpty())
+    // {
+    getEntries().add(t);
+    save();
+    // }
   }
 
   @Override
