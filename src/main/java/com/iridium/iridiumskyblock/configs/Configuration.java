@@ -50,7 +50,7 @@ public class Configuration {
     public boolean backButtons = true;
     public boolean createIslandOnHome = true;
     public boolean putBackOnIslandLeave = false;
-    public boolean dropSpawners = true;
+    public boolean dropSpawners = false;
     public boolean basicSpawnerSupport = true;
     public boolean extraDebugMessage = false;
     public boolean respectNetherRatio = false;
