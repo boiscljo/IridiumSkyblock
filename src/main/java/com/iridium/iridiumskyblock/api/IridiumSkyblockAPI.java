@@ -354,7 +354,7 @@ public class IridiumSkyblockAPI {
             return false;
         }
 
-        return island.isVisitable() || user.isBypassing() || user.getPlayer().hasPermission("iridiumskyblock.visitbypass") || island.getMembers().contains(user) || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island, user).isPresent();
+        return island.isVisitable() || user.isBypassing() || user.getPlayer().hasPermission("iridiumskyblock.visitbypass") || island.getMembership(user).getIslandRank() !=  IslandRank.VISITOR || IridiumSkyblock.getInstance().getIslandManager().getIslandTrusted(island, user).isPresent();
     }
 
 }

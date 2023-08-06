@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.iridium"
-version = "3.3.3-OM-b2"
+version = "3.3.3-OM-b3"
 description = "IridiumSkyblock"
 
 repositories {
