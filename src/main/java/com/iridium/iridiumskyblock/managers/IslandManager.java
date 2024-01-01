@@ -17,6 +17,7 @@ import com.iridium.iridiumskyblock.configs.Configuration.IslandRegenSettings;
 import com.iridium.iridiumskyblock.configs.Configuration;
 import com.iridium.iridiumskyblock.configs.Schematics;
 import com.iridium.iridiumskyblock.database.*;
+import com.iridium.iridiumskyblock.generators.GeneratorType;
 import com.iridium.iridiumskyblock.generators.OceanGenerator;
 import com.iridium.iridiumskyblock.support.StackerSupport;
 import com.iridium.iridiumskyblock.utils.LocationUtils;
@@ -86,9 +87,15 @@ public class IslandManager {
       return move(w_.get());
     }
     long begin = System.nanoTime();
-    WorldCreator worldCreator = new WorldCreator(name)
-        .generator(IridiumSkyblock.getInstance().getDefaultWorldGenerator(name, null))
-        .environment(environment);
+    WorldCreator worldCreator = null;
+    if (IridiumSkyblock.getInstance().getConfiguration().generatorSettings.generatorType == GeneratorType.NORMAL) {
+      worldCreator = new WorldCreator(name)
+          .environment(environment);
+    } else {
+      worldCreator = new WorldCreator(name)
+          .generator(IridiumSkyblock.getInstance().getDefaultWorldGenerator(name, null))
+          .environment(environment);
+    }
     World w = Bukkit.createWorld(worldCreator);
 
     System.out.println("Created world in " + (System.nanoTime() - begin) + " nanoseconds");
@@ -1138,8 +1145,9 @@ public class IslandManager {
                 if (island.isInIsland(x + (chunk.getX() * 16), z + (chunk.getZ() * 16), world)) {
                   final int maxy = Math.min(maxHeight, chunk.getHighestBlockYAt(x, z));
                   for (int y = LocationUtils.getMinHeight(world); y <= maxy; y++) {
+                    
                     ObsidianMaterial material = ObsidianMaterial
-                        .valueOf(chunk.getBlockType(x, y, z));
+                        .match(chk.getBlock(x,y,z));
                     if (material == air)
                       continue;
                     if (!ignoreMainMaterial

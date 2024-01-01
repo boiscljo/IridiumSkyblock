@@ -17,7 +17,6 @@ import com.iridium.iridiumskyblock.gui.GUI;
 import com.iridium.iridiumskyblock.listeners.*;
 import com.iridium.iridiumskyblock.managers.*;
 import com.iridium.iridiumskyblock.placeholders.ClipPlaceholderAPI;
-import com.iridium.iridiumskyblock.placeholders.MVDWPlaceholderAPI;
 import com.iridium.iridiumskyblock.shop.ShopManager;
 import com.iridium.iridiumskyblock.support.RoseStackerSupport;
 import com.iridium.iridiumskyblock.support.StackerSupport;
@@ -293,14 +292,6 @@ public class IridiumSkyblock extends IridiumCore {
   }
 
   private void registerPlaceholderSupport() {
-    Plugin MVDWPlaceholderAPI = getServer().getPluginManager().getPlugin("MVdWPlaceholderAPI");
-    if (MVDWPlaceholderAPI != null && MVDWPlaceholderAPI.isEnabled()) {
-      new MVDWPlaceholderAPI();
-      getLogger().info("Successfully registered "
-          + com.iridium.iridiumskyblock.placeholders.Placeholders.placeholders.size()
-          + " placeholders with MVDWPlaceholderAPI.");
-    }
-
     Plugin PlaceholderAPI = getServer().getPluginManager().getPlugin("PlaceholderAPI");
     if (PlaceholderAPI != null && PlaceholderAPI.isEnabled()) {
       if (new ClipPlaceholderAPI().register()) {

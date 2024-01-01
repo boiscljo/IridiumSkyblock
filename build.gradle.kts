@@ -28,7 +28,7 @@ repositories {
 dependencies {
     // Dependencies that we want to shade in
     implementation("org.jetbrains:annotations:23.0.0")
-    implementation("com.iridium:IridiumCore:1.6.11-OM")
+    implementation("com.iridium:IridiumCore:1.6.12-OM")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.github.Redempt:Crunch:1.0")
     implementation("com.j256.ormlite:ormlite-core:6.1")
@@ -41,9 +41,6 @@ dependencies {
     compileOnly("net.ess3:EssentialsXSpawn:2.16.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.9.2")
-    compileOnly("be.maximvdw:MVdWPlaceholderAPI:2.1.1") {
-        exclude("org.spigotmc")
-    }
     compileOnly("com.gc:AdvancedSpawners:1.2.6")
     compileOnly("dev.rosewood:rosestacker:1.5.9")
     compileOnly("com.github.OmerBenGera:WildStackerAPI:master")
@@ -105,6 +102,11 @@ tasks {
         sourceCompatibility = JavaVersion.VERSION_17.toString()
         targetCompatibility = JavaVersion.VERSION_17.toString()
     }
+}
+tasks.withType<JavaCompile>().configureEach {
+    javaCompiler.set(javaToolchains.compilerFor {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    })
 }
 
 // Set the Java version and vendor
