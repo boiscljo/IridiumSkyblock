@@ -13,6 +13,8 @@ import com.iridium.iridiumskyblock.commands.*;
 public class Commands {
 
     public AboutCommand aboutCommand = new AboutCommand();
+    public WhatIsCommand whatCommand = new WhatIsCommand();
+
     public BanCommand banCommand = new BanCommand();
     public BankCommand bankCommand = new BankCommand();
     public BiomeCommand biomeCommand = new BiomeCommand();

@@ -105,6 +105,7 @@ public class IridiumSkyblock extends IridiumCore {
 
   private BukkitTask islandRecalcTimer;
   private BukkitTask missionResetTimer;
+  private boolean fullyLoaded = false;
 
   /**
    * The default constructor.
@@ -152,7 +153,13 @@ public class IridiumSkyblock extends IridiumCore {
    */
   @Override
   public void onEnable() {
+
+    ObsidianMaterial.registerPluginAdapters();
+    loadConfigs2();
+
     super.onEnable();
+    fullyLoaded = true;
+    saveConfigs();
 
     // Convert old IridiumSkyblock data
     DataConverter.copyLegacyData();
@@ -446,25 +453,12 @@ public class IridiumSkyblock extends IridiumCore {
    */
   @Override
   public void loadConfigs() {
-    loadConfigFiles();
+    loadConfigFiles1();
 
     for (Color color : Color.values()) {
       if (!border.enabled.containsKey(color)) {
         border.enabled.put(color, true);
       }
-    }
-
-    int maxSize = upgrades.sizeUpgrade.upgrades.values().stream()
-        .max(Comparator.comparing(sizeUpgrade -> sizeUpgrade.size)).get().size;
-    if (configuration.distance <= maxSize) {
-      configuration.distance = maxSize + 1;
-    }
-
-    if (inventories.confirmationGUI.yes.slot == null || inventories.confirmationGUI.yes.slot == 0) {
-      inventories.confirmationGUI.yes.slot = 15;
-    }
-    if (inventories.confirmationGUI.no.slot == null || inventories.confirmationGUI.no.slot == 0) {
-      inventories.confirmationGUI.no.slot = 1;
     }
 
     initializePermissionList();
@@ -473,6 +467,17 @@ public class IridiumSkyblock extends IridiumCore {
     for (Permission permission : permissionList.values()) {
       if (permission.getPage() == 0)
         permission.setPage(1);
+    }
+  }
+
+  public void loadConfigs2() {
+    loadConfigFiles2();
+
+    if (inventories.confirmationGUI.yes.slot == null || inventories.confirmationGUI.yes.slot == 0) {
+      inventories.confirmationGUI.yes.slot = 15;
+    }
+    if (inventories.confirmationGUI.no.slot == null || inventories.confirmationGUI.no.slot == 0) {
+      inventories.confirmationGUI.no.slot = 1;
     }
 
     if (bankItems.crystalsBankItem.getDisplayName() == null)
@@ -573,23 +578,29 @@ public class IridiumSkyblock extends IridiumCore {
     Bukkit.getPluginManager().callEvent(reloadEvent);
   }
 
-  private void loadConfigFiles() {
+  private void loadConfigFiles1() {
     this.configuration = getPersist().load(Configuration.class);
     this.messages = getPersist().load(Messages.class);
     this.sql = getPersist().load(SQL.class);
+    this.commands = getPersist().load(Commands.class);
+    this.biomes = getPersist().load(Biomes.class);
+    this.border = getPersist().load(Border.class);
+    this.placeholders = getPersist().load(Placeholders.class);
+    this.islandSettings = getPersist().load(IslandSettings.class);
+    this.permissions = getPersist().load(Permissions.class);
+  }
+
+  private void loadConfigFiles2() {
     this.schematics = getPersist().load(Schematics.class);
     this.inventories = getPersist().load(Inventories.class);
     this.permissions = getPersist().load(Permissions.class);
     this.blockValues = getPersist().load(BlockValues.class);
     this.bankItems = getPersist().load(BankItems.class);
+
     this.missions = getPersist().load(Missions.class);
     this.upgrades = getPersist().load(Upgrades.class);
     this.boosters = getPersist().load(Boosters.class);
-    this.commands = getPersist().load(Commands.class);
     this.shop = getPersist().load(Shop.class);
-    this.biomes = getPersist().load(Biomes.class);
-    this.border = getPersist().load(Border.class);
-    this.placeholders = getPersist().load(Placeholders.class);
     this.islandSettings = getPersist().load(IslandSettings.class);
   }
 
@@ -681,6 +692,8 @@ public class IridiumSkyblock extends IridiumCore {
    */
   @Override
   public void saveConfigs() {
+    if (!fullyLoaded)
+      return;
     getPersist().save(configuration);
     getPersist().save(messages);
     getPersist().save(sql);

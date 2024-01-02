@@ -1077,7 +1077,7 @@ public class IslandManager {
     chunks.stream().forEach(chunk_ -> {
       ChunkSnapshot chunk = chunk_.getChunkSnapshot(true, false, false);
       World world = Bukkit.getWorld(chunk.getWorldName());
-      boolean ignoreMainMaterial = IridiumSkyblock.getInstance().getChunkGenerator().ignoreMainMaterial();
+      boolean ignoreMainMaterial = Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(x->x.ignoreMainMaterial()).orElse(true);
       int maxHeight = world == null ? 255 : world.getMaxHeight() - 1;
 
       for (int x = 0; x < 16; x++) {
@@ -1088,8 +1088,7 @@ public class IslandManager {
               ObsidianMaterial material = ObsidianMaterial.valueOf(chunk.getBlockType(x, y, z));
               if (material == ObsidianMaterial.valueOf("AIR"))
                 continue;
-              if (!ignoreMainMaterial && material == IridiumSkyblock.getInstance().getChunkGenerator()
-                  .getMainMaterial(world))
+              if (!ignoreMainMaterial && material == Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(maybeChunk->maybeChunk.getMainMaterial(world)).orElse(ObsidianMaterial.valueOf("AIR")))
                 continue;
 
               IslandBlocks islandBlock = IridiumSkyblock.getInstance().getIslandManager()
@@ -1137,8 +1136,7 @@ public class IslandManager {
             Chunk chk = iterator.next();
             ChunkSnapshot chunk = chk.getChunkSnapshot(true, false, false);
             World world = Bukkit.getWorld(chunk.getWorldName());
-            boolean ignoreMainMaterial = IridiumSkyblock.getInstance().getChunkGenerator()
-                .ignoreMainMaterial();
+            boolean ignoreMainMaterial =Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(x->x.ignoreMainMaterial()).orElse(true);
             int maxHeight = world == null ? 255 : world.getMaxHeight() - 1;
             for (int x = 0; x < 16; x++) {
               for (int z = 0; z < 16; z++) {
@@ -1150,10 +1148,8 @@ public class IslandManager {
                         .match(chk.getBlock(x,y,z));
                     if (material == air)
                       continue;
-                    if (!ignoreMainMaterial
-                        && material == IridiumSkyblock.getInstance().getChunkGenerator()
-                            .getMainMaterial(world))
-                      continue;
+                     if (!ignoreMainMaterial && material == Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(maybeChunk->maybeChunk.getMainMaterial(world)).orElse(ObsidianMaterial.valueOf("AIR")))
+                continue;
 
                     IslandBlocks islandBlock = IridiumSkyblock.getInstance().getIslandManager()
                         .getIslandBlock(island, material);

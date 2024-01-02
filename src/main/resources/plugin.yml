@@ -15,6 +15,7 @@ softdepend:
   - "FastAsyncWorldEdit"
   - "AsyncWorldEdit"
   - "WildStacker"
+  - "Oraxen"
   - "NBTAPI"
 loadbefore:
   - "Multiverse-Core"
