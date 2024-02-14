@@ -5,6 +5,8 @@ import com.iridium.iridiumcore.IridiumCore;
 
 import com.moyskleytech.obsidian.material.ObsidianMaterial;
 import com.iridium.iridiumcore.utils.NumberFormatter;
+import com.iridium.iridiumcore.utils.Scheduler;
+import com.iridium.iridiumcore.utils.Scheduler.Task;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockReloadEvent;
 import com.iridium.iridiumskyblock.bank.BankItem;
@@ -22,14 +24,10 @@ import com.iridium.iridiumskyblock.support.RoseStackerSupport;
 import com.iridium.iridiumskyblock.support.StackerSupport;
 import com.iridium.iridiumskyblock.support.WildStackerSupport;
 import com.iridium.iridiumskyblock.utils.PlayerUtils;
-import de.jeff_media.updatechecker.UpdateChecker;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.EntityType;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
@@ -37,8 +35,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPluginLoader;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -103,8 +100,8 @@ public class IridiumSkyblock extends IridiumCore {
 
   private PlayerTrackListener track;
 
-  private BukkitTask islandRecalcTimer;
-  private BukkitTask missionResetTimer;
+  private Scheduler.Task islandRecalcTimer;
+  private Scheduler.Task missionResetTimer;
   private boolean fullyLoaded = false;
 
   /**
@@ -146,6 +143,15 @@ public class IridiumSkyblock extends IridiumCore {
 
     // Initialize the ChunkGenerator
     this.chunkGenerator = configuration.generatorSettings.generatorType.getChunkGenerator();
+  }
+
+  private static boolean isFolia() {
+    try {
+      Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
   }
 
   /**
@@ -194,7 +200,7 @@ public class IridiumSkyblock extends IridiumCore {
     this.schematicManager = new SchematicManager();
 
     // Initialize Vault economy support
-    Bukkit.getScheduler().runTask(this, () -> this.economy = setupEconomy());
+    Scheduler.getInstance().runTask(() -> this.economy = setupEconomy());
 
     this.stackerSupport = registerBlockStackerSupport();
 
@@ -210,18 +216,22 @@ public class IridiumSkyblock extends IridiumCore {
     // this.createRecalcTimer();
 
     // Automatically update all inventories
-    Bukkit.getScheduler().runTaskTimer(this, () -> Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-      InventoryHolder inventoryHolder = player.getOpenInventory().getTopInventory().getHolder();
-      if (inventoryHolder instanceof GUI) {
-        GUI g = ((GUI) inventoryHolder);
-        if (g.needRefresh()) {
-          ((GUI) inventoryHolder).addContent(player.getOpenInventory().getTopInventory());
-        }
-      }
-    }), 0, 20);
+    Scheduler.getInstance().runTaskTimerAsync((task) -> {
+      Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+        Scheduler.getInstance().runEntityTask(player, 0, () -> {
+          InventoryHolder inventoryHolder = player.getOpenInventory().getTopInventory().getHolder();
+          if (inventoryHolder instanceof GUI) {
+            GUI g = ((GUI) inventoryHolder);
+            if (g.needRefresh()) {
+              ((GUI) inventoryHolder).addContent(player.getOpenInventory().getTopInventory());
+            }
+          }
+        });
+      });
+    }, 0, 20);
 
-    missionResetTimer = Bukkit.getScheduler().runTaskTimer(this,
-        () -> Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+    missionResetTimer = Scheduler.getInstance().runTaskTimer(
+        (task) -> Bukkit.getServer().getOnlinePlayers().forEach(player -> {
           databaseManager.getIslandMissionTableManager().delete(
               databaseManager.getIslandMissionTableManager().getEntries().stream()
                   .filter(islandMission -> islandMission.getType() == Mission.MissionType.TIMED)
@@ -239,6 +249,7 @@ public class IridiumSkyblock extends IridiumCore {
     getLogger().info("");
     getLogger().info(getDescription().getName() + " Enabled!");
     getLogger().info("Version: " + getDescription().getVersion());
+    getLogger().info("Folia: " + isFolia());
     getLogger().info("");
     getLogger().info("----------------------------------------");
   }
@@ -251,44 +262,43 @@ public class IridiumSkyblock extends IridiumCore {
       this.islandRecalcTimer = null;
     }
     if (getConfiguration().islandRecalculateInterval > 0) {
-      new BukkitRunnable() {
-        public void run() {
-          IridiumSkyblock.this.islandRecalcTimer = (new BukkitRunnable() {
-            ListIterator<Integer> islands = getDatabaseManager().getIslandTableManager().getEntries()
-                .stream()
-                .map(Island::getId).collect(Collectors.toList()).listIterator();
-            long start = 0;
+      Scheduler.getInstance().runTaskLater(() -> {
+        IridiumSkyblock.this.islandRecalcTimer = Scheduler.getInstance().runTaskTimer(
+            new Consumer<Scheduler.Task>() {
+              ListIterator<Integer> islands = getDatabaseManager().getIslandTableManager().getEntries()
+                  .stream()
+                  .map(Island::getId).collect(Collectors.toList()).listIterator();
+              long start = 0;
 
-            @Override
-            public void run() {
-              if (getConfiguration().performance.disableIslandRecalculationTimer)
-                return;
-              islands = getDatabaseManager().getIslandTableManager().getEntries().stream()
-                  .map(Island::getId)
-                  .collect(Collectors.toList()).listIterator();
-              if (islands.hasNext()) {
-                start = System.currentTimeMillis();
-                runOnce();
+              @Override
+              public void accept(Task arg0) {
+                if (getConfiguration().performance.disableIslandRecalculationTimer)
+                  return;
+                islands = getDatabaseManager().getIslandTableManager().getEntries().stream()
+                    .map(Island::getId)
+                    .collect(Collectors.toList()).listIterator();
+                if (islands.hasNext()) {
+                  start = System.currentTimeMillis();
+                  runOnce();
+                }
               }
-            }
 
-            public void runOnce() {
-              if (islands.hasNext()) {
-                getIslandManager().getIslandById(islands.next())
-                    .ifPresent(island -> {
-                      getIslandManager().recalculateIslandAsync(island).thenRun(() -> {
-                        runOnce();
+              public void runOnce() {
+                if (islands.hasNext()) {
+                  getIslandManager().getIslandById(islands.next())
+                      .ifPresent(island -> {
+                        getIslandManager().recalculateIslandAsync(island).thenRun(() -> {
+                          runOnce();
+                        });
                       });
-                    });
-              } else {
-                if (IridiumSkyblock.getInstance().getConfiguration().extraDebugMessage)
-                  IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "
-                      + (System.currentTimeMillis() - start) + " milliseconds");
+                } else {
+                  if (IridiumSkyblock.getInstance().getConfiguration().extraDebugMessage)
+                    IridiumSkyblock.getInstance().getLogger().info("recalculation finished in "
+                        + (System.currentTimeMillis() - start) + " milliseconds");
+                }
               }
-            }
-          }).runTaskTimer(IridiumSkyblock.this, 0, getConfiguration().islandRecalculateInterval * 60 * 20L);
-        }
-      }.runTaskLater(this, 20);
+            }, 0, getConfiguration().islandRecalculateInterval * 60 * 20);
+      }, 20);
     }
   }
 
@@ -322,28 +332,7 @@ public class IridiumSkyblock extends IridiumCore {
    * Automatically resets the Island missions in a defined time interval.
    */
   private void resetIslandMissions() {
-    /*
-     * Calendar c = Calendar.getInstance();
-     * c.add(Calendar.DAY_OF_MONTH, 1);
-     * c.set(Calendar.HOUR_OF_DAY, 0);
-     * c.set(Calendar.MINUTE, 0);
-     * c.set(Calendar.SECOND, 0);
-     * c.set(Calendar.MILLISECOND, 0);
-     * 
-     * new Timer().schedule(new TimerTask() {
-     * 
-     * @Override
-     * public void run() {
-     * databaseManager.getIslandMissionTableManager().delete(
-     * databaseManager.getIslandMissionTableManager().getEntries().stream()
-     * .filter(islandMission -> islandMission.getType() ==
-     * Mission.MissionType.DAILY)
-     * .collect(Collectors.toList()));
-     * Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () ->
-     * resetIslandMissions());
-     * }
-     * }, c.getTime());
-     */
+
   }
 
   /**

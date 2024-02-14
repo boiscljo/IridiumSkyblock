@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.listeners;
 
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.database.Island;
 import org.bukkit.Bukkit;
@@ -14,22 +15,25 @@ import java.util.Optional;
 
 public class PotionBrewListener implements Listener {
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void monitorPotionBrew(BrewEvent event) {
-        // Delay the check so the new potion is checked
-        Bukkit.getScheduler().scheduleSyncDelayedTask(IridiumSkyblock.getInstance(), () -> {
-            Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getBlock().getLocation());
+  @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+  public void monitorPotionBrew(BrewEvent event) {
+    // Delay the check so the new potion is checked
+    Scheduler.getInstance().runTaskLater(() -> {
+      Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager()
+          .getIslandViaLocation(event.getBlock().getLocation());
 
-            for (int i = 0; i < 3; i++) {
-                ItemStack itemStack = event.getContents().getItem(i);
-                if (itemStack != null && itemStack.getItemMeta() instanceof PotionMeta) {
-                    PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
+      for (int i = 0; i < 3; i++) {
+        ItemStack itemStack = event.getContents().getItem(i);
+        if (itemStack != null && itemStack.getItemMeta() instanceof PotionMeta) {
+          PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
 
-                    island.ifPresent(value -> IridiumSkyblock.getInstance().getMissionManager().handleMissionUpdates(value,
-                            "BREW", potionMeta.getBasePotionData().getType() + ":" + (potionMeta.getBasePotionData().isUpgraded() ? 2 : 1), 1));
-                }
-            }
-        });
-    }
+          island.ifPresent(value -> IridiumSkyblock.getInstance().getMissionManager().handleMissionUpdates(value,
+              "BREW",
+              potionMeta.getBasePotionData().getType() + ":" + (potionMeta.getBasePotionData().isUpgraded() ? 2 : 1),
+              1));
+        }
+      }
+    }, 1);
+  }
 
 }

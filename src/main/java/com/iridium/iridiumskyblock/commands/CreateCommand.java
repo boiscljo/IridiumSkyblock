@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.commands;
 
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.api.IslandCreateEvent;
@@ -123,7 +124,8 @@ public class CreateCommand extends Command {
         IridiumSkyblock.getInstance().getConfiguration().prefix)));
     IridiumSkyblock.getInstance().getIslandManager()
         .createIsland(player, islandCreateEvent.getIslandName(), islandCreateEvent.getSchematicConfig())
-        .thenAccept(island -> Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
+        .thenAccept(island ->
+        Scheduler.getInstance().runTask(() -> {
           IridiumSkyblock.getInstance().getIslandManager().teleportHome(player, island, 0);
           IridiumSkyblock.getInstance().getNms().sendTitle(player,
               IridiumSkyblock.getInstance().getConfiguration().islandCreateTitle,

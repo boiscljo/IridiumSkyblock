@@ -14,22 +14,25 @@ import java.util.Optional;
 
 public class PlayerRespawnListener implements Listener {
 
-    @EventHandler
-    public void onRespawn(PlayerRespawnEvent event) {
-        if (IridiumSkyblock.getInstance().getConfiguration().respawnOnIsland) {
-            User user = IridiumSkyblock.getInstance().getUserManager().getUser(event.getPlayer());
-            user.getIsland().ifPresent(island -> {
-                if (!island.isInIsland(event.getRespawnLocation())) {
-                    event.setRespawnLocation(LocationUtils.getSafeLocation(island.getHome(), island));
-                }
-            });
+  @EventHandler
+  public void onRespawn(PlayerRespawnEvent event) {
+    if (IridiumSkyblock.getInstance().getConfiguration().respawnOnIsland) {
+      User user = IridiumSkyblock.getInstance().getUserManager().getUser(event.getPlayer());
+      user.getIsland().ifPresent(island -> {
+        if (!island.isInIsland(event.getRespawnLocation())) {
+          LocationUtils.getSafeLocation(island.getHome(), island).thenAccept(location -> {
+            event.setRespawnLocation(location);
+          });
         }
+      });
     }
+  }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void monitorRespawn(PlayerRespawnEvent event) {
-        Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getRespawnLocation());
-        island.ifPresent(targetIsland -> PlayerUtils.sendBorder(event.getPlayer(), targetIsland));
-    }
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void monitorRespawn(PlayerRespawnEvent event) {
+    Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager()
+        .getIslandViaLocation(event.getRespawnLocation());
+    island.ifPresent(targetIsland -> PlayerUtils.sendBorder(event.getPlayer(), targetIsland));
+  }
 
 }

@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.listeners;
 
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.IslandBooster;
@@ -15,26 +16,30 @@ import java.util.Optional;
 
 public class SpawnerSpawnListener implements Listener {
 
-    private final CooldownProvider<CreatureSpawner> cooldownProvider = CooldownProvider.newInstance(Duration.ofMillis(50));
+  private final CooldownProvider<CreatureSpawner> cooldownProvider = CooldownProvider
+      .newInstance(Duration.ofMillis(50));
 
-    @EventHandler(ignoreCancelled = true)
-    public void onCreatureSpawn(SpawnerSpawnEvent event) {
-        if (IridiumSkyblock.getInstance().getConfiguration().performance.disableSpawnerEntitySpawnCheck) return;
+  @EventHandler(ignoreCancelled = true)
+  public void onCreatureSpawn(SpawnerSpawnEvent event) {
+    if (IridiumSkyblock.getInstance().getConfiguration().performance.disableSpawnerEntitySpawnCheck)
+      return;
 
-        Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager().getIslandViaLocation(event.getLocation());
-        if (island.isPresent()) {
-            IslandBooster islandBooster = IridiumSkyblock.getInstance().getIslandManager().getIslandBooster(island.get(), "spawner");
-            if (islandBooster.isActive()) {
-                CreatureSpawner spawner = event.getSpawner();
-                if (!cooldownProvider.isOnCooldown(spawner)) {
-                    cooldownProvider.applyCooldown(spawner);
-                    Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
-                        spawner.setDelay(spawner.getDelay() / 2);
-                        spawner.update();
-                    });
-                }
-            }
+    Optional<Island> island = IridiumSkyblock.getInstance().getIslandManager()
+        .getIslandViaLocation(event.getLocation());
+    if (island.isPresent()) {
+      IslandBooster islandBooster = IridiumSkyblock.getInstance().getIslandManager().getIslandBooster(island.get(),
+          "spawner");
+      if (islandBooster.isActive()) {
+        CreatureSpawner spawner = event.getSpawner();
+        if (!cooldownProvider.isOnCooldown(spawner)) {
+          cooldownProvider.applyCooldown(spawner);
+          Scheduler.getInstance().runTask(() -> {
+            spawner.setDelay(spawner.getDelay() / 2);
+            spawner.update();
+          });
         }
+      }
     }
+  }
 
 }

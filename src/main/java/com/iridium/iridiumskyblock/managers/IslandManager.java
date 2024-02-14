@@ -7,7 +7,9 @@ import com.moyskleytech.obsidian.material.dependencies.xseries.XBiome;
 
 import com.iridium.iridiumcore.utils.ItemStackUtils;
 import com.iridium.iridiumcore.utils.Placeholder;
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumcore.utils.StringUtils;
+import com.iridium.iridiumcore.utils.Scheduler.Task;
 import com.iridium.iridiumskyblock.*;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.api.IslandDeleteEvent;
@@ -36,8 +38,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +64,8 @@ public class IslandManager {
   }
 
   private World move(World w) {
+    if (w == null)
+      return Bukkit.getWorlds().get(0);
     if (w.getEnvironment() == Environment.NORMAL)
       overworld = w;
     else if (w.getEnvironment() == Environment.NETHER)
@@ -96,7 +98,13 @@ public class IslandManager {
           .generator(IridiumSkyblock.getInstance().getDefaultWorldGenerator(name, null))
           .environment(environment);
     }
-    World w = Bukkit.createWorld(worldCreator);
+    World w;
+    try {
+      w = Bukkit.createWorld(worldCreator);
+    } catch (Throwable t) {
+      t.printStackTrace();
+      w = Bukkit.getWorlds().stream().filter(x -> x.getEnvironment() == environment).findAny().orElse(null);
+    }
 
     System.out.println("Created world in " + (System.nanoTime() - begin) + " nanoseconds");
     return move(w);
@@ -141,7 +149,20 @@ public class IslandManager {
     getIslandChunks(island, world).thenAccept(chunks -> {
       Location pos1 = island.getPos1(world);
       Location pos2 = island.getPos2(world);
-      xBiome.setBiome(pos1, pos2).thenRun(() -> {
+      Scheduler.getInstance().runChunkTask(pos2, 0, () -> {
+        int heightMax = true ? world.getMaxHeight() : 1;
+        int heightMin = true ? world.getMinHeight() : 0;
+        for (int x = pos1.getBlockX(); x < pos2.getBlockX(); ++x) {
+          for (int y = heightMin; y < heightMax; y += 4) {
+            for (int z = pos1.getBlockZ(); z < pos2.getBlockZ(); ++z) {
+              Block block = (new Location(world, (double) x, (double) y, (double) z)).getBlock();
+              if (block.getBiome() != xBiome.getBiome()) {
+                block.setBiome(xBiome.getBiome());
+              }
+            }
+          }
+        }
+
         for (Chunk chunk : chunks) {
           chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
         }
@@ -187,10 +208,11 @@ public class IslandManager {
       teleportHome(player, island);
       return;
     }
-    BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(), () -> {
+    Task bukkitTask = Scheduler.getInstance().runTaskLater(() -> {
       teleportHome(player, island);
       user.setTeleportingTask(null);
-    }, 20L * delay);
+    }, 20 * delay);
+
     user.setTeleportingTask(bukkitTask);
   }
 
@@ -229,9 +251,10 @@ public class IslandManager {
   private void teleportHome(@NotNull Player player, @NotNull Island island) {
     player.setFallDistance(0);
     IridiumSkyblock.getInstance().getTrack().track(player, island);
-    PaperLib.teleportAsync(player, LocationUtils.getSafeLocation(island.getHome(), island),
-        PlayerTeleportEvent.TeleportCause.PLUGIN);
-
+    LocationUtils.getSafeLocation(island.getHome(), island).thenAccept(location -> {
+      PaperLib.teleportAsync(player, location,
+          PlayerTeleportEvent.TeleportCause.PLUGIN);
+    });
   }
 
   /**
@@ -250,10 +273,10 @@ public class IslandManager {
       teleportWarp(player, islandWarp);
       return;
     }
-    BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(), () -> {
+    Task bukkitTask = Scheduler.getInstance().runTaskLater(() -> {
       teleportWarp(player, islandWarp);
       IridiumSkyblock.getInstance().getUserManager().getUser(player).setTeleportingTask(null);
-    }, 20L * delay);
+    }, 20 * delay);
     IridiumSkyblock.getInstance().getUserManager().getUser(player).setTeleportingTask(bukkitTask);
   }
 
@@ -265,9 +288,11 @@ public class IslandManager {
    */
   private void teleportWarp(@NotNull Player player, @NotNull IslandWarp islandWarp) {
     player.setFallDistance(0);
-    PaperLib.teleportAsync(player,
-        LocationUtils.getSafeLocation(islandWarp.getLocation(), islandWarp.getIsland().orElse(null)),
-        PlayerTeleportEvent.TeleportCause.PLUGIN);
+    LocationUtils.getSafeLocation(islandWarp.getLocation(), islandWarp.getIsland().orElse(null)).thenAccept(loc -> {
+      PaperLib.teleportAsync(player,
+          loc,
+          PlayerTeleportEvent.TeleportCause.PLUGIN);
+    });
   }
 
   /**
@@ -282,23 +307,20 @@ public class IslandManager {
       @NotNull Schematics.SchematicConfig schematic) {
     clearIslandCache();
     CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-    Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+    Scheduler.getInstance().runTaskAsync((task) -> {
       User user = IridiumSkyblock.getInstance().getUserManager().getUser(player);
       Island island = new Island(name, schematic);
-
       IridiumSkyblock.getInstance().getDatabaseManager().registerIsland(island).join();
-
       user.setIsland(island);// Set it in the current profile
-      // user.setIslandRank(IslandRank.OWNER);
       IridiumSkyblock.getInstance().getDatabaseManager().getUserTableManager().save(user);
-
       IslandMember membership = new IslandMember(island, user, IslandRank.OWNER);
       IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().save(membership);
       IridiumSkyblock.getInstance().getDatabaseManager().getIslandMemberTableManager().addEntry(membership);
 
-      Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(),
+      Scheduler.getInstance().runTask(
           () -> pasteSchematic(island, schematic).thenRun(() -> completableFuture.complete(island)));
     });
+
     return completableFuture;
   }
 
@@ -429,15 +451,17 @@ public class IslandManager {
         }
 
         getEntities(island, getWorld(), getNetherWorld(), getEndWorld())
-            .thenAccept(entities -> Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
+            .thenAccept(entities -> {
               for (Entity entity : entities) {
-                if (entity instanceof Player) {
-                  teleportHome((Player) entity, island, 0);
-                } else {
-                  entity.remove();
-                }
+                Scheduler.getInstance().runEntityTask(entity, 0, () -> {
+                  if (entity instanceof Player) {
+                    teleportHome((Player) entity, island, 0);
+                  } else {
+                    entity.remove();
+                  }
+                });
               }
-            }));
+            });
       });
     });
 
@@ -827,8 +851,9 @@ public class IslandManager {
       if (delay < 1) {
         deleteIslandBlocks(island, world, y - 1, completableFuture, delay);
       } else {
-        Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(),
-            () -> deleteIslandBlocks(island, world, y - 1, completableFuture, delay), delay);
+        Scheduler.getInstance().runTaskLater(
+            () -> deleteIslandBlocks(island, world, y - 1, completableFuture, delay),
+            delay);
       }
     }
   }
@@ -867,11 +892,14 @@ public class IslandManager {
     });
     deleteIslandDatabaseEntries(island);
 
-    getEntities(island, getWorld(), getEndWorld(), getNetherWorld()).thenAccept(entities -> Bukkit.getScheduler()
-        .runTask(IridiumSkyblock.getInstance(), () -> entities.stream()
-            .filter(entity -> entity instanceof Player)
-            .map(entity -> (Player) entity)
-            .forEach(PlayerUtils::teleportSpawn)));
+    getEntities(island, getWorld(), getEndWorld(),
+        getNetherWorld()).thenAccept(
+            entities -> entities.stream()
+                .filter(entity -> entity instanceof Player)
+                .map(entity -> (Player) entity)
+                .forEach((player) -> {
+                  Scheduler.getInstance().runEntityTask(player, 0, () -> PlayerUtils.teleportSpawn(player));
+                }));
   }
 
   /**
@@ -881,7 +909,7 @@ public class IslandManager {
    */
   private void deleteIslandDatabaseEntries(@NotNull Island island) {
     DatabaseManager databaseManager = IridiumSkyblock.getInstance().getDatabaseManager();
-    Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+    Scheduler.getInstance().runTaskAsync((task) -> {
       databaseManager.getIslandTableManager().delete(island);
       databaseManager.getIslandBanTableManager().getEntries(island)
           .forEach(databaseManager.getIslandBanTableManager()::delete);
@@ -1077,7 +1105,8 @@ public class IslandManager {
     chunks.stream().forEach(chunk_ -> {
       ChunkSnapshot chunk = chunk_.getChunkSnapshot(true, false, false);
       World world = Bukkit.getWorld(chunk.getWorldName());
-      boolean ignoreMainMaterial = Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(x->x.ignoreMainMaterial()).orElse(true);
+      boolean ignoreMainMaterial = Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator())
+          .map(x -> x.ignoreMainMaterial()).orElse(true);
       int maxHeight = world == null ? 255 : world.getMaxHeight() - 1;
 
       for (int x = 0; x < 16; x++) {
@@ -1088,7 +1117,9 @@ public class IslandManager {
               ObsidianMaterial material = ObsidianMaterial.valueOf(chunk.getBlockType(x, y, z));
               if (material == ObsidianMaterial.valueOf("AIR"))
                 continue;
-              if (!ignoreMainMaterial && material == Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(maybeChunk->maybeChunk.getMainMaterial(world)).orElse(ObsidianMaterial.valueOf("AIR")))
+              if (!ignoreMainMaterial
+                  && material == Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator())
+                      .map(maybeChunk -> maybeChunk.getMainMaterial(world)).orElse(ObsidianMaterial.valueOf("AIR")))
                 continue;
 
               IslandBlocks islandBlock = IridiumSkyblock.getInstance().getIslandManager()
@@ -1103,7 +1134,7 @@ public class IslandManager {
     if (Bukkit.isPrimaryThread()) {
       getAllTileInIsland(island, chunks);
     } else {
-      Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> getAllTileInIsland(island, chunks));
+      Scheduler.getInstance().runTask(() -> getAllTileInIsland(island, chunks));
     }
   }
 
@@ -1118,38 +1149,36 @@ public class IslandManager {
     int delay = IridiumSkyblock.getInstance().getConfiguration().tickPerRecalculationStep;
     ObsidianMaterial air = ObsidianMaterial.wrap(Material.AIR);
 
-    new BukkitRunnable() {
-      @Override
-      public void run() {
-        for (int i = 0; i < IridiumSkyblock.getInstance().getConfiguration().chunkPerTickRecalculation; i++)
-          if (!iterator.hasNext()) {
-            if (Bukkit.isPrimaryThread()) {
-              getAllTileInIsland(island, chunks);
-            } else {
-              Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(),
-                  () -> getAllTileInIsland(island, chunks));
-            }
-            ret.complete(null);
-            this.cancel();
-            return;
-          } else {
-            Chunk chk = iterator.next();
-            ChunkSnapshot chunk = chk.getChunkSnapshot(true, false, false);
-            World world = Bukkit.getWorld(chunk.getWorldName());
-            boolean ignoreMainMaterial =Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(x->x.ignoreMainMaterial()).orElse(true);
-            int maxHeight = world == null ? 255 : world.getMaxHeight() - 1;
+    Scheduler.getInstance().runTaskTimer((task) -> {
+      for (int i = 0; i < IridiumSkyblock.getInstance().getConfiguration().chunkPerTickRecalculation; i++)
+        if (!iterator.hasNext()) {
+          Scheduler.getInstance().runTask(() -> getAllTileInIsland(island, chunks));
+          ret.complete(null);
+          task.cancel();
+          return;
+        } else {
+          Chunk chk = iterator.next();
+          ChunkSnapshot chunk = chk.getChunkSnapshot(true, false, false);
+          World world = Bukkit.getWorld(chunk.getWorldName());
+          boolean ignoreMainMaterial = Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator())
+              .map(x -> x.ignoreMainMaterial()).orElse(true);
+          int maxHeight = world == null ? 255 : world.getMaxHeight() - 1;
+          Scheduler.getInstance().runChunkTask(new Location(chk.getWorld(), chk.getX(), 0, chk.getZ()), 0, () -> {
             for (int x = 0; x < 16; x++) {
               for (int z = 0; z < 16; z++) {
                 if (island.isInIsland(x + (chunk.getX() * 16), z + (chunk.getZ() * 16), world)) {
                   final int maxy = Math.min(maxHeight, chunk.getHighestBlockYAt(x, z));
                   for (int y = LocationUtils.getMinHeight(world); y <= maxy; y++) {
-                    
+
                     ObsidianMaterial material = ObsidianMaterial
-                        .match(chk.getBlock(x,y,z));
+                        .match(chk.getBlock(x, y, z));
                     if (material == air)
                       continue;
-                     if (!ignoreMainMaterial && material == Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator()).map(maybeChunk->maybeChunk.getMainMaterial(world)).orElse(ObsidianMaterial.valueOf("AIR")))
-                continue;
+                    if (!ignoreMainMaterial
+                        && material == Optional.ofNullable(IridiumSkyblock.getInstance().getChunkGenerator())
+                            .map(maybeChunk -> maybeChunk.getMainMaterial(world))
+                            .orElse(ObsidianMaterial.valueOf("AIR")))
+                      continue;
 
                     IslandBlocks islandBlock = IridiumSkyblock.getInstance().getIslandManager()
                         .getIslandBlock(island, material);
@@ -1158,27 +1187,29 @@ public class IslandManager {
                 }
               }
             }
-          }
-      }
-    }.runTaskTimer(IridiumSkyblock.getInstance(), delay, delay);
+          });
+        }
+    }, delay, delay);
+
   }
 
   private void getAllTileInIsland(Island island, List<Chunk> chunks) {
     chunks.forEach(chunk -> {
-      for (BlockState blockState : chunk.getTileEntities()) {
-        if (!(blockState instanceof CreatureSpawner))
-          continue;
-        if (!island.isInIsland(blockState.getLocation()))
-          continue;
-        CreatureSpawner creatureSpawner = (CreatureSpawner) blockState;
-        try {
-          IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager()
-              .getIslandSpawners(island, creatureSpawner.getSpawnedType());
-          islandSpawners.setAmount(islandSpawners.getAmount() + 1);
-        } catch (Throwable t) {
-
+      Scheduler.getInstance().runChunkTask(new Location(chunk.getWorld(), chunk.getX(), 0, chunk.getZ()), 0, () -> {
+        for (BlockState blockState : chunk.getTileEntities()) {
+          if (!(blockState instanceof CreatureSpawner))
+            continue;
+          if (!island.isInIsland(blockState.getLocation()))
+            continue;
+          CreatureSpawner creatureSpawner = (CreatureSpawner) blockState;
+          try {
+            IslandSpawners islandSpawners = IridiumSkyblock.getInstance().getIslandManager()
+                .getIslandSpawners(island, creatureSpawner.getSpawnedType());
+            islandSpawners.setAmount(islandSpawners.getAmount() + 1);
+          } catch (Throwable t) {
+          }
         }
-      }
+      });
     });
   }
 
@@ -1209,13 +1240,13 @@ public class IslandManager {
    */
   public CompletableFuture<List<Entity>> getEntities(@NotNull Island island, @NotNull World... worlds) {
     CompletableFuture<List<Entity>> completableFuture = new CompletableFuture<>();
-    Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+    Scheduler.getInstance().runTaskAsync((task) -> {
       List<Chunk> chunks = new ArrayList<>();
       for (World world : worlds) {
         if (world != null)
           chunks.addAll(getIslandChunks(island, world).join());
       }
-      Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
+      Scheduler.getInstance().runTask(() -> {
         List<Entity> entities = new ArrayList<>();
         for (Chunk chunk : chunks) {
           for (Entity entity : chunk.getEntities()) {
@@ -1389,7 +1420,7 @@ public class IslandManager {
       this.createWorld(World.Environment.THE_END, configuration.worldName + "_the_end");
 
     // Register worlds with multiverse
-    Bukkit.getScheduler().runTaskLater(IridiumSkyblock.getInstance(), () -> {
+    Scheduler.getInstance().runTaskLater(() -> {
       if (Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
         IridiumSkyblock.getInstance().registerMultiverse(getWorld());
         if (configuration.netherIslands)

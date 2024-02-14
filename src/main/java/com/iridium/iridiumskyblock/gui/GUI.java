@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.gui;
 
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.configs.inventories.NoItemGUI;
@@ -61,7 +62,7 @@ public abstract class GUI implements InventoryHolder {
     public Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(this, noItemGUI.size, StringUtils.color(noItemGUI.title));
 
-        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> addContent(inventory));
+        Scheduler.getInstance().runTaskAsync((task)->addContent(inventory));
 
         return inventory;
     }

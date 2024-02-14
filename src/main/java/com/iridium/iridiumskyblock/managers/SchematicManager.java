@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.managers;
 
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.configs.Schematics;
 import com.iridium.iridiumskyblock.database.Island;
@@ -97,11 +98,11 @@ public class SchematicManager {
             Location location = island.getCenter(schematic.getKey());
             location.add(0, schematic.getValue().islandHeight, 0);
             File file = schematicFiles.getOrDefault(schematic.getValue().schematicID, schematicFiles.values().stream().findFirst().get());
-            if (fawe) {
-                Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> schematicPaster.paste(file, location, schematic.getValue().ignoreAirBlocks, completableFuture));
-            } else {
-                schematicPaster.paste(file, location, schematic.getValue().ignoreAirBlocks, completableFuture);
-            }
+             if (fawe) {
+                Scheduler.getInstance().runTaskAsync((task)-> schematicPaster.paste(file, location, schematic.getValue().ignoreAirBlocks, completableFuture));
+             } else {
+                 schematicPaster.paste(file, location, schematic.getValue().ignoreAirBlocks, completableFuture);
+             }
         }
         return completableFuture;
     }

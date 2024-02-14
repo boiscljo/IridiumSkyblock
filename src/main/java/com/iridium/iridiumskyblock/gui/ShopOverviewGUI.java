@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.gui;
 
 import com.iridium.iridiumcore.utils.InventoryUtils;
 import com.iridium.iridiumcore.utils.ItemStackUtils;
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumcore.utils.StringUtils;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.PlaceholderBuilder;
@@ -17,53 +18,57 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ShopOverviewGUI extends GUI {
 
-    public ShopOverviewGUI(Player player,Inventory previousInventory) {
-        super(player,previousInventory);
+  public ShopOverviewGUI(Player player, Inventory previousInventory) {
+    super(player, previousInventory);
+  }
+
+  /**
+   * Get the object's inventory.
+   *
+   * @return The inventory.
+   */
+  @NotNull
+  @Override
+  public Inventory getInventory() {
+    Inventory inventory = Bukkit.createInventory(this, IridiumSkyblock.getInstance().getShop().overviewSize,
+        StringUtils.color(IridiumSkyblock.getInstance().getShop().overviewTitle));
+
+    Scheduler.getInstance().runTaskAsync((task) -> addContent(inventory));
+
+    return inventory;
+  }
+
+  /**
+   * Called when updating the Inventories contents
+   */
+  @Override
+  public void addContent(Inventory inventory) {
+    inventory.clear();
+
+    InventoryUtils.fillInventory(inventory, IridiumSkyblock.getInstance().getShop().overviewBackground);
+
+    for (ShopCategory category : IridiumSkyblock.getInstance().getShopManager().getCategories()) {
+      inventory.setItem(category.item.slot,
+          ItemStackUtils.makeItem(category.item, new PlaceholderBuilder().papi(getPlayer()).build()));
     }
 
-    /**
-     * Get the object's inventory.
-     *
-     * @return The inventory.
-     */
-    @NotNull
-    @Override
-    public Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, IridiumSkyblock.getInstance().getShop().overviewSize, StringUtils.color(IridiumSkyblock.getInstance().getShop().overviewTitle));
-
-        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> addContent(inventory));
-
-        return inventory;
+    if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
+      inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot,
+          ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,
+              new PlaceholderBuilder().papi(getPlayer()).build()));
     }
+  }
 
-    /**
-     * Called when updating the Inventories contents
-     */
-    @Override
-    public void addContent(Inventory inventory) {
-        inventory.clear();
-
-        InventoryUtils.fillInventory(inventory, IridiumSkyblock.getInstance().getShop().overviewBackground);
-
-        for (ShopCategory category : IridiumSkyblock.getInstance().getShopManager().getCategories()) {
-            inventory.setItem(category.item.slot, ItemStackUtils.makeItem(category.item,new PlaceholderBuilder().papi(getPlayer()).build()));
-        }
-
-        if (IridiumSkyblock.getInstance().getConfiguration().backButtons && getPreviousInventory() != null) {
-            inventory.setItem(inventory.getSize() + IridiumSkyblock.getInstance().getInventories().backButton.slot, ItemStackUtils.makeItem(IridiumSkyblock.getInstance().getInventories().backButton,new PlaceholderBuilder().papi(getPlayer()).build()));
-        }
-    }
-
-    /**
-     * Called when there is a click in this GUI. Cancelled automatically.
-     *
-     * @param event The InventoryClickEvent provided by Bukkit
-     */
-    @Override
-    public void onInventoryClick(InventoryClickEvent event) {
-        IridiumSkyblock.getInstance().getShopManager().getCategoryBySlot(event.getSlot()).ifPresent(shopCategory ->
-                IridiumSkyblock.getInstance().getCommands().shopCommand.execute(event.getWhoClicked(), new String[]{"", shopCategory.name})
-        );
-    }
+  /**
+   * Called when there is a click in this GUI. Cancelled automatically.
+   *
+   * @param event The InventoryClickEvent provided by Bukkit
+   */
+  @Override
+  public void onInventoryClick(InventoryClickEvent event) {
+    IridiumSkyblock.getInstance().getShopManager().getCategoryBySlot(event.getSlot())
+        .ifPresent(shopCategory -> IridiumSkyblock.getInstance().getCommands().shopCommand
+            .execute(event.getWhoClicked(), new String[] { "", shopCategory.name }));
+  }
 
 }

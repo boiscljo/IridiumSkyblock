@@ -3,9 +3,10 @@ plugins {
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
+defaultTasks("shadowJar","publishToMavenLocal")
 
 group = "com.iridium"
-version = "3.3.4-OM-b2"
+version = "3.3.4-OM-folia-1"
 description = "IridiumSkyblock"
 
 repositories {
@@ -28,7 +29,7 @@ repositories {
 dependencies {
     // Dependencies that we want to shade in
     implementation("org.jetbrains:annotations:23.0.0")
-    implementation("com.iridium:IridiumCore:1.6.12-OM")
+    implementation("com.iridium:IridiumCore:1.6.12-OM-folia")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.github.Redempt:Crunch:1.0")
     implementation("com.j256.ormlite:ormlite-core:6.1")
@@ -37,7 +38,9 @@ dependencies {
    
     // Other dependencies that are not required or already available at runtime
     compileOnly("org.projectlombok:lombok:1.18.22")
-    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    //compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("dev.folia:folia-api:1.20.2-R0.1-SNAPSHOT")
+    
     compileOnly("net.ess3:EssentialsXSpawn:2.16.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.9.2")
@@ -94,8 +97,8 @@ tasks {
     }
 
     compileJava {
-        sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-        targetCompatibility = JavaVersion.VERSION_1_8.toString()
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
     }
 
     compileTestJava {
@@ -119,6 +122,9 @@ java {
 // Maven publishing
 publishing {
     publications.create<MavenPublication>("maven") {
-        from(components["java"])
+        setGroupId("com.iridium")
+        setArtifactId("IridiumSkyblock")
+        setVersion(version)
+        artifact(tasks["shadowJar"])
     }
 }

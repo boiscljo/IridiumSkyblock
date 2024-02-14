@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.database;
 
+import com.iridium.iridiumcore.utils.Scheduler.Task;
 import com.iridium.iridiumskyblock.DatabaseObject;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.IslandRank;
@@ -13,7 +14,6 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +59,7 @@ public final class User extends DatabaseObject {
 
   private Island currentIslandVisiting;
 
-  private BukkitTask teleportingTask;
+  private Task teleportingTask;
 
   /**
    * The default constructor.
@@ -198,7 +198,7 @@ public final class User extends DatabaseObject {
     this.currentIslandVisiting = currentIslandVisiting;
   }
 
-  public void setTeleportingTask(BukkitTask teleportingTask) {
+  public void setTeleportingTask(Task teleportingTask) {
     this.teleportingTask = teleportingTask;
   }
 

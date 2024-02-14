@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock.schematics;
 
+import com.iridium.iridiumcore.utils.Scheduler;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEditException;
@@ -26,72 +27,69 @@ import java.util.concurrent.CompletableFuture;
 
 public class FastAsyncWorldEdit implements SchematicPaster {
 
-    private static final HashMap<File, ClipboardFormat> cachedClipboardFormat = new HashMap<>();
-    private static Object mutex = new Object();
+  private static final HashMap<File, ClipboardFormat> cachedClipboardFormat = new HashMap<>();
+  private static Object mutex = new Object();
 
-    public static boolean isWorking() {
-        try {
-            final Platform platform = com.sk89q.worldedit.WorldEdit.getInstance().getPlatformManager()
-                    .queryCapability(Capability.WORLD_EDITING);
-            int liveDataVersion = platform.getDataVersion();
-            return liveDataVersion != -1;
-        } catch (Throwable t) {
-            IridiumSkyblock.getInstance().getLogger().warning(
-                    "WorldEdit threw an error during initializing, make sure it's updated and API compatible(FAWE isn't API compatible) ::"
-                            + t.getMessage());
-        }
-        return false;
+  public static boolean isWorking() {
+    try {
+      final Platform platform = com.sk89q.worldedit.WorldEdit.getInstance().getPlatformManager()
+          .queryCapability(Capability.WORLD_EDITING);
+      int liveDataVersion = platform.getDataVersion();
+      return liveDataVersion != -1;
+    } catch (Throwable t) {
+      IridiumSkyblock.getInstance().getLogger().warning(
+          "WorldEdit threw an error during initializing, make sure it's updated and API compatible(FAWE isn't API compatible) ::"
+              + t.getMessage());
     }
+    return false;
+  }
 
-    @Override
-    public void paste(File file, Location location, Boolean ignoreAirBlock, CompletableFuture<Void> completableFuture) {
-        try {
-            ClipboardFormat format = cachedClipboardFormat.getOrDefault(file, ClipboardFormats.findByFile(file));
-            ClipboardReader reader = format.getReader(new FileInputStream(file));
-            Clipboard clipboard = reader.read();
-            int width = clipboard.getDimensions().getBlockX();
-            int height = clipboard.getDimensions().getBlockY();
-            int length = clipboard.getDimensions().getBlockZ();
-            location.subtract(width / 2.00, height / 2.00, length / 2.00); // Centers the schematic
-            clipboard.setOrigin(clipboard.getRegion().getMinimumPoint()); // Change the //copy point to the minimum
-                                                                          // corner
-            {
-                Thread t = new Thread() {
-                    public void run() {
-                        synchronized (mutex) {
-                            EditSession editSession = com.sk89q.worldedit.WorldEdit.getInstance()
-                                    .newEditSession(new BukkitWorld(location.getWorld()));
-                            Operation operation = new ClipboardHolder(clipboard)
-                                    .createPaste(editSession)
-                                    .to(BlockVector3.at(location.getX(), location.getY(), location.getZ()))
-                                    .copyEntities(true)
-                                    .ignoreAirBlocks(ignoreAirBlock)
-                                    .build();
-                            try {
-                                Operations.complete(operation);
-                                Operations.complete(editSession.commit());
-                            } catch (WorldEditException e) {
-                                e.printStackTrace();
-                            }
-                            cachedClipboardFormat.putIfAbsent(file, format);
-                            Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), new Runnable() {
-                                @Override
-                                public void run() {
-                                    completableFuture.complete(null);
-                                }
-                            });
-                        }
-                    };
-                };
-                t.start();
+  @Override
+  public void paste(File file, Location location, Boolean ignoreAirBlock, CompletableFuture<Void> completableFuture) {
+    try {
+      ClipboardFormat format = cachedClipboardFormat.getOrDefault(file, ClipboardFormats.findByFile(file));
+      ClipboardReader reader = format.getReader(new FileInputStream(file));
+      Clipboard clipboard = reader.read();
+      int width = clipboard.getDimensions().getBlockX();
+      int height = clipboard.getDimensions().getBlockY();
+      int length = clipboard.getDimensions().getBlockZ();
+      location.subtract(width / 2.00, height / 2.00, length / 2.00); // Centers the schematic
+      clipboard.setOrigin(clipboard.getRegion().getMinimumPoint()); // Change the //copy point to the minimum
+                                                                    // corner
+      {
+        Thread t = new Thread() {
+          public void run() {
+            synchronized (mutex) {
+              EditSession editSession = com.sk89q.worldedit.WorldEdit.getInstance()
+                  .newEditSession(new BukkitWorld(location.getWorld()));
+              Operation operation = new ClipboardHolder(clipboard)
+                  .createPaste(editSession)
+                  .to(BlockVector3.at(location.getX(), location.getY(), location.getZ()))
+                  .copyEntities(true)
+                  .ignoreAirBlocks(ignoreAirBlock)
+                  .build();
+              try {
+                Operations.complete(operation);
+                Operations.complete(editSession.commit());
+              } catch (WorldEditException e) {
+                e.printStackTrace();
+              }
+              cachedClipboardFormat.putIfAbsent(file, format);
+              Scheduler.getInstance().runTask(() -> {
+                completableFuture.complete(null);
+              });
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+          };
+        };
+        t.start();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+  }
 
-    @Override
-    public void clearCache() {
-        cachedClipboardFormat.clear();
-    }
+  @Override
+  public void clearCache() {
+    cachedClipboardFormat.clear();
+  }
 }
